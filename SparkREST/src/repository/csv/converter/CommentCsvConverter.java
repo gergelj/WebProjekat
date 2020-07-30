@@ -6,8 +6,6 @@
 
 package repository.csv.converter;
 
-import java.util.*;
-
 import beans.Comment;
 
 public class CommentCsvConverter implements ICsvConverter<Comment> {

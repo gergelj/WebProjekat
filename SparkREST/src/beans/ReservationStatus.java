@@ -6,8 +6,6 @@
 
 package beans;
 
-import java.util.*;
-
 public enum ReservationStatus {
    created,
    rejected,

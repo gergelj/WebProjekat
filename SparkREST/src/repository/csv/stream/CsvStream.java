@@ -14,7 +14,15 @@ public class CsvStream <T> implements ICsvStream<T> {
    
    private ICsvConverter<T> converter;
    
-   public void writeAllLinesToFile(String[] content) {
+   
+   
+   public CsvStream(String path, ICsvConverter<T> converter) {
+	   super();
+	   this.path = path;
+	   this.converter = converter;
+   }
+
+public void writeAllLinesToFile(String[] content) {
       // TODO: implement
    }
    

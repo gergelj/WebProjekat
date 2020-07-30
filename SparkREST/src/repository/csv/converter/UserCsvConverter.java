@@ -6,8 +6,6 @@
 
 package repository.csv.converter;
 
-import java.util.*;
-
 import beans.User;
 
 public class UserCsvConverter implements ICsvConverter<User> {

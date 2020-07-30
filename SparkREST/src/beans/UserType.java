@@ -6,8 +6,6 @@
 
 package beans;
 
-import java.util.*;
-
 public enum UserType {
    undefined,
    admin,

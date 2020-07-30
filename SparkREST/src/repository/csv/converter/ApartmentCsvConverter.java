@@ -6,8 +6,6 @@
 
 package repository.csv.converter;
 
-import java.util.*;
-
 import beans.Apartment;
 
 public class ApartmentCsvConverter implements ICsvConverter<Apartment> {

@@ -12,7 +12,14 @@ import java.util.*;
 
 public class CommentService {
    private CommentRepository commentRepository;
-   
+
+//Constructors
+   public CommentService(CommentRepository commentRepository) {
+	   super();
+	   this.commentRepository = commentRepository;
+   }
+
+ //Methods
    public Comment create(Comment comment) {
       // TODO: implement
       return null;

@@ -6,8 +6,6 @@
 
 package repository.csv.converter;
 
-import java.util.*;
-
 import beans.Reservation;
 
 public class ReservationCsvConverter implements ICsvConverter<Reservation> {

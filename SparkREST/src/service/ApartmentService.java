@@ -18,7 +18,17 @@ public class ApartmentService {
    private ApartmentRepository apartmentRepository;
    private AvailableDateCollectionRepository availableDateCollectionRepository;
    private BookingDateCollectionRepository bookingDateCollectionRepository;
+
+//Constructors
+   public ApartmentService(ApartmentRepository apartmentRepository, AvailableDateCollectionRepository availableDateCollectionRepository, BookingDateCollectionRepository bookingDateCollectionRepository) {
+	   super();
+	   this.apartmentRepository = apartmentRepository;
+	   this.availableDateCollectionRepository = availableDateCollectionRepository;
+	   this.bookingDateCollectionRepository = bookingDateCollectionRepository;
+   }
    
+   
+//Methods
    public List<Apartment> getActiveApartments() {
       // TODO: implement
       return null;

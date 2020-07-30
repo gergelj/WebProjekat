@@ -6,8 +6,6 @@
 
 package repository.csv.converter;
 
-import java.util.*;
-
 import beans.Amenity;
 
 public class AmenityCsvConverter implements ICsvConverter<Amenity> {
