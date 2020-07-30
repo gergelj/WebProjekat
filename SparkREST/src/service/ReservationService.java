@@ -18,7 +18,18 @@ public class ReservationService {
    private ReservationRepository reservationRepository;
    private AvailableDateCollectionRepository availableDateCollectionRepository;
    private BookingDateCollectionRepository bookingDateCollectionRepository;
+
+
    
+//Constructors 
+   public ReservationService(ReservationRepository reservationRepository, AvailableDateCollectionRepository availableDateCollectionRepository, BookingDateCollectionRepository bookingDateCollectionRepository) {
+	super();
+	this.reservationRepository = reservationRepository;
+	this.availableDateCollectionRepository = availableDateCollectionRepository;
+	this.bookingDateCollectionRepository = bookingDateCollectionRepository;
+   }
+
+//Methods
    public List<Reservation> getReservationByGuest(User guest) {
       // TODO: implement
       return null;

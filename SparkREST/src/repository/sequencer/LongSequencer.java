@@ -6,8 +6,6 @@
 
 package repository.sequencer;
 
-import java.util.*;
-
 public class LongSequencer implements ISequencer<Long> {
    private long nextId;
    

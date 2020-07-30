@@ -13,6 +13,13 @@ import java.util.*;
 public class AmenityService {
    private AmenityRepository amenityRepository;
    
+//Constructors
+   public AmenityService(AmenityRepository amenityRepository) {
+	super();
+		this.amenityRepository = amenityRepository;
+   }
+
+//Methods
    public Amenity create(Amenity amenity) {
       // TODO: implement
       return null;

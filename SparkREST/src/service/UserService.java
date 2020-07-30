@@ -15,6 +15,14 @@ import java.util.*;
 public class UserService {
    private UserRepository userRepository;
    
+   
+//Constructors
+   public UserService(UserRepository userRepository) {
+	super();
+	this.userRepository = userRepository;
+   }
+
+//Methods
    public void register(UserDTO user) {
       // TODO: implement
    }

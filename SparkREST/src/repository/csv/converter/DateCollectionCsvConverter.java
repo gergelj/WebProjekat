@@ -6,8 +6,6 @@
 
 package repository.csv.converter;
 
-import java.util.*;
-
 import beans.DateCollection;
 
 public class DateCollectionCsvConverter implements ICsvConverter<DateCollection> {
