@@ -12,7 +12,7 @@ public class AmenityCsvConverter implements ICsvConverter<Amenity> {
    private String delimiter;
    
    public String toCsv(Amenity entity) {
-      return null;
+      return String.join(delimiter, String.valueOf(entity.getId()), entity.getName(), String.valueOf(entity.isDeleted()));
    }
   
    public Amenity fromCsv(String entityCsv) {
