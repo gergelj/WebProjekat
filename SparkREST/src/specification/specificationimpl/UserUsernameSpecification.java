@@ -8,5 +8,14 @@ package specification.specificationimpl;
 
 import java.util.*;
 
-public class UserUsernameSpecification extends specification.AbstractSpecification<User> {
+import beans.User;
+import specification.AbstractSpecification;
+
+public class UserUsernameSpecification extends AbstractSpecification<User> {
+
+	@Override
+	public boolean isSatisfiedBy(User candidate) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

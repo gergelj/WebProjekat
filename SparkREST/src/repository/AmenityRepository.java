@@ -8,7 +8,11 @@ package repository;
 
 import java.util.*;
 
-public class AmenityRepository extends repository.csv.CSVRepository<Amenity,Long> implements repository.abstract.IAmenityRepository {
+import beans.Amenity;
+import repository.abstractrepository.IAmenityRepository;
+import repository.csv.CSVRepository;
+
+public class AmenityRepository extends CSVRepository<Amenity,Long> implements IAmenityRepository {
    private String entityName;
 
 }

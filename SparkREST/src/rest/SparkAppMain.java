@@ -12,7 +12,6 @@ import java.util.Date;
 
 import com.google.gson.Gson;
 
-import beans.Student;
 import beans.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -33,6 +32,7 @@ public class SparkAppMain {
 	static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
 	public static void main(String[] args) throws Exception {
+		/*
 		port(8080);
 
 		webSocket("/ws", WsHandler.class);
@@ -146,6 +146,7 @@ public class SparkAppMain {
 			}
 			return "No user logged in.";
 		});
+		*/
 
 	}
 }

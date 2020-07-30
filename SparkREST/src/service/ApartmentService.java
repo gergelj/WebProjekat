@@ -24,24 +24,20 @@ public class ApartmentService {
       return null;
    }
    
-   /** @param host */
    public List<Apartment> getApartmentsByHost(User host) {
       // TODO: implement
       return null;
    }
    
-   /** @param id */
    public Apartment getById(long id) {
       // TODO: implement
       return null;
    }
    
-   /** @param apartment */
    public void update(Apartment apartment) {
       // TODO: implement
    }
    
-   /** @param apartment */
    public void delete(Apartment apartment) {
       // TODO: implement
    }
@@ -55,13 +51,11 @@ public class ApartmentService {
       // TODO: implement
    }
    
-   /** @param apartment */
    public Apartment create(Apartment apartment) {
       // TODO: implement
       return null;
    }
    
-   /** @param filter */
    public List<Apartment> find(ApartmentFilterDTO filter) {
       // TODO: implement
       return null;

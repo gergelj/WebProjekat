@@ -8,20 +8,24 @@ package repository;
 
 import java.util.*;
 
-public class ReservationRepository extends repository.csv.CSVRepository<Reservation,Long> implements repository.abstract.IReservationRepository, repository.csv.IEagerCsvRepository<Reservation,Long> {
+import beans.Reservation;
+import repository.abstractrepository.IReservationRepository;
+import repository.csv.CSVRepository;
+import repository.csv.IEagerCsvRepository;
+
+public class ReservationRepository extends CSVRepository<Reservation,Long> implements IReservationRepository, IEagerCsvRepository<Reservation,Long> {
    private String entityName;
    
    private void bind() {
       // TODO: implement
    }
    
-   /** @param id */
-   public T getEager(ID id) {
+   public Reservation getEager(Long id) {
       // TODO: implement
       return null;
    }
    
-   public List<T> getAllEager() {
+   public List<Reservation> getAllEager() {
       // TODO: implement
       return null;
    }

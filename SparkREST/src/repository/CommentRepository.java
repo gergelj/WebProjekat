@@ -8,20 +8,24 @@ package repository;
 
 import java.util.*;
 
-public class CommentRepository extends repository.csv.CSVRepository<Comment,Long> implements repository.abstract.ICommentRepository, repository.csv.IEagerCsvRepository<Comment,Long> {
+import beans.Comment;
+import repository.abstractrepository.ICommentRepository;
+import repository.csv.CSVRepository;
+import repository.csv.IEagerCsvRepository;
+
+public class CommentRepository extends CSVRepository<Comment,Long> implements ICommentRepository, IEagerCsvRepository<Comment,Long> {
    private String entityName;
    
    private void bind() {
       // TODO: implement
    }
    
-   /** @param id */
-   public T getEager(ID id) {
+   public Comment getEager(Long id) {
       // TODO: implement
       return null;
    }
    
-   public List<T> getAllEager() {
+   public List<Comment> getAllEager() {
       // TODO: implement
       return null;
    }

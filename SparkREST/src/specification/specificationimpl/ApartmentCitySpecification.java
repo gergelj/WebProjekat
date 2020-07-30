@@ -8,5 +8,14 @@ package specification.specificationimpl;
 
 import java.util.*;
 
-public class ApartmentCitySpecification extends specification.AbstractSpecification<Apartment> {
+import beans.Apartment;
+import specification.AbstractSpecification;
+
+public class ApartmentCitySpecification extends AbstractSpecification<Apartment> {
+
+	@Override
+	public boolean isSatisfiedBy(Apartment candidate) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -10,11 +10,12 @@ import java.util.*;
 
 public class NotSpecification <T> extends AbstractSpecification<T> {
    private ISpecification<T> leftSpecification;
+
+	@Override
+	public boolean isSatisfiedBy(T candidate) {
+		// TODO Auto-generated method stub
+		return false;
+	}
    
-   /** @param candidate */
-   public bool isSatisfiedBy(T candidate) {
-      // TODO: implement
-      return null;
-   }
 
 }

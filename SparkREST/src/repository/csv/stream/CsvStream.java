@@ -14,12 +14,10 @@ public class CsvStream <T> implements ICsvStream<T> {
    
    private ICsvConverter<T> converter;
    
-   /** @param content */
    public void writeAllLinesToFile(String[] content) {
       // TODO: implement
    }
    
-   /** @param entities */
    public void saveAll(List<T> entities) {
       // TODO: implement
    }
@@ -29,7 +27,6 @@ public class CsvStream <T> implements ICsvStream<T> {
       return null;
    }
    
-   /** @param entity */
    public void appendToFile(T entity) {
       // TODO: implement
    }

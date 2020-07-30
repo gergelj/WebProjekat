@@ -4,9 +4,12 @@
  * Purpose: Defines the Interface IApartmentRepository
  ***********************************************************************/
 
-package repository.abstract;
+package repository.abstractrepository;
 
 import java.util.*;
+
+import beans.Apartment;
+import specification.ISpecification;
 
 public interface IApartmentRepository extends IRepository<Apartment,Long> {
    /** @param specification */

@@ -19,34 +19,28 @@ public class ReservationService {
    private AvailableDateCollectionRepository availableDateCollectionRepository;
    private BookingDateCollectionRepository bookingDateCollectionRepository;
    
-   /** @param guest */
    public List<Reservation> getReservationByGuest(User guest) {
       // TODO: implement
       return null;
    }
    
-   /** @param reservation */
    public void cancelReservation(Reservation reservation) {
       // TODO: implement
    }
    
-   /** @param host */
    public List<Reservation> getReservationByHost(User host) {
       // TODO: implement
       return null;
    }
    
-   /** @param reservation */
    public void acceptReservation(Reservation reservation) {
       // TODO: implement
    }
    
-   /** @param reservation */
    public void rejectReservation(Reservation reservation) {
       // TODO: implement
    }
    
-   /** @param reservation */
    public void finishReservation(Reservation reservation) {
       // TODO: implement
    }
@@ -56,19 +50,16 @@ public class ReservationService {
       return null;
    }
    
-   /** @param reservation */
    public Reservation create(Reservation reservation) {
       // TODO: implement
       return null;
    }
    
-   /** @param apartment */
    public List<Date> getAvailableDatesForApartment(Apartment apartment) {
       // TODO: implement
       return null;
    }
    
-   /** @param username */
    public List<Reservation> getReservationByUsername(String username) {
       // TODO: implement
       return null;

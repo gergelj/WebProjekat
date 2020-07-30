@@ -4,9 +4,12 @@
  * Purpose: Defines the Interface IUserRepository
  ***********************************************************************/
 
-package repository.abstract;
+package repository.abstractrepository;
 
 import java.util.*;
+
+import beans.User;
+import specification.ISpecification;
 
 public interface IUserRepository extends IRepository<User,Long> {
    /** @param specification */

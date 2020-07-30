@@ -7,7 +7,11 @@
 package specification.filterconverter;
 
 import dto.ApartmentFilterDTO;
+import specification.ISpecification;
+
 import java.util.*;
+
+import beans.Apartment;
 
 public class ApartmentFilterConverter {
    /** @param filter */

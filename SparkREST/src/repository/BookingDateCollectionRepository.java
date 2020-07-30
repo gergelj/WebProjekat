@@ -8,7 +8,11 @@ package repository;
 
 import java.util.*;
 
-public class BookingDateCollectionRepository extends repository.csv.CSVRepository<DateCollection,Long> implements repository.abstract.IDateCollectionRepository {
+import beans.DateCollection;
+import repository.abstractrepository.IDateCollectionRepository;
+import repository.csv.CSVRepository;
+
+public class BookingDateCollectionRepository extends CSVRepository<DateCollection,Long> implements IDateCollectionRepository {
    private String entityName;
 
 }

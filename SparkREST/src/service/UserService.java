@@ -15,17 +15,14 @@ import java.util.*;
 public class UserService {
    private UserRepository userRepository;
    
-   /** @param user */
    public void register(UserDTO user) {
       // TODO: implement
    }
    
-   /** @param user */
    public void login(UserDTO user) {
       // TODO: implement
    }
    
-   /** @param id */
    public User getById(long id) {
       // TODO: implement
       return null;
@@ -45,13 +42,11 @@ public class UserService {
       return null;
    }
    
-   /** @param host */
    public List<User> getGuestsByHost(User host) {
       // TODO: implement
       return null;
    }
    
-   /** @param filter */
    public List<User> find(UserFilterDTO filter) {
       // TODO: implement
       return null;

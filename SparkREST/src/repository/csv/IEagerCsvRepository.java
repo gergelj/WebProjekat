@@ -9,7 +9,6 @@ package repository.csv;
 import java.util.*;
 
 public interface IEagerCsvRepository <T,ID> {
-   /** @param id */
    T getEager(ID id);
    List<T> getAllEager();
 

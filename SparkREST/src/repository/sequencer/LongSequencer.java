@@ -12,11 +12,11 @@ public class LongSequencer implements ISequencer<Long> {
    private long nextId;
    
    /** @param initId */
-   public void initialize(T initId) {
+   public void initialize(Long initId) {
       // TODO: implement
    }
    
-   public T generateId() {
+   public Long generateId() {
       // TODO: implement
       return null;
    }
