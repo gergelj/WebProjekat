@@ -35,10 +35,10 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
       joiner.add(String.valueOf(entity.getCheckInHour()));
       joiner.add(String.valueOf(entity.getCheckOutHour()));
       joiner.add(String.valueOf(entity.getApartmentType()));
-      //TODO: proveriti
-      joiner.add(String.valueOf(entity.getLocation().getLatitude()));
+      
+      joiner.add(String.valueOf(entity.getLocation().getLatitude()));   //Lokacija
       joiner.add(String.valueOf(entity.getLocation().getLongitude()));
-      //joiner.add(String.valueOf(entity.getLocation().getAddress()));
+      joiner.add(String.valueOf(getAddressString(entity.getLocation().getAddress())));	//Adresa
       
       joiner.add(String.valueOf(entity.getHost() == null? "" : entity.getHost().getId()));
       
@@ -49,25 +49,6 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
       
       return joiner.toString();
    }
-   
-   /*
-    *  private int numberOfRooms;
-   private int numberOfGuests;
-   private long id;
-   private double pricePerNight;
-   private boolean deleted;
-   private boolean active;
-   private int checkInHour = 14;
-   private int checkOutHour = 10;
-   
-   private ApartmentType apartmentType;
-   private Location location;
-   private User host;
-   private List<Picture> pictures;
-   private List<Amenity> amenities;
-   private List<Comment> comments;
-    * 
-    */
    
    public Apartment fromCsv(String entityCsv) {
       String[] tokens = entityCsv.split(delimiter);
@@ -81,19 +62,35 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
       int checkInHour = Integer.valueOf(tokens[6]);
       int checkOutHour = Integer.valueOf(tokens[7]);
       ApartmentType apartmentType = ApartmentType.valueOf(tokens[8]);
-      //TODO: proveriti 
-	  Location location = new Location(Double.valueOf(tokens[9]), Double.valueOf(tokens[10]), new Address());
-	  User host = new User(Long.valueOf(tokens[11]));
+      
+	  Location location = new Location(Double.valueOf(tokens[9]), Double.valueOf(tokens[10]), getAddressFromString(tokens[11]));
+	  User host = new User(Long.valueOf(tokens[12]));
 	  
-	  List<Picture> pictures = getPictureList(tokens[12]);
-	  List<Amenity> amenities = getAmenityList(tokens[13]);
-	  List<Comment> comments = getCommentList(tokens[14]);
+	  List<Picture> pictures = getPictureList(tokens[13]);
+	  List<Amenity> amenities = getAmenityList(tokens[14]);
+	  List<Comment> comments = getCommentList(tokens[15]);
 	  
-	  Apartment retVal = new Apartment(numberOfRooms, numberOfGuests, pricePerNight, deleted, active, apartmentType, location, host, pictures, amenities, comments);
+	  //Apartment retVal = new Apartment(numberOfRooms, numberOfGuests, pricePerNight, deleted, active, apartmentType, location, host, pictures, amenities, comments);
+	  
+	  Apartment retVal = new Apartment(id, numberOfRooms, numberOfGuests, pricePerNight, deleted, active, checkInHour, checkOutHour, apartmentType, location, host, pictures, amenities, comments)
 	  
       return retVal;
    }
 
+   private Address getAddressFromString(String addressString)
+   {
+	   Address retVal = new Address();
+	   
+	   String[] tokens = addressString.split(listDelimiter);
+	   
+	   retVal.setStreet(tokens[0]);
+	   retVal.setHouseNumber(tokens[1]);
+	   retVal.setCity(tokens[2]);
+	   retVal.setPostalCode(tokens[3]);
+	   
+	   return retVal;
+   }
+   
    private List<Picture> getPictureList(String pictureString)
    {
 	   List<Picture> retVal = new ArrayList<Picture>();
@@ -138,6 +135,18 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
 	   {
 		   joiner.add(p.getName());
 	   }
+	   
+	   return joiner.toString();
+   }
+   
+   private String getAddressString(Address address)
+   {
+	   StringJoiner joiner = new StringJoiner(listDelimiter);
+	   
+	   joiner.add(address.getStreet());
+	   joiner.add(address.getHouseNumber());
+	   joiner.add(address.getCity());
+	   joiner.add(address.getPostalCode());
 	   
 	   return joiner.toString();
    }
