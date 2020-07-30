@@ -6,12 +6,18 @@
 
 package specification.specificationimpl;
 
-import java.util.*;
-
 import beans.Apartment;
 import specification.AbstractSpecification;
 
 public class ApartmentCitySpecification extends AbstractSpecification<Apartment> {
+
+	private String city;
+	
+	public ApartmentCitySpecification(String city) {
+		super();
+		this.city = city;
+	}
+
 
 	@Override
 	public boolean isSatisfiedBy(Apartment candidate) {

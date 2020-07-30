@@ -6,12 +6,18 @@
 
 package specification.specificationimpl;
 
-import java.util.*;
-
 import beans.User;
+import beans.UserType;
 import specification.AbstractSpecification;
 
 public class UserUserTypeSpecification extends AbstractSpecification<User> {
+
+	private UserType userType;
+	
+	public UserUserTypeSpecification(UserType userType) {
+		super();
+		this.userType = userType;
+	}
 
 	@Override
 	public boolean isSatisfiedBy(User candidate) {

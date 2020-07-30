@@ -16,7 +16,14 @@ public class CSVRepository <T,ID> implements IRepository<T,ID> {
    private String entityName;
    
    private ICsvStream<T> stream;
-   private ISequencer<T> sequencer;
+   private ISequencer<ID> sequencer;
+   
+   public CSVRepository(String entityName, ICsvStream<T> stream, ISequencer<ID> sequencer){
+	   this.entityName = entityName;
+	   this.stream = stream;
+	   this.sequencer = sequencer;
+	   initializeId();
+   }
    
    private ID getMaxId(List<T> entities) {
       // TODO: implement

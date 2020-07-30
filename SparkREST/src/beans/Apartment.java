@@ -23,9 +23,69 @@ public class Apartment implements IIdentifiable, IDeletable {
    private User host;
    private List<Picture> pictures;
    private List<Amenity> amenities;
-   private List<Comment> comment;
+   private List<Comment> comments;
    
+   public Apartment() {
+	   this.location = new Location();
+	   this.host = new User();
+	   this.pictures = new ArrayList<Picture>();
+	   this.amenities = new ArrayList<Amenity>();
+	   this.comments = new ArrayList<Comment>();
+   }
    
+   public Apartment(long id, int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
+		int checkInHour, int checkOutHour, ApartmentType apartmentType, Location location, User host,
+		List<Picture> pictures, List<Amenity> amenities, List<Comment> comments) {
+		this.numberOfRooms = numberOfRooms;
+		this.numberOfGuests = numberOfGuests;
+		this.id = id;
+		this.pricePerNight = pricePerNight;
+		this.deleted = deleted;
+		this.active = active;
+		this.checkInHour = checkInHour;
+		this.checkOutHour = checkOutHour;
+		this.apartmentType = apartmentType;
+		this.location = location;
+		this.host = host;
+		this.pictures = pictures;
+		this.amenities = amenities;
+		this.comments = comments;
+   }
+   
+   public Apartment(int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
+		int checkInHour, int checkOutHour, ApartmentType apartmentType, Location location, User host,
+		List<Picture> pictures, List<Amenity> amenities, List<Comment> comments) {
+		this.numberOfRooms = numberOfRooms;
+		this.numberOfGuests = numberOfGuests;
+		this.pricePerNight = pricePerNight;
+		this.deleted = deleted;
+		this.active = active;
+		this.checkInHour = checkInHour;
+		this.checkOutHour = checkOutHour;
+		this.apartmentType = apartmentType;
+		this.location = location;
+		this.host = host;
+		this.pictures = pictures;
+		this.amenities = amenities;
+		this.comments = comments;
+   }
+   
+   public Apartment(int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
+		ApartmentType apartmentType, Location location, User host,
+		List<Picture> pictures, List<Amenity> amenities, List<Comment> comments) {
+		this.numberOfRooms = numberOfRooms;
+		this.numberOfGuests = numberOfGuests;
+		this.pricePerNight = pricePerNight;
+		this.deleted = deleted;
+		this.active = active;
+		this.apartmentType = apartmentType;
+		this.location = location;
+		this.host = host;
+		this.pictures = pictures;
+		this.amenities = amenities;
+		this.comments = comments;
+   }
+
    public List<Picture> getPictures() {
       if (pictures == null)
          pictures = new ArrayList<Picture>();
@@ -95,46 +155,165 @@ public class Apartment implements IIdentifiable, IDeletable {
    }
 
    
-   public List<Comment> getComment() {
-      if (comment == null)
-         comment = new ArrayList<Comment>();
-      return comment;
+   public List<Comment> getComments() {
+      if (comments == null)
+         comments = new ArrayList<Comment>();
+      return comments;
    }
 
-   public void setComment(List<Comment> newComment) {
-      removeAllComment();
+   public void setComments(List<Comment> newComment) {
+      removeAllComments();
       for (Iterator<Comment> iter = newComment.iterator(); iter.hasNext();)
-         addComment((Comment)iter.next());
+         addComments((Comment)iter.next());
    }
    
-   public void addComment(Comment newComment) {
+   public void addComments(Comment newComment) {
       if (newComment == null)
          return;
-      if (this.comment == null)
-         this.comment = new ArrayList<Comment>();
-      if (!this.comment.contains(newComment))
-         this.comment.add(newComment);
+      if (this.comments == null)
+         this.comments = new ArrayList<Comment>();
+      if (!this.comments.contains(newComment))
+         this.comments.add(newComment);
    }
    
-   public void removeComment(Comment oldComment) {
+   public void removeComments(Comment oldComment) {
       if (oldComment == null)
          return;
-      if (this.comment != null)
-         if (this.comment.contains(oldComment))
-            this.comment.remove(oldComment);
+      if (this.comments != null)
+         if (this.comments.contains(oldComment))
+            this.comments.remove(oldComment);
    }
    
-   public void removeAllComment() {
-      if (comment != null)
-         comment.clear();
+   public void removeAllComments() {
+      if (comments != null)
+         comments.clear();
    }
    
    public long getId() {
       return id;
    }
    
-   /** @param id */
-   public void setId(long id) {
+   public int getNumberOfRooms() {
+	return numberOfRooms;
+}
+
+
+
+public void setNumberOfRooms(int numberOfRooms) {
+	this.numberOfRooms = numberOfRooms;
+}
+
+
+
+public int getNumberOfGuests() {
+	return numberOfGuests;
+}
+
+
+
+public void setNumberOfGuests(int numberOfGuests) {
+	this.numberOfGuests = numberOfGuests;
+}
+
+
+
+public double getPricePerNight() {
+	return pricePerNight;
+}
+
+
+
+public void setPricePerNight(double pricePerNight) {
+	this.pricePerNight = pricePerNight;
+}
+
+
+
+public boolean isDeleted() {
+	return deleted;
+}
+
+
+
+public void setDeleted(boolean deleted) {
+	this.deleted = deleted;
+}
+
+
+
+public boolean isActive() {
+	return active;
+}
+
+
+
+public void setActive(boolean active) {
+	this.active = active;
+}
+
+
+
+public int getCheckInHour() {
+	return checkInHour;
+}
+
+
+
+public void setCheckInHour(int checkInHour) {
+	this.checkInHour = checkInHour;
+}
+
+
+
+public int getCheckOutHour() {
+	return checkOutHour;
+}
+
+
+
+public void setCheckOutHour(int checkOutHour) {
+	this.checkOutHour = checkOutHour;
+}
+
+
+
+public ApartmentType getApartmentType() {
+	return apartmentType;
+}
+
+
+
+public void setApartmentType(ApartmentType apartmentType) {
+	this.apartmentType = apartmentType;
+}
+
+
+
+public Location getLocation() {
+	return location;
+}
+
+
+
+public void setLocation(Location location) {
+	this.location = location;
+}
+
+
+
+public User getHost() {
+	return host;
+}
+
+
+
+public void setHost(User host) {
+	this.host = host;
+}
+
+
+
+public void setId(long id) {
       this.id = id;
    }
    

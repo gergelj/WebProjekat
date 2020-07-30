@@ -6,8 +6,6 @@
 
 package repository.abstractrepository;
 
-import java.util.*;
-
 import beans.Comment;
 
 public interface ICommentRepository extends IRepository<Comment,Long> {

@@ -6,12 +6,18 @@
 
 package specification.specificationimpl;
 
-import java.util.*;
-
+import beans.Gender;
 import beans.User;
 import specification.AbstractSpecification;
 
 public class UserGenderSpecification extends AbstractSpecification<User> {
+
+	private Gender gender;
+	
+	public UserGenderSpecification(Gender gender) {
+		super();
+		this.gender = gender;
+	}
 
 	@Override
 	public boolean isSatisfiedBy(User candidate) {

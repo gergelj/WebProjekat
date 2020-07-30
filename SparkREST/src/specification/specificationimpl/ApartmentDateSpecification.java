@@ -6,12 +6,19 @@
 
 package specification.specificationimpl;
 
-import java.util.*;
 
 import beans.Apartment;
+import beans.DateRange;
 import specification.AbstractSpecification;
 
 public class ApartmentDateSpecification extends AbstractSpecification<Apartment> {
+
+	private DateRange dateRange;
+	
+	public ApartmentDateSpecification(DateRange dateRange) {
+		super();
+		this.dateRange = dateRange;
+	}
 
 	@Override
 	public boolean isSatisfiedBy(Apartment candidate) {

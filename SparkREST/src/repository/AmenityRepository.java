@@ -6,13 +6,16 @@
 
 package repository;
 
-import java.util.*;
-
 import beans.Amenity;
 import repository.abstractrepository.IAmenityRepository;
 import repository.csv.CSVRepository;
+import repository.csv.stream.ICsvStream;
+import repository.sequencer.ISequencer;
 
 public class AmenityRepository extends CSVRepository<Amenity,Long> implements IAmenityRepository {
-   private String entityName;
+
+   public AmenityRepository(ICsvStream<Amenity> stream, ISequencer<Long> sequencer) {
+	   super("Amenity", stream, sequencer);
+   }
 
 }

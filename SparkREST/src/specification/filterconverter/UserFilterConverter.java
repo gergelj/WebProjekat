@@ -9,8 +9,6 @@ package specification.filterconverter;
 import dto.UserFilterDTO;
 import specification.ISpecification;
 
-import java.util.*;
-
 import beans.User;
 
 public class UserFilterConverter {

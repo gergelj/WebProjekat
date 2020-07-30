@@ -12,9 +12,14 @@ import beans.Reservation;
 import repository.abstractrepository.IReservationRepository;
 import repository.csv.CSVRepository;
 import repository.csv.IEagerCsvRepository;
+import repository.csv.stream.ICsvStream;
+import repository.sequencer.ISequencer;
 
 public class ReservationRepository extends CSVRepository<Reservation,Long> implements IReservationRepository, IEagerCsvRepository<Reservation,Long> {
-   private String entityName;
+   
+	public ReservationRepository(ICsvStream<Reservation> stream, ISequencer<Long> sequencer) {
+		super("Reservation", stream, sequencer);
+	}
    
    private void bind() {
       // TODO: implement

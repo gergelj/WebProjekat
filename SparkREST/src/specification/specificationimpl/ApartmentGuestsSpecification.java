@@ -6,12 +6,18 @@
 
 package specification.specificationimpl;
 
-import java.util.*;
 
 import beans.Apartment;
 import specification.AbstractSpecification;
 
 public class ApartmentGuestsSpecification extends AbstractSpecification<Apartment> {
+
+	private int numOfGuests;
+	
+	public ApartmentGuestsSpecification(int numOfGuests) {
+		super();
+		this.numOfGuests = numOfGuests;
+	}
 
 	@Override
 	public boolean isSatisfiedBy(Apartment candidate) {

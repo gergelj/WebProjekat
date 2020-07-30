@@ -6,11 +6,16 @@
 
 package specification;
 
-import java.util.*;
-
 public class OrSpecification <T> extends AbstractSpecification<T> {
-   private ISpecification<T> leftSpecification;
-   private ISpecification<T> rightSpecification;
+   
+	public OrSpecification(ISpecification<T> leftSpecification, ISpecification<T> rightSpecification) {
+		super();
+		this.leftSpecification = leftSpecification;
+		this.rightSpecification = rightSpecification;
+	}
+
+	private ISpecification<T> leftSpecification;
+	private ISpecification<T> rightSpecification;
    
 	@Override
 	public boolean isSatisfiedBy(T candidate) {

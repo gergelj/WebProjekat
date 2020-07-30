@@ -6,7 +6,6 @@
 
 package beans;
 
-import java.util.*;
 
 public enum ApartmentType {
    fullApartment,

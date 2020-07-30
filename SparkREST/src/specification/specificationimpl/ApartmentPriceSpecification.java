@@ -6,12 +6,18 @@
 
 package specification.specificationimpl;
 
-import java.util.*;
-
 import beans.Apartment;
+import beans.PriceRange;
 import specification.AbstractSpecification;
 
 public class ApartmentPriceSpecification extends AbstractSpecification<Apartment> {
+
+	private PriceRange priceRange;
+	
+	public ApartmentPriceSpecification(PriceRange priceRange) {
+		super();
+		this.priceRange = priceRange;
+	}
 
 	@Override
 	public boolean isSatisfiedBy(Apartment candidate) {

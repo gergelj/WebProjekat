@@ -11,11 +11,16 @@ import java.util.*;
 import beans.User;
 import repository.abstractrepository.IUserRepository;
 import repository.csv.CSVRepository;
+import repository.csv.stream.ICsvStream;
+import repository.sequencer.ISequencer;
 import specification.ISpecification;
 
 public class UserRepository extends CSVRepository<User,Long> implements IUserRepository {
-   private String entityName;
    private String notUniqueError;
+   
+   public UserRepository(ICsvStream<User> stream, ISequencer<Long> sequencer) {
+		super("User", stream, sequencer);
+	}
    
    private boolean isUsernameUnique(String username) {
       // TODO: implement

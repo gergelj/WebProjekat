@@ -12,10 +12,15 @@ import beans.Apartment;
 import repository.abstractrepository.IApartmentRepository;
 import repository.csv.CSVRepository;
 import repository.csv.IEagerCsvRepository;
+import repository.csv.stream.ICsvStream;
+import repository.sequencer.ISequencer;
 import specification.ISpecification;
 
 public class ApartmentRepository extends CSVRepository<Apartment,Long> implements IApartmentRepository, IEagerCsvRepository<Apartment,Long> {
-   private String entityName;
+   
+   public ApartmentRepository(ICsvStream<Apartment> stream, ISequencer<Long> sequencer) {
+	   super("Apartment", stream, sequencer);
+   }
    
    private void bind() {
       // TODO: implement
