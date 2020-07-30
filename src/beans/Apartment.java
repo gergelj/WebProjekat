@@ -86,7 +86,11 @@ public class Apartment implements IIdentifiable, IDeletable {
 		this.comments = comments;
    }
 
-   public List<Picture> getPictures() {
+   public Apartment(long id) {
+	   this.id = id;
+   }
+
+public List<Picture> getPictures() {
       if (pictures == null)
          pictures = new ArrayList<Picture>();
       return pictures;

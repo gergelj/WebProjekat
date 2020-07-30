@@ -27,10 +27,10 @@ public class User implements IDeletable, IIdentifiable {
    }
    
    public void delete() {
-      // TODO: implement
+      this.setDeleted(true);
    }
 
-public User(String username, String password, String name, String surname, long id, boolean deleted, boolean blocked,
+public User(long id, String username, String password, String name, String surname, boolean deleted, boolean blocked,
 		Gender gender, UserType userType) {
 	super();
 	this.username = username;
@@ -59,6 +59,10 @@ public User(String username, String password, String name, String surname, boole
 	this.blocked = blocked;
 	this.gender = gender;
 	this.userType = userType;
+}
+
+public User(Long id) {
+	this.id = id;
 }
 
 public String getUsername() {

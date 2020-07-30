@@ -21,8 +21,8 @@ public class Reservation implements IDeletable, IIdentifiable {
    private User guest;
    
 //Constructors
-	public Reservation(Date checkIn, int nights, double totalPrice, String message, long id, boolean deleted,
-			ReservationStatus reservationStatus, Apartment apartment, User guest) {
+	public Reservation(long id, Apartment apartment, User guest, Date checkIn, int nights, double totalPrice, String message, boolean deleted,
+			ReservationStatus reservationStatus) {
 		super();
 		this.checkIn = checkIn;
 		this.nights = nights;
@@ -42,9 +42,15 @@ public class Reservation implements IDeletable, IIdentifiable {
 		this.guest = new User();
 	}
 	
+	public Reservation(long id) {
+		this.id = id;
+		
+		this.apartment = new Apartment();
+		this.guest = new User();
+	}
 	
-	public Reservation(Date checkIn, int nights, double totalPrice, String message, boolean deleted,
-			ReservationStatus reservationStatus, Apartment apartment, User guest) {
+	public Reservation(Apartment apartment, User guest, Date checkIn, int nights, double totalPrice, String message, boolean deleted,
+			ReservationStatus reservationStatus) {
 		super();
 		this.checkIn = checkIn;
 		this.nights = nights;
