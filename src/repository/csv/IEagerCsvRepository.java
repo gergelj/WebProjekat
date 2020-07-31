@@ -8,8 +8,8 @@ package repository.csv;
 
 import java.util.*;
 
-public interface IEagerCsvRepository <T,ID> {
-   T getEager(ID id);
+public interface IEagerCsvRepository <T> {
+   T getEager(long id);
    List<T> getAllEager();
 
 }

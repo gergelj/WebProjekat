@@ -13,11 +13,11 @@ import repository.abstractrepository.IReservationRepository;
 import repository.csv.CSVRepository;
 import repository.csv.IEagerCsvRepository;
 import repository.csv.stream.ICsvStream;
-import repository.sequencer.ISequencer;
+import repository.sequencer.LongSequencer;
 
-public class ReservationRepository extends CSVRepository<Reservation,Long> implements IReservationRepository, IEagerCsvRepository<Reservation,Long> {
+public class ReservationRepository extends CSVRepository<Reservation> implements IReservationRepository, IEagerCsvRepository<Reservation> {
    
-	public ReservationRepository(ICsvStream<Reservation> stream, ISequencer<Long> sequencer) {
+	public ReservationRepository(ICsvStream<Reservation> stream, LongSequencer sequencer) {
 		super("Reservation", stream, sequencer);
 	}
    
@@ -25,7 +25,7 @@ public class ReservationRepository extends CSVRepository<Reservation,Long> imple
       // TODO: implement
    }
    
-   public Reservation getEager(Long id) {
+   public Reservation getEager(long id) {
       // TODO: implement
       return null;
    }

@@ -11,7 +11,7 @@ import java.util.*;
 import beans.Apartment;
 import specification.ISpecification;
 
-public interface IApartmentRepository extends IRepository<Apartment,Long> {
+public interface IApartmentRepository extends IRepository<Apartment> {
    /** @param specification */
    List<Apartment> find(ISpecification<Apartment> specification);
 

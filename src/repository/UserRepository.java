@@ -12,13 +12,13 @@ import beans.User;
 import repository.abstractrepository.IUserRepository;
 import repository.csv.CSVRepository;
 import repository.csv.stream.ICsvStream;
-import repository.sequencer.ISequencer;
+import repository.sequencer.LongSequencer;
 import specification.ISpecification;
 
-public class UserRepository extends CSVRepository<User,Long> implements IUserRepository {
+public class UserRepository extends CSVRepository<User> implements IUserRepository {
    private String notUniqueError;
    
-   public UserRepository(ICsvStream<User> stream, ISequencer<Long> sequencer) {
+   public UserRepository(ICsvStream<User> stream, LongSequencer sequencer) {
 		super("User", stream, sequencer);
 	}
    

@@ -8,5 +8,5 @@ package repository.abstractrepository;
 
 import beans.Comment;
 
-public interface ICommentRepository extends IRepository<Comment,Long> {
+public interface ICommentRepository extends IRepository<Comment> {
 }

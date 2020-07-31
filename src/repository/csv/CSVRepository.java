@@ -8,33 +8,34 @@ package repository.csv;
 
 import repository.abstractrepository.IRepository;
 import repository.csv.stream.ICsvStream;
-import repository.sequencer.ISequencer;
+import repository.sequencer.LongSequencer;
+
 import java.util.*;
 
-public class CSVRepository <T,ID> implements IRepository<T,ID> {
+public class CSVRepository <T> implements IRepository<T> {
    private String notFoundError;
    private String entityName;
    
    private ICsvStream<T> stream;
-   private ISequencer<ID> sequencer;
+   private LongSequencer sequencer;
    
-   public CSVRepository(String entityName, ICsvStream<T> stream, ISequencer<ID> sequencer){
+   public CSVRepository(String entityName, ICsvStream<T> stream, LongSequencer sequencer){
 	   this.entityName = entityName;
 	   this.stream = stream;
 	   this.sequencer = sequencer;
 	   initializeId();
    }
    
-   private ID getMaxId(List<T> entities) {
-      // TODO: implement
-      return null;
+   private long getMaxId(List<T> entities) {
+      if(entities.isEmpty()) return 0;
+      return 0;
    }
    
    protected void initializeId() {
-      // TODO: implement
+      this.sequencer.initialize(getMaxId(this.stream.readAll()));
    }
    
-   public T getById(ID id) {
+   public T getById(long id) {
       // TODO: implement
       return null;
    }

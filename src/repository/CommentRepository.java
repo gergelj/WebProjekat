@@ -13,11 +13,11 @@ import repository.abstractrepository.ICommentRepository;
 import repository.csv.CSVRepository;
 import repository.csv.IEagerCsvRepository;
 import repository.csv.stream.ICsvStream;
-import repository.sequencer.ISequencer;
+import repository.sequencer.LongSequencer;
 
-public class CommentRepository extends CSVRepository<Comment,Long> implements ICommentRepository, IEagerCsvRepository<Comment,Long> {
+public class CommentRepository extends CSVRepository<Comment> implements ICommentRepository, IEagerCsvRepository<Comment> {
    
-	public CommentRepository(ICsvStream<Comment> stream, ISequencer<Long> sequencer) {
+	public CommentRepository(ICsvStream<Comment> stream, LongSequencer sequencer) {
 		super("Comment", stream, sequencer);
 	}
    
@@ -25,7 +25,7 @@ public class CommentRepository extends CSVRepository<Comment,Long> implements IC
       // TODO: implement
    }
    
-   public Comment getEager(Long id) {
+   public Comment getEager(long id) {
       // TODO: implement
       return null;
    }

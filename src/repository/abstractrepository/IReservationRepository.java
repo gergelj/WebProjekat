@@ -8,5 +8,5 @@ package repository.abstractrepository;
 
 import beans.Reservation;
 
-public interface IReservationRepository extends IRepository<Reservation,Long> {
+public interface IReservationRepository extends IRepository<Reservation> {
 }
