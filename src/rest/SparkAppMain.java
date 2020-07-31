@@ -6,7 +6,18 @@ import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 import static spark.Spark.webSocket;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,130 +82,6 @@ public class SparkAppMain {
 		
 		testRepositoryMethods();
 		
-		/*
-		port(8080);
-
-		
-		//testUser();
-		//testReservation();
-		//testDateCollection();
-		Long idL = null;
-		long id = idL.longValue();
-		System.out.println(id);
-
-		webSocket("/ws", WsHandler.class);
-
-		staticFiles.externalLocation(new File("./static").getCanonicalPath());
-		
-		get("/rest/demo/test", (req, res) -> {
-			return "Works";
-		});
-		
-		get("/rest/demo/book/:isbn", (req, res) -> {
-			String isbn = req.params("isbn");
-			return "/rest/demo/book received PathParam 'isbn': " + isbn;
-		});
-
-		get("/rest/demo/books", (req, res) -> {
-			String num = req.queryParams("num");
-			return "/rest/demo/book received QueryParam 'num': " + num;
-		});
-		
-		get("/rest/demo/testheader", (req, res) -> {
-			String cookie = req.headers("Cookie");
-			return "/rest/demo/testheader received HeaderParam 'Cookie': " + cookie;
-		});
-		
-		get("/rest/demo/testcookie", (req, res) -> {
-			String cookie = req.cookie("pera");
-			if (cookie == null) {
-				res.cookie("pera", "Perin kolacic");
-				return "/rest/demo/testcookie <b>created</b> CookieParam 'pera': 'Perin kolacic'";  
-			} else {
-				return "/rest/demo/testcookie <i><u>received</u></i> CookieParam 'pera': " + cookie;
-			}
-		});
-
-		post("/rest/demo/forma", (req, res) -> {
-			res.type("application/json");
-			String ime = req.queryParams("ime");
-			String prezime = req.queryParams("prezime");
-			Student s = new Student(ime, prezime, null);
-			return g.toJson(s);
-		});
-
-		post("/rest/demo/testjson", (req, res) -> {
-			res.type("application/json");
-			String payload = req.body();
-			Student s = g.fromJson(payload, Student.class);
-			s.setIme(s.getIme() + "2");
-			s.setPrezime(s.getPrezime() + "2");
-			return g.toJson(s);
-		});
-
-		post("/rest/demo/login", (req, res) -> {
-			res.type("application/json");
-			String payload = req.body();
-			User u = g.fromJson(payload, User.class);
-			Session ss = req.session(true);
-			User user = ss.attribute("user");
-			if (user == null) {
-				user = u;
-				ss.attribute("user", user);
-			}
-			return g.toJson(user);
-		});
-
-		get("/rest/demo/testlogin", (req, res) -> {
-			Session ss = req.session(true);
-			User user = ss.attribute("user");
-			
-			if (user == null) {
-				return "No user logged in.";  
-			} else {
-				return "User " + user + " logged in.";
-			}
-		});
-
-		get("/rest/demo/logout", (req, res) -> {
-			res.type("application/json");
-			Session ss = req.session(true);
-			User user = ss.attribute("user");
-			
-			if (user != null) {
-				ss.invalidate();
-			}
-			return true;
-		});
-		
-		post("/rest/demo/loginJWT", (req, res) -> {
-			res.type("application/json");
-			String payload = req.body();
-			User u = g.fromJson(payload, User.class);
-			// Token je validan 10 sekundi!
-			String jws = Jwts.builder().setSubject(u.getUsername()).setExpiration(new Date(new Date().getTime() + 1000*10L)).setIssuedAt(new Date()).signWith(key).compact();
-			u.setJWTToken(jws);
-			System.out.println("Returned JWT: " + jws);
-			return g.toJson(u);
-		});
-
-		get("/rest/demo/testloginJWT", (req, res) -> {
-			String auth = req.headers("Authorization");
-			System.out.println("Authorization: " + auth);
-			if ((auth != null) && (auth.contains("Bearer "))) {
-				String jwt = auth.substring(auth.indexOf("Bearer ") + 7);
-				try {
-				    Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
-				    // ako nije bacio izuzetak, onda je OK
-					return "User " + claims.getBody().getSubject() + " logged in.";
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
-			}
-			return "No user logged in.";
-		});
-		*/
-		
 		//amenityConverterTest();
 		//apartmentConverterTest();
 		//commentConverterTest();
@@ -206,8 +93,9 @@ public class SparkAppMain {
 			users.add(new User(128, "ushiy73", "rtdyGYUguryw7", "Milos", "Jovin", false, false, Gender.male, UserType.host));
 			users.add(new User(755, "ushiy73", "rtdyGYUguryw7", "Marko", "Jovin", false, false, Gender.male, UserType.host));
 			users.add(new User(56, "ushiy73", "rtdyGYUguryw7", "Jovan", "Jovin", false, false, Gender.male, UserType.host));
-			users.add(new User(755, "ushiy73", "rtdyGYUguryw7", "Nikola", "Jovin", false, false, Gender.male, UserType.host));
+			//users.add(new User(755, "ushiy73", "rtdyGYUguryw7", "Nikola", "Jovin", false, false, Gender.male, UserType.host));
 			users.add(new User(8, "ushiy73", "rtdyGYUguryw7", "Dragan", "Jovin", false, false, Gender.male, UserType.host));
+			
 			User notInList = new User(888, "ushiy73", "rtdyGYUguryw7", "Dragan", "Jovin", false, false, Gender.male, UserType.host);
 			
 			//long maxId = users.stream().max(Comparator.comparing(User::getId)).get().getId();
@@ -216,6 +104,7 @@ public class SparkAppMain {
 			//User user = getById(users, 7);
 			//System.out.println(user.getName());
 			
+			/*
 			System.out.println("Before");
 			User user = getById(users, 567);
 			System.out.println(user.isDeleted());
@@ -223,7 +112,90 @@ public class SparkAppMain {
 			System.out.println("After");
 			User updatedUser = getById(users, 567);
 			System.out.println(updatedUser.isDeleted());
+			 */
+			
+			//write(users);
+			//addUser(notInList);
+			List<User> list = read();
+			
+			for(User us: list)
+				System.out.println(us.getId() + " " + us.getName() + " " + us.getSurname());
+	}
+	
+	private static List<User> read(){
+		List<User> list = new ArrayList<User>();
+		try {
+			BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream("storage/users.dsv"), "UTF8"));
+			
+			UserCsvConverter conv = new UserCsvConverter();
+			String line = null;
+			
+			while((line=rd.readLine()) != null) {
+				list.add(conv.fromCsv(line));
+			}
+			
+			rd.close();
+			
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
+		return list;
+	}
+	
+	private static void write(List<User> users) {
+		try {
+			BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("storage/users.dsv"), "UTF8"));
+			
+			UserCsvConverter conv = new UserCsvConverter();
+			
+			for(User user : users) {
+				wr.write(conv.toCsv(user));
+				wr.newLine();
+			}
+			
+			wr.close();
+			
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private static void addUser(User user) {
+		try {
+			BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("storage/users.dsv", true), "UTF8"));
+			
+			UserCsvConverter conv = new UserCsvConverter();
+			
+			wr.append(conv.toCsv(user));
+			wr.newLine();
+			
+			wr.close();
+			
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private static void delete(List<User> users, User entity) throws EntityNotFoundException {

@@ -82,3 +82,6 @@ local.properties
 
 # Compiled class file
 *.class
+
+# Delimiter-separated value files
+*.dsv
