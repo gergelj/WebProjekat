@@ -25,6 +25,11 @@ public class Amenity implements IIdentifiable, IDeletable {
 		this.name = name;
 		this.deleted = deleted;
 	}
+	
+	public Amenity(long id)
+	{
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;

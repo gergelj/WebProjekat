@@ -39,6 +39,11 @@ public class Comment implements IDeletable, IIdentifiable {
 		this.user = user;
 	}
 	
+	public Comment(long id)
+	{
+		this.id = id;
+	}
+	
 //Getters and Setters
 	public String getText() {
 		return text;
