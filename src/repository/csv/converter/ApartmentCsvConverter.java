@@ -72,7 +72,7 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
 	  
 	  //Apartment retVal = new Apartment(numberOfRooms, numberOfGuests, pricePerNight, deleted, active, apartmentType, location, host, pictures, amenities, comments);
 	  
-	  Apartment retVal = new Apartment(id, numberOfRooms, numberOfGuests, pricePerNight, deleted, active, checkInHour, checkOutHour, apartmentType, location, host, pictures, amenities, comments)
+	  Apartment retVal = new Apartment(id, numberOfRooms, numberOfGuests, pricePerNight, deleted, active, checkInHour, checkOutHour, apartmentType, location, host, pictures, amenities, comments);
 	  
       return retVal;
    }
