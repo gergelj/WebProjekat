@@ -17,7 +17,7 @@ public class DateCollection implements IIdentifiable, IDeletable {
    
 
  //Constructors
-	public DateCollection(List<DateRange> dates, long id, boolean deleted, Apartment apartment) {
+	public DateCollection(long id, Apartment apartment, boolean deleted, List<DateRange> dates) {
 		super();
 		this.dates = dates;
 		this.id = id;
@@ -31,7 +31,7 @@ public class DateCollection implements IIdentifiable, IDeletable {
 		this.dates = new ArrayList<DateRange>();
 	}
 	
-	public DateCollection(List<DateRange> dates, boolean deleted, Apartment apartment) {
+	public DateCollection(Apartment apartment, boolean deleted, List<DateRange> dates) {
 		super();
 		this.dates = dates;
 		this.deleted = deleted;
