@@ -11,10 +11,12 @@ import repository.csv.stream.ICsvStream;
 import repository.sequencer.LongSequencer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import beans.IDeletable;
 import beans.IIdentifiable;
 import exceptions.EntityNotFoundException;
+import exceptions.NotUniqueException;
 
 public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRepository<T> {
    private String notFoundError = "%s with %s:%s can not be found!";
@@ -30,7 +32,7 @@ public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRe
 	   initializeId();
    }
    
-   public T create(T entity) {
+   public T create(T entity) throws NotUniqueException {
 	   entity.setId(this.sequencer.generateId());
 	   this.stream.appendToFile(entity);
 	   return entity;
@@ -44,6 +46,10 @@ public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRe
 	   
 	   if(index == -1)
 		   throw new EntityNotFoundException(String.format(this.notFoundError, this.entityName, "id", entity.getId()));
+	   
+	   if(entities.get(index).isDeleted())
+		   throw new EntityNotFoundException(String.format(this.notFoundError, this.entityName, "id", entity.getId()));
+		   
 	   
 	   entities.set(index, entity);
 	   this.stream.saveAll(entities);
@@ -63,7 +69,12 @@ public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRe
    public T getById(long id) throws EntityNotFoundException {
 	   try {
 		   
-		   return stream.readAll().stream().filter(entity -> entity.getId() == id).findFirst().get();
+		   T entity = stream.readAll().stream().filter(ent -> ent.getId() == id).findFirst().get();
+		   
+		   if(entity.isDeleted())
+			   throw new EntityNotFoundException(String.format(this.notFoundError, this.entityName, "id", id));
+		   
+		   return entity;
 	   }
 	   catch(NoSuchElementException e) {
 		   throw new EntityNotFoundException(String.format(this.notFoundError, this.entityName, "id", id));
@@ -71,7 +82,8 @@ public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRe
    }
 
    public List<T> getAll() {
-      return this.stream.readAll();
+	  List<T> entities = this.stream.readAll();
+      return entities.stream().filter(e -> !e.isDeleted()).collect(Collectors.toList());
    }
    
    public void delete(long id) throws EntityNotFoundException {

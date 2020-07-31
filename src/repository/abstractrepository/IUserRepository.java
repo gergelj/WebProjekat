@@ -12,7 +12,9 @@ import beans.User;
 import specification.ISpecification;
 
 public interface IUserRepository extends IRepository<User> {
-   /** @param specification */
+
    List<User> find(ISpecification<User> specification);
+   
+   User getByUsername(String username);
 
 }

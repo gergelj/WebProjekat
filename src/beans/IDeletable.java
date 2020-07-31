@@ -6,9 +6,8 @@
 
 package beans;
 
-import java.util.*;
-
 public interface IDeletable {
+	boolean isDeleted();
    void delete();
 
 }
