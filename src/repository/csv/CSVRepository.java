@@ -12,8 +12,12 @@ import repository.sequencer.LongSequencer;
 
 import java.util.*;
 
-public class CSVRepository <T> implements IRepository<T> {
-   private String notFoundError;
+import beans.IDeletable;
+import beans.IIdentifiable;
+import exceptions.EntityNotFoundException;
+
+public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRepository<T> {
+   private String notFoundError = "%s with %s:%s can not be found!";
    private String entityName;
    
    private ICsvStream<T> stream;
@@ -26,36 +30,54 @@ public class CSVRepository <T> implements IRepository<T> {
 	   initializeId();
    }
    
+   public T create(T entity) {
+	   entity.setId(this.sequencer.generateId());
+	   this.stream.appendToFile(entity);
+	   return entity;
+   }
+   
+   public void update(T entity) throws EntityNotFoundException {
+	   
+	   List<T> entities = this.stream.readAll();
+	   
+	   int index = entities.indexOf(entity);
+	   
+	   if(index == -1)
+		   throw new EntityNotFoundException(String.format(this.notFoundError, this.entityName, "id", entity.getId()));
+	   
+	   entities.set(index, entity);
+	   this.stream.saveAll(entities);
+   }
+   
    private long getMaxId(List<T> entities) {
+	   
       if(entities.isEmpty()) return 0;
-      return 0;
+      
+      return entities.stream().max(Comparator.comparing(T::getId)).get().getId();
    }
    
    protected void initializeId() {
       this.sequencer.initialize(getMaxId(this.stream.readAll()));
    }
    
-   public T getById(long id) {
-      // TODO: implement
-      return null;
+   public T getById(long id) throws EntityNotFoundException {
+	   try {
+		   
+		   return stream.readAll().stream().filter(entity -> entity.getId() == id).findFirst().get();
+	   }
+	   catch(NoSuchElementException e) {
+		   throw new EntityNotFoundException(String.format(this.notFoundError, this.entityName, "id", id));
+	   }
    }
-   
+
    public List<T> getAll() {
-      // TODO: implement
-      return null;
+      return this.stream.readAll();
    }
    
-   public T create(T entity) {
-      // TODO: implement
-      return null;
-   }
-   
-   public void update(T entity) {
-      // TODO: implement
-   }
-   
-   public void delete(T entity) {
-      // TODO: implement
+   public void delete(long id) throws EntityNotFoundException {
+	   T entity = getById(id);
+	   entity.delete();
+	   this.update(entity);
    }
 
 }

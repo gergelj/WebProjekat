@@ -199,130 +199,114 @@ public List<Picture> getPictures() {
    
    public int getNumberOfRooms() {
 	return numberOfRooms;
-}
-
-
-
-public void setNumberOfRooms(int numberOfRooms) {
-	this.numberOfRooms = numberOfRooms;
-}
-
-
-
-public int getNumberOfGuests() {
-	return numberOfGuests;
-}
-
-
-
-public void setNumberOfGuests(int numberOfGuests) {
-	this.numberOfGuests = numberOfGuests;
-}
-
-
-
-public double getPricePerNight() {
-	return pricePerNight;
-}
-
-
-
-public void setPricePerNight(double pricePerNight) {
-	this.pricePerNight = pricePerNight;
-}
-
-
-
-public boolean isDeleted() {
-	return deleted;
-}
-
-
-
-public void setDeleted(boolean deleted) {
-	this.deleted = deleted;
-}
-
-
-
-public boolean isActive() {
-	return active;
-}
-
-
-
-public void setActive(boolean active) {
-	this.active = active;
-}
-
-
-
-public int getCheckInHour() {
-	return checkInHour;
-}
-
-
-
-public void setCheckInHour(int checkInHour) {
-	this.checkInHour = checkInHour;
-}
-
-
-
-public int getCheckOutHour() {
-	return checkOutHour;
-}
-
-
-
-public void setCheckOutHour(int checkOutHour) {
-	this.checkOutHour = checkOutHour;
-}
-
-
-
-public ApartmentType getApartmentType() {
-	return apartmentType;
-}
-
-
-
-public void setApartmentType(ApartmentType apartmentType) {
-	this.apartmentType = apartmentType;
-}
-
-
-
-public Location getLocation() {
-	return location;
-}
-
-
-
-public void setLocation(Location location) {
-	this.location = location;
-}
-
-
-
-public User getHost() {
-	return host;
-}
-
-
-
-public void setHost(User host) {
-	this.host = host;
-}
-
-
-
-public void setId(long id) {
-      this.id = id;
    }
+
+	public void setNumberOfRooms(int numberOfRooms) {
+		this.numberOfRooms = numberOfRooms;
+	}
+	
+	public int getNumberOfGuests() {
+		return numberOfGuests;
+	}
+	
+	public void setNumberOfGuests(int numberOfGuests) {
+		this.numberOfGuests = numberOfGuests;
+	}
+	
+	public double getPricePerNight() {
+		return pricePerNight;
+	}
+	
+	public void setPricePerNight(double pricePerNight) {
+		this.pricePerNight = pricePerNight;
+	}
+	
+	public boolean isDeleted() {
+		return deleted;
+	}
+	
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	public boolean isActive() {
+		return active;
+	}
+	
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
+	public int getCheckInHour() {
+		return checkInHour;
+	}
+	
+	public void setCheckInHour(int checkInHour) {
+		this.checkInHour = checkInHour;
+	}
+	
+	public int getCheckOutHour() {
+		return checkOutHour;
+	}
+	
+	public void setCheckOutHour(int checkOutHour) {
+		this.checkOutHour = checkOutHour;
+	}
+	
+	public ApartmentType getApartmentType() {
+		return apartmentType;
+	}
+	
+	public void setApartmentType(ApartmentType apartmentType) {
+		this.apartmentType = apartmentType;
+	}
+	
+	public Location getLocation() {
+		return location;
+	}
+	
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+	
+	public User getHost() {
+		return host;
+	}
+	
+	public void setHost(User host) {
+		this.host = host;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
+	}
    
-   public void delete() {
-      // TODO: implement
-   }
+	public void delete() {
+		this.setDeleted(true);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Apartment other = (Apartment) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+	
+	
 
 }

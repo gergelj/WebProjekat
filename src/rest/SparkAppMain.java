@@ -11,6 +11,7 @@ import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import com.google.gson.Gson;
 
@@ -24,6 +25,7 @@ import beans.Picture;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -39,6 +41,7 @@ import beans.Reservation;
 import beans.ReservationStatus;
 import beans.User;
 import beans.UserType;
+import exceptions.EntityNotFoundException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -65,7 +68,9 @@ public class SparkAppMain {
 	static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
 	public static void main(String[] args) throws Exception {
-
+		
+		testRepositoryMethods();
+		
 		/*
 		port(8080);
 
@@ -190,11 +195,62 @@ public class SparkAppMain {
 		});
 		*/
 		
-		amenityConverterTest();
-		apartmentConverterTest();
-		commentConverterTest();
+		//amenityConverterTest();
+		//apartmentConverterTest();
+		//commentConverterTest();
 	}
 	
+	private static void testRepositoryMethods() throws EntityNotFoundException {
+		   List<User> users = new ArrayList<User>();
+			users.add(new User(567, "ushiy73", "rtdyGYUguryw7", "Igor", "Jovin", false, false, Gender.male, UserType.host));
+			users.add(new User(128, "ushiy73", "rtdyGYUguryw7", "Milos", "Jovin", false, false, Gender.male, UserType.host));
+			users.add(new User(755, "ushiy73", "rtdyGYUguryw7", "Marko", "Jovin", false, false, Gender.male, UserType.host));
+			users.add(new User(56, "ushiy73", "rtdyGYUguryw7", "Jovan", "Jovin", false, false, Gender.male, UserType.host));
+			users.add(new User(755, "ushiy73", "rtdyGYUguryw7", "Nikola", "Jovin", false, false, Gender.male, UserType.host));
+			users.add(new User(8, "ushiy73", "rtdyGYUguryw7", "Dragan", "Jovin", false, false, Gender.male, UserType.host));
+			User notInList = new User(888, "ushiy73", "rtdyGYUguryw7", "Dragan", "Jovin", false, false, Gender.male, UserType.host);
+			
+			//long maxId = users.stream().max(Comparator.comparing(User::getId)).get().getId();
+			//System.out.println(maxId);
+			
+			//User user = getById(users, 7);
+			//System.out.println(user.getName());
+			
+			System.out.println("Before");
+			User user = getById(users, 567);
+			System.out.println(user.isDeleted());
+			delete(users, user);
+			System.out.println("After");
+			User updatedUser = getById(users, 567);
+			System.out.println(updatedUser.isDeleted());
+		
+	}
+
+	private static void delete(List<User> users, User entity) throws EntityNotFoundException {
+		   entity.delete();
+		   update(users, entity);
+	   }
+	   
+	   private static List<User> update(List<User> entities, User entity) throws EntityNotFoundException {
+		   int index = entities.indexOf(entity);
+		   
+		   if(index == -1)
+			   throw new EntityNotFoundException("not found");
+		   
+		   entities.set(index, entity);
+		   return entities;
+	   }
+	
+	private static User getById(List<User> users, int id) throws EntityNotFoundException {
+		   try {
+			   
+			   return users.stream().filter(entity -> entity.getId() == id).findFirst().get();
+		   }
+		   catch(NoSuchElementException e) {
+			   throw new EntityNotFoundException("not found", e);
+		   }
+	}
+
 	private static void commentConverterTest()
 	{
 		CommentCsvConverter ccnv = new CommentCsvConverter();
