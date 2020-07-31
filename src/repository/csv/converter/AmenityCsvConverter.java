@@ -11,7 +11,7 @@ import java.util.StringJoiner;
 import beans.Amenity;
 
 public class AmenityCsvConverter implements ICsvConverter<Amenity> {
-   private String delimiter;
+   private String delimiter = ",";
    
    public String toCsv(Amenity entity) {
       StringJoiner joiner = new StringJoiner(delimiter);
@@ -22,13 +22,6 @@ public class AmenityCsvConverter implements ICsvConverter<Amenity> {
       
       return joiner.toString();
    }
-   
-   /*
-    * 
-    * private long id;
-	private String name;
-	private boolean deleted;
-    */
    
    public Amenity fromCsv(String entityCsv) {
        String[] tokens = entityCsv.split(delimiter);

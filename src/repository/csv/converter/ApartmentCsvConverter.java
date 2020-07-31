@@ -20,8 +20,8 @@ import beans.Picture;
 import beans.User;
 
 public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
-   private String delimiter;
-   private String listDelimiter;
+   private String delimiter = ",";
+   private String listDelimiter = ";";
   
    public String toCsv(Apartment entity) {
       StringJoiner joiner = new StringJoiner(delimiter);
@@ -69,8 +69,6 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
 	  List<Picture> pictures = getPictureList(tokens[13]);
 	  List<Amenity> amenities = getAmenityList(tokens[14]);
 	  List<Comment> comments = getCommentList(tokens[15]);
-	  
-	  //Apartment retVal = new Apartment(numberOfRooms, numberOfGuests, pricePerNight, deleted, active, apartmentType, location, host, pictures, amenities, comments);
 	  
 	  Apartment retVal = new Apartment(id, numberOfRooms, numberOfGuests, pricePerNight, deleted, active, checkInHour, checkOutHour, apartmentType, location, host, pictures, amenities, comments);
 	  
