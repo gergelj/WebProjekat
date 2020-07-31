@@ -20,7 +20,7 @@ import beans.User;
 import service.UserService;
 
 public class CommentCsvConverter implements ICsvConverter<Comment> {
-   private String delimiter = ",";
+   private String delimiter = "~";
    
    private String newLine = "`";
    
@@ -47,7 +47,7 @@ public class CommentCsvConverter implements ICsvConverter<Comment> {
 	  boolean approved = Boolean.valueOf(tokens[4]);
 	  User user = new User(Long.valueOf(tokens[5])); 
 	  
-	  Comment retVal = new Comment(id, text, rating, deleted, approved, user);
+	  Comment retVal = new Comment(text, rating, deleted, approved, user);
 	  
       return retVal;
    }

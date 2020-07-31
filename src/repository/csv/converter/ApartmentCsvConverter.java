@@ -20,7 +20,7 @@ import beans.Picture;
 import beans.User;
 
 public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
-   private String delimiter = ",";
+   private String delimiter = "~";
    private String listDelimiter = ";";
   
    public String toCsv(Apartment entity) {
