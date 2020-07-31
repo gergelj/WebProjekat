@@ -19,7 +19,7 @@ import beans.DateRange;
 
 public class DateCollectionCsvConverter implements ICsvConverter<DateCollection> {
    private String delimiter = "~";
-   private String listDelimiter = "^";
+   private String listDelimiter = ";";
    private String listDelimiter2 = "_";
    private String dateFormat = "dd.MM.yyyy.";
    private SimpleDateFormat formatter;
