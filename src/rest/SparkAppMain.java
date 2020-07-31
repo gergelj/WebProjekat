@@ -98,6 +98,11 @@ public class SparkAppMain {
 			
 			User notInList = new User(888, "ushiy73", "rtdyGYUguryw7", "Dragan", "Jovin", false, false, Gender.male, UserType.host);
 			
+			System.out.println(users.size());
+			User us = users.stream().filter(user -> user.getId() == 755).findFirst().get();
+			System.out.println(users.size());
+			
+			
 			//long maxId = users.stream().max(Comparator.comparing(User::getId)).get().getId();
 			//System.out.println(maxId);
 			
@@ -116,10 +121,8 @@ public class SparkAppMain {
 			
 			//write(users);
 			//addUser(notInList);
-			List<User> list = read();
+			//List<User> list = read();
 			
-			for(User us: list)
-				System.out.println(us.getId() + " " + us.getName() + " " + us.getSurname());
 	}
 	
 	private static List<User> read(){
