@@ -61,7 +61,7 @@ public User(String username, String password, String name, String surname, boole
 	this.userType = userType;
 }
 
-public User(Long id) {
+public User(long id) {
 	this.id = id;
 }
 
