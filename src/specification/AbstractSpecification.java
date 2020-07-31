@@ -6,22 +6,19 @@
 
 package specification;
 
-import java.util.*;
 
 public abstract class AbstractSpecification <T> implements ISpecification<T> {
+	
    public ISpecification<T> and(ISpecification<T> other) {
-      // TODO: implement
-      return null;
+      return new AndSpecification<T>(this, other);
    }
    
    public ISpecification<T> or(ISpecification<T> other) {
-      // TODO: implement
-      return null;
+      return new OrSpecification<T>(this, other);
    }
    
    public ISpecification<T> not(ISpecification<T> other) {
-      // TODO: implement
-      return null;
+      return new NotSpecification<T>(other);
    }
    
    public abstract boolean isSatisfiedBy(T candidate);

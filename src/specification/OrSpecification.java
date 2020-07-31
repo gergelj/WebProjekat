@@ -18,8 +18,7 @@ public class OrSpecification <T> extends AbstractSpecification<T> {
 
 	@Override
 	public boolean isSatisfiedBy(T candidate) {
-		// TODO Auto-generated method stub
-		return false;
+		return leftSpecification.isSatisfiedBy(candidate) || rightSpecification.isSatisfiedBy(candidate);
 	}
 
 }

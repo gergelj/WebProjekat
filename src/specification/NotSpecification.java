@@ -6,7 +6,6 @@
 
 package specification;
 
-import java.util.*;
 
 public class NotSpecification <T> extends AbstractSpecification<T> {
    private ISpecification<T> leftSpecification;
@@ -18,8 +17,7 @@ public class NotSpecification <T> extends AbstractSpecification<T> {
 
 	@Override
 	public boolean isSatisfiedBy(T candidate) {
-		// TODO Auto-generated method stub
-		return false;
+		return !leftSpecification.isSatisfiedBy(candidate);
 	}
    
 

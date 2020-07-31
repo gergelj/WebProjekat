@@ -21,7 +21,6 @@ public class ApartmentPriceSpecification extends AbstractSpecification<Apartment
 
 	@Override
 	public boolean isSatisfiedBy(Apartment candidate) {
-		// TODO Auto-generated method stub
-		return false;
+		return priceRange.isIn(candidate.getPricePerNight());
 	}
 }

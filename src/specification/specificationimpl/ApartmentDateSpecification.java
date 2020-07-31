@@ -22,7 +22,7 @@ public class ApartmentDateSpecification extends AbstractSpecification<Apartment>
 
 	@Override
 	public boolean isSatisfiedBy(Apartment candidate) {
-		// TODO Auto-generated method stub
+		//TODO: Get available dates for apartment
 		return false;
 	}
 }

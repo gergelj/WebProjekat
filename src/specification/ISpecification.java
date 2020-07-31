@@ -6,7 +6,6 @@
 
 package specification;
 
-import java.util.*;
 
 public interface ISpecification <T> {
    boolean isSatisfiedBy(T candidate);

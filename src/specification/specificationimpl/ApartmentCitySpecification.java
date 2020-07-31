@@ -18,10 +18,12 @@ public class ApartmentCitySpecification extends AbstractSpecification<Apartment>
 		this.city = city;
 	}
 
-
 	@Override
 	public boolean isSatisfiedBy(Apartment candidate) {
-		// TODO Auto-generated method stub
+		if(candidate.getLocation() != null) 
+			if(candidate.getLocation().getAddress() != null)
+				return city.toLowerCase().equals(candidate.getLocation().getAddress().getCity().toLowerCase());
+		
 		return false;
 	}
 }

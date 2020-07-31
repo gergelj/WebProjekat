@@ -21,7 +21,6 @@ public class UserUserTypeSpecification extends AbstractSpecification<User> {
 
 	@Override
 	public boolean isSatisfiedBy(User candidate) {
-		// TODO Auto-generated method stub
-		return false;
+		return userType == candidate.getUserType();
 	}
 }

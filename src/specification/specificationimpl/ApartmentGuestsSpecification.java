@@ -21,7 +21,6 @@ public class ApartmentGuestsSpecification extends AbstractSpecification<Apartmen
 
 	@Override
 	public boolean isSatisfiedBy(Apartment candidate) {
-		// TODO Auto-generated method stub
-		return false;
+		return numOfGuests == candidate.getNumberOfGuests();
 	}
 }

@@ -20,7 +20,6 @@ public class UserUsernameSpecification extends AbstractSpecification<User> {
 
 	@Override
 	public boolean isSatisfiedBy(User candidate) {
-		// TODO Auto-generated method stub
-		return false;
+		return username.equals(candidate.getUsername());
 	}
 }

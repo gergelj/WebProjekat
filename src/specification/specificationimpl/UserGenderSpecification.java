@@ -21,7 +21,6 @@ public class UserGenderSpecification extends AbstractSpecification<User> {
 
 	@Override
 	public boolean isSatisfiedBy(User candidate) {
-		// TODO Auto-generated method stub
-		return false;
+		return gender == candidate.getGender();
 	}
 }
