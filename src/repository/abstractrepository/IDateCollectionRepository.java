@@ -9,5 +9,5 @@ package repository.abstractrepository;
 
 import beans.DateCollection;
 
-public interface IDateCollectionRepository extends IRepository<DateCollection,Long> {
+public interface IDateCollectionRepository extends IRepository<DateCollection> {
 }

@@ -6,17 +6,17 @@
 
 package repository.sequencer;
 
-public class LongSequencer implements ISequencer<Long> {
+public class LongSequencer {
    private long nextId;
    
-   /** @param initId */
-   public void initialize(Long initId) {
+
+   public void initialize(long initId) {
       // TODO: implement
    }
    
-   public Long generateId() {
+   public long generateId() {
       // TODO: implement
-      return null;
+      return 0;
    }
 
 }

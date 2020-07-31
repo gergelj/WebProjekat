@@ -10,11 +10,11 @@ import beans.DateCollection;
 import repository.abstractrepository.IDateCollectionRepository;
 import repository.csv.CSVRepository;
 import repository.csv.stream.ICsvStream;
-import repository.sequencer.ISequencer;
+import repository.sequencer.LongSequencer;
 
-public class AvailableDateCollectionRepository extends CSVRepository<DateCollection,Long> implements IDateCollectionRepository {
+public class AvailableDateCollectionRepository extends CSVRepository<DateCollection> implements IDateCollectionRepository {
    
-	public AvailableDateCollectionRepository(ICsvStream<DateCollection> stream, ISequencer<Long> sequencer) {
+	public AvailableDateCollectionRepository(ICsvStream<DateCollection> stream, LongSequencer sequencer) {
 		super("AvailableDateCollection", stream, sequencer);
 	}
 

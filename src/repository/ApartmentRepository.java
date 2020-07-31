@@ -13,12 +13,12 @@ import repository.abstractrepository.IApartmentRepository;
 import repository.csv.CSVRepository;
 import repository.csv.IEagerCsvRepository;
 import repository.csv.stream.ICsvStream;
-import repository.sequencer.ISequencer;
+import repository.sequencer.LongSequencer;
 import specification.ISpecification;
 
-public class ApartmentRepository extends CSVRepository<Apartment,Long> implements IApartmentRepository, IEagerCsvRepository<Apartment,Long> {
+public class ApartmentRepository extends CSVRepository<Apartment> implements IApartmentRepository, IEagerCsvRepository<Apartment> {
    
-   public ApartmentRepository(ICsvStream<Apartment> stream, ISequencer<Long> sequencer) {
+   public ApartmentRepository(ICsvStream<Apartment> stream, LongSequencer sequencer) {
 	   super("Apartment", stream, sequencer);
    }
    
@@ -31,7 +31,7 @@ public class ApartmentRepository extends CSVRepository<Apartment,Long> implement
       return null;
    }
 
-   public Apartment getEager(Long id) {
+   public Apartment getEager(long id) {
       // TODO: implement
       return null;
    }

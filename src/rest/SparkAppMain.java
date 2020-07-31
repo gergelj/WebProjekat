@@ -52,6 +52,9 @@ public class SparkAppMain {
 		//testUser();
 		//testReservation();
 		//testDateCollection();
+		Long idL = null;
+		long id = idL.longValue();
+		System.out.println(id);
 
 	}
 

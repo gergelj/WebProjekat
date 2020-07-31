@@ -9,5 +9,5 @@ package repository.abstractrepository;
 
 import beans.Amenity;
 
-public interface IAmenityRepository extends IRepository<Amenity,Long> {
+public interface IAmenityRepository extends IRepository<Amenity> {
 }
