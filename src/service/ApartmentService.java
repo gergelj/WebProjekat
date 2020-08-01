@@ -9,8 +9,12 @@ package service;
 import repository.ApartmentRepository;
 import repository.DateCollectionRepository;
 import beans.User;
+import beans.UserType;
 import beans.Apartment;
 import dto.ApartmentFilterDTO;
+import exceptions.DatabaseException;
+import exceptions.InvalidUserException;
+
 import java.util.*;
 
 public class ApartmentService {
@@ -28,10 +32,14 @@ public class ApartmentService {
    
    
 //Methods
-   public List<Apartment> getActiveApartments() {
-      // TODO: implement
-      return null;
+   public List<Apartment> getActiveApartments(UserType userType) throws DatabaseException, InvalidUserException {
+      if(userType == UserType.guest || userType == UserType.undefined)
+      {
+    	  return apartmentRepository.getAllEager();
+      }
+      throw new InvalidUserException();
    }
+   
    
    public List<Apartment> getApartmentsByHost(User host) {
       // TODO: implement

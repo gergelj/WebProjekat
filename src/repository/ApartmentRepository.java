@@ -89,11 +89,22 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
 
    private void bindApartmentWithAmenities(Apartment apartment, List<Amenity> amenities) {
 	   List<Amenity> amenityIds = apartment.getAmenities();
-	      
+	   
+	   List<Amenity> amenitiesToAdd = new ArrayList<Amenity>();
+	   
 	   for(int i=0; i<amenityIds.size(); i++) {
 		   long amenityId = amenityIds.get(i).getId();
-		   amenityIds.set(i, amenities.stream().filter(am -> am.getId() == amenityId).findFirst().get());
+		  
+		try {
+			   Amenity a = amenities.stream().filter(am -> am.getId() == amenityId).findFirst().get();
+			   
+			   amenitiesToAdd.add(a);
+		} catch (NoSuchElementException e) {
+			continue;
+		}
 	   }
+	   
+	   apartment.setAmenities(amenitiesToAdd);
    }
 
    private User getHostById(User host) throws DatabaseException {

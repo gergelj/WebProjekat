@@ -7,8 +7,7 @@
 package beans;
 
 public class User implements IDeletable, IIdentifiable {
-   private String username;
-   private String password;
+   private Account account;
    private String name;
    private String surname;
    private long id;
@@ -30,11 +29,10 @@ public class User implements IDeletable, IIdentifiable {
       this.setDeleted(true);
    }
 
-	public User(long id, String username, String password, String name, String surname, boolean deleted, boolean blocked,
+	public User(long id, Account account, String name, String surname, boolean deleted, boolean blocked,
 			Gender gender, UserType userType) {
 		super();
-		this.username = username;
-		this.password = password;
+		this.account = account;
 		this.name = name;
 		this.surname = surname;
 		this.id = id;
@@ -48,11 +46,10 @@ public class User implements IDeletable, IIdentifiable {
 		super();
 	}
 	
-	public User(String username, String password, String name, String surname, boolean deleted, boolean blocked,
+	public User(Account account, String name, String surname, boolean deleted, boolean blocked,
 			Gender gender, UserType userType) {
 		super();
-		this.username = username;
-		this.password = password;
+		this.account = account;
 		this.name = name;
 		this.surname = surname;
 		this.deleted = deleted;
@@ -65,22 +62,15 @@ public class User implements IDeletable, IIdentifiable {
 		this.id = id;
 	}
 	
-	public String getUsername() {
-		return username;
-	}
 	
-	public void setUsername(String username) {
-		this.username = username;
+	public Account getAccount() {
+		return account;
 	}
-	
-	public String getPassword() {
-		return password;
+
+	public void setAccount(Account account) {
+		this.account = account;
 	}
-	
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
+
 	public String getName() {
 		return name;
 	}
