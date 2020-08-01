@@ -40,7 +40,11 @@ public class DateCollectionCsvConverter implements ICsvConverter<DateCollection>
    }
    
    private CharSequence getDateList(List<DateRange> dates) {
-	   if(dates == null) return "";
+	   if(dates == null) 
+		   return "♥";
+	   
+	   if(dates.isEmpty()) 
+		   return "♥";
 	   
 	   StringJoiner joiner = new StringJoiner(listDelimiter);
 	   
@@ -65,7 +69,8 @@ public class DateCollectionCsvConverter implements ICsvConverter<DateCollection>
 	private List<DateRange> getDateFromCsv(String list) {
 		List<DateRange> retVal = new ArrayList<DateRange>();
 		
-		if(list.equals("")) return retVal;
+		if(list.equals("♥")) 
+			return retVal;
 		
 		String[] tokens = list.split(listDelimiter);
 		

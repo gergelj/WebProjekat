@@ -25,8 +25,10 @@ public class ReservationRepository extends CSVRepository<Reservation> implements
 	private IApartmentRepository apartmentRepository;
 	private IUserRepository userRepository;
 	
-	public ReservationRepository(ICsvStream<Reservation> stream, LongSequencer sequencer) {
+	public ReservationRepository(ICsvStream<Reservation> stream, LongSequencer sequencer, IApartmentRepository apartmentRepository, IUserRepository userRepository) {
 		super("Reservation", stream, sequencer);
+		this.apartmentRepository = apartmentRepository;
+		this.userRepository = userRepository;
 	}
    
    private void bind(List<Reservation> reservations) throws DatabaseException {

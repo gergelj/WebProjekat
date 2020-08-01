@@ -126,12 +126,134 @@ public class SparkAppMain {
 	{
 		AmenityRepository res = AppResources.getInstance().amenityRepository;
 		
+		/*RADE:
+		 * - create
+		 * - update
+		 * - delete
+		 * - getById
+		 * - getAll
+		 */
+		
 	}
 	
-	private static void apartmentRepoTest()
+	private static void apartmentRepoTest() throws DatabaseException
 	{
-		ApartmentRepository res = AppResources.getInstance().apartmentRepository;
+		/*RADE:
+		 * - create
+		 * - update
+		 * - getById
+		 * - delete
+		 * - getAll
+		 * - getEager		?
+		 * - getAllEager	?
+		 * - find			?
+		 */
 		
+		ApartmentRepository res = AppResources.getInstance().apartmentRepository;
+		UserRepository userRes = AppResources.getInstance().userRepository;
+		AmenityRepository amRes = AppResources.getInstance().amenityRepository;
+		CommentRepository comRes = AppResources.getInstance().commentRepository;
+		
+		ApartmentCsvConverter conv = new ApartmentCsvConverter();
+		
+		Address add1 = new Address("Mare Ognjanovic", "12", "Novi Sad", "21000");
+		Address add2 = new Address("Narnodnog frotna", "48", "Novi Sad", "21000");
+		Address add3 = new Address("Blazakova", "28", "Novi Sad", "21000");
+		Address add4 = new Address("Pere Popadica", "3/2", "Novi Sad", "21000");
+		Address add5 = new Address("Safarikova", "33", "Novi Sad", "21000");
+		
+		Location loc1 = new Location(45.123456, 19.156936, add1);
+		Location loc2 = new Location(45.156988, 19.159874, add2);
+		Location loc3 = new Location(45.123456, 19.156936, add3);
+		Location loc4 = new Location(45.789455, 19.369636, add4);
+		Location loc5 = new Location(45.174896, 19.888855, add5);
+		
+		Picture pic1 = new Picture("glaata.jpg");
+		Picture pic2 = new Picture("dadas.jpg");
+		Picture pic3 = new Picture("ewqeqw.jpg");
+		Picture pic4 = new Picture("dasdsa.jpg");
+		Picture pic5 = new Picture("gffdg.jpg");
+		Picture pic6 = new Picture("hfghfg.jpg");
+		Picture pic7 = new Picture("kjhhjkhjk.jpg");
+		Picture pic8 = new Picture("cxzcxz.jpg");
+		Picture pic9 = new Picture("bcvbcvcb.jpg");
+		Picture pic0 = new Picture("gmnbmbn.jpg");
+		Picture pic11 = new Picture("dsaasdf.jpg");
+		
+		List<Picture> pictures1 = new ArrayList<Picture>();
+		pictures1.add(pic11);
+		pictures1.add(pic1);
+		pictures1.add(pic2);
+		
+		List<Picture> pictures2 = new ArrayList<Picture>();
+		pictures2.add(pic3);
+		pictures2.add(pic4);
+		pictures2.add(pic5);
+		
+		List<Picture> pictures3 = new ArrayList<Picture>();
+		pictures3.add(pic6);
+		pictures3.add(pic7);
+		pictures3.add(pic8);
+		
+		List<Picture> pictures4 = new ArrayList<Picture>();
+		pictures4.add(pic9);
+		pictures4.add(pic0);
+		pictures4.add(pic11);
+		
+		List<Picture> pictures5 = new ArrayList<Picture>();
+		pictures5.add(pic1);
+		pictures5.add(pic2);
+		pictures5.add(pic3);
+		
+		List<Amenity> amenities1 = new ArrayList<Amenity>();
+		amenities1.add(amRes.getById(1));
+		amenities1.add(amRes.getById(3));
+		amenities1.add(amRes.getById(4));
+		
+		List<Amenity> amenities2 = new ArrayList<Amenity>();
+		amenities2.add(amRes.getById(2));
+		amenities2.add(amRes.getById(4));
+		amenities2.add(amRes.getById(5));
+		
+		List<Amenity> amenities3 = new ArrayList<Amenity>();
+		amenities3.add(amRes.getById(1));
+		amenities3.add(amRes.getById(2));
+		amenities3.add(amRes.getById(3));
+		
+		List<Amenity> amenities4 = new ArrayList<Amenity>();
+		amenities4.add(amRes.getById(3));
+		amenities4.add(amRes.getById(4));
+		amenities4.add(amRes.getById(5));
+		
+		List<Amenity> amenities5 = new ArrayList<Amenity>();
+		amenities5.add(amRes.getById(5));
+		amenities5.add(amRes.getById(2));
+		amenities5.add(amRes.getById(3));
+			
+		
+		List<Comment> comments1 = new ArrayList<Comment>();
+		comments1.add(comRes.getById(1));
+		comments1.add(comRes.getById(2));
+		
+		List<Comment> comments2 = new ArrayList<Comment>();
+		comments2.add(comRes.getById(3));
+		comments2.add(comRes.getById(4));
+	
+		List<Comment> comments3 = new ArrayList<Comment>();
+		comments3.add(comRes.getById(1));
+		comments3.add(comRes.getById(3));		
+		
+		
+		Apartment ap1 = new Apartment(2, 10, 150.6, false, true, ApartmentType.fullApartment, loc1, userRes.getById(1), pictures1, amenities1, comments1);
+		Apartment ap2 = new Apartment(1, 3, 150.6, false, true, ApartmentType.fullApartment, loc2, userRes.getById(2), pictures2, amenities2, comments2);
+		Apartment ap3 = new Apartment(1, 4, 150.6, false, true, ApartmentType.fullApartment, loc3, userRes.getById(3), pictures3, amenities3, comments3);
+		Apartment ap4 = new Apartment(1, 5, 150.6, false, true, ApartmentType.fullApartment, loc4, userRes.getById(4), pictures4, amenities4, comments2);
+		Apartment ap5 = new Apartment(1, 3, 150.6, false, true, ApartmentType.fullApartment, loc5, userRes.getById(5), pictures5, amenities5, comments3);
+					
+		
+
+		
+		//TODO: find?
 	}
 	
 	private static void commentRepoTest() throws DatabaseException
@@ -173,9 +295,37 @@ public class SparkAppMain {
 		
 	}
 	
-	private static void reservationRepoTest()
+	private static void reservationRepoTest() throws DatabaseException
 	{
+		/*RADE:
+		 * - create
+		 * - update
+		 * - getById
+		 * - delete
+		 * - getAll
+		 * - getAllEager
+		 * - getEager
+		 */
+		
 		ReservationRepository res = AppResources.getInstance().reservationRepository;
+		ApartmentRepository apRes = AppResources.getInstance().apartmentRepository;
+		UserRepository userRes = AppResources.getInstance().userRepository;
+		
+		ReservationCsvConverter conv = new ReservationCsvConverter();
+		
+		Reservation r1 = new Reservation(apRes.getById(1), userRes.getById(1), new Date(2020, 8, 1), 5, 800.0, "Poruka1", false, ReservationStatus.accepted);
+		Reservation r2= new Reservation(apRes.getById(2), userRes.getById(2), new Date(2020, 10, 12), 5, 525.0, "Poruka2", false, ReservationStatus.accepted);
+		Reservation r3 = new Reservation(apRes.getById(3), userRes.getById(3), new Date(2020, 5, 23), 5, 123.0, "Poruka3", false, ReservationStatus.accepted);
+		Reservation r4 = new Reservation(apRes.getById(4), userRes.getById(4), new Date(2020, 1, 1), 5, 421.0, "Poruka4", false, ReservationStatus.accepted);
+		
+
+		
+		r2 = res.getById(1);
+		r2.setReservationStatus(ReservationStatus.created);
+		res.update(r2);
+		
+		Reservation r = res.getEager(res.getById(1).getId());
+			System.out.println(conv.toCsv(r));
 		
 	}
 	
