@@ -6,22 +6,14 @@
 
 package repository.csv.converter;
 
-import java.text.ParseException;
-import java.util.Date;
+
 import java.util.StringJoiner;
 
-import javax.swing.text.StyledEditorKit.BoldAction;
-
-import beans.Apartment;
 import beans.Comment;
-import beans.Reservation;
-import beans.ReservationStatus;
 import beans.User;
-import service.UserService;
 
 public class CommentCsvConverter implements ICsvConverter<Comment> {
    private String delimiter = "~";
-   
    private String newLine = "`";
    
    public String toCsv(Comment entity){
@@ -47,7 +39,7 @@ public class CommentCsvConverter implements ICsvConverter<Comment> {
 	  boolean approved = Boolean.valueOf(tokens[4]);
 	  User user = new User(Long.valueOf(tokens[5])); 
 	  
-	  Comment retVal = new Comment(text, rating, deleted, approved, user);
+	  Comment retVal = new Comment(id, text, rating, deleted, approved, user);
 	  
       return retVal;
    }

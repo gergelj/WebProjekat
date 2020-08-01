@@ -1,12 +1,12 @@
 package exceptions;
 
-public class EntityNotFoundException extends Exception {
-
+public class EntityNotFoundException extends DatabaseException {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	
 	public EntityNotFoundException() {
 		super();
 	}
@@ -18,5 +18,6 @@ public class EntityNotFoundException extends Exception {
 	public EntityNotFoundException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
+
 
 }

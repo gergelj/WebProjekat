@@ -90,7 +90,8 @@ public class SparkAppMain {
 
 	public static void main(String[] args) throws Exception {
 		
-		testRepositoryMethods();
+		//testRepositoryMethods();
+		
 		
 		//amenityConverterTest();
 		//apartmentConverterTest();

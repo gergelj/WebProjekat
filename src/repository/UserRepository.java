@@ -10,6 +10,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import beans.User;
+import exceptions.DatabaseException;
+import exceptions.EntityNotFoundException;
 import exceptions.NotUniqueException;
 import repository.abstractrepository.IUserRepository;
 import repository.csv.CSVRepository;
@@ -25,7 +27,7 @@ public class UserRepository extends CSVRepository<User> implements IUserReposito
 	}
    
    @Override
-   public User create(User entity) throws NotUniqueException {
+   public User create(User entity) throws DatabaseException {
 	   if(isUsernameUnique(entity.getUsername()))
 		   return super.create(entity);
 	   else
@@ -33,8 +35,12 @@ public class UserRepository extends CSVRepository<User> implements IUserReposito
    }
    
    private boolean isUsernameUnique(String username) {
-	   User user = getByUsername(username);
-	   return user == null ? true : false;
+		try {
+			getByUsername(username);
+			return false;
+		} catch (DatabaseException e) {
+			return true;
+		}
    }
    
    public List<User> find(ISpecification<User> specification) {
@@ -42,11 +48,11 @@ public class UserRepository extends CSVRepository<User> implements IUserReposito
    }
 
 	@Override
-	public User getByUsername(String username) {
+	public User getByUsername(String username) throws DatabaseException {
 		try {
 			return getAll().stream().filter(user -> user.getUsername().equals(username)).findFirst().get();			
 		}catch(NoSuchElementException e) {
-			return null;
+			throw new EntityNotFoundException(String.format(this.notFoundError, this.entityName, "username", username));
 		}
 	}
 

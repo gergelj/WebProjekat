@@ -10,7 +10,7 @@ import java.util.*;
 
 import beans.Comment;
 import beans.User;
-import exceptions.EntityNotFoundException;
+import exceptions.DatabaseException;
 import repository.abstractrepository.ICommentRepository;
 import repository.abstractrepository.IUserRepository;
 import repository.csv.CSVRepository;
@@ -27,14 +27,14 @@ public class CommentRepository extends CSVRepository<Comment> implements ICommen
 		this.userRepository =  userRepository;
 	}
    
-   private void bind(List<Comment> comments) throws EntityNotFoundException {
+   private void bind(List<Comment> comments) throws DatabaseException {
       for(Comment comment: comments)
       {
     	  comment.setUser(getUserById(comment.getUser()));
       }
    }
    
-   public Comment getEager(long id) throws EntityNotFoundException {
+   public Comment getEager(long id) throws DatabaseException {
       Comment comment = getById(id);
       
       comment.setUser(getUserById(comment.getUser()));
@@ -42,7 +42,7 @@ public class CommentRepository extends CSVRepository<Comment> implements ICommen
       return comment;
    }
    
-   public List<Comment> getAllEager() throws EntityNotFoundException {
+   public List<Comment> getAllEager() throws DatabaseException {
 	  List<Comment> comments = getAll();
 	  
 	  bind(comments);
@@ -51,8 +51,7 @@ public class CommentRepository extends CSVRepository<Comment> implements ICommen
    }
 
    
-   private User getUserById(User user) throws EntityNotFoundException
-   {
+   private User getUserById(User user) throws DatabaseException {
 	   return user == null ? null : userRepository.getById(user.getId());
    }
 }
