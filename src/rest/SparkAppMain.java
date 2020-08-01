@@ -63,6 +63,7 @@ import io.jsonwebtoken.security.Keys;
 import repository.AmenityRepository;
 import repository.ApartmentRepository;
 import repository.CommentRepository;
+import repository.DateCollectionRepository;
 import repository.ReservationRepository;
 import repository.UserRepository;
 import repository.abstractrepository.IUserRepository;
@@ -114,6 +115,12 @@ public class SparkAppMain {
 		userRepoTest();
 	}
 	
+	private static void dateCollectoinRepoTest() {
+		DateCollectionRepository res = AppResources.getInstance().availableDateCollectionRepository;
+		
+		DateCollection dc = new DateCollection(new Apartment(), false, new ArrayList<DateRange>());
+		
+	}
 	
 	private static void amenityRepoTest()
 	{
@@ -127,9 +134,42 @@ public class SparkAppMain {
 		
 	}
 	
-	private static void commentRepoTest()
+	private static void commentRepoTest() throws DatabaseException
 	{
 		CommentRepository res = AppResources.getInstance().commentRepository;
+		CommentCsvConverter conv = new CommentCsvConverter();
+		UserRepository userRepo = AppResources.getInstance().userRepository;
+		
+		Comment comment1 = new Comment("Vas apartamn je potpuno sranje.\nNe zelim nikome da ode tamo vise u zivotu", 1, false, false, userRepo.getById(4));
+		Comment comment2 = new Comment("Najbolji apartman u gradu", 5, false, false, userRepo.getById(5));
+		Comment comment3 = new Comment("Ooooo K.", 3, false, false, userRepo.getById(6));
+		Comment comment4 = new Comment("Lorem Ipsum bla bla bla bla balab jhsuahbj", 4, false, false, userRepo.getById(4));
+		
+		//res.create(comment1);
+		//res.create(comment2);
+		//res.create(comment3);
+		//res.create(comment4);
+		
+		//res.delete(3);
+		
+		//List<Comment> comments = res.getAll();
+		
+		//List<Comment> comments = res.getAllEager();
+		
+		//Comment com = res.getById(2);
+		
+		//com.setRating(4);
+		//com.setText("Па и није нешто посебно");
+		//res.update(com);
+		
+		//Comment comment = res.getEager(2);
+		//System.out.println(comment.getUser().getName() + ": " + comment.getText());
+		
+		/*
+		for(Comment comment : comments) {
+			System.out.println(comment.getUser().getName() + ": " + comment.getText());
+		}
+		*/
 		
 	}
 	
