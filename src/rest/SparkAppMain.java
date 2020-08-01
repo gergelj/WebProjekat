@@ -58,14 +58,22 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import repository.AmenityRepository;
+import repository.ApartmentRepository;
+import repository.CommentRepository;
+import repository.ReservationRepository;
+import repository.UserRepository;
+import repository.abstractrepository.IUserRepository;
 import repository.csv.converter.AmenityCsvConverter;
 import repository.csv.converter.ApartmentCsvConverter;
 import repository.csv.converter.CommentCsvConverter;
 import repository.csv.converter.DateCollectionCsvConverter;
 import repository.csv.converter.ReservationCsvConverter;
 import repository.csv.converter.UserCsvConverter;
-
+import repository.csv.stream.ICsvStream;
+import repository.sequencer.LongSequencer;
 import spark.Session;
+import utils.AppResources;
 import ws.WsHandler;
 
 public class SparkAppMain {
@@ -77,6 +85,8 @@ public class SparkAppMain {
 	 * Biblioteka: https://github.com/jwtk/jjwt
 	 */
 	static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+	
+	AppResources res;
 
 	public static void main(String[] args) throws Exception {
 		
@@ -85,6 +95,50 @@ public class SparkAppMain {
 		//amenityConverterTest();
 		//apartmentConverterTest();
 		//commentConverterTest();
+		
+		testRepositories();
+	}
+	
+	
+	private static void testRepositories()
+	{
+		amenityRepoTest();
+		apartmentRepoTest();
+		//TODO: dateCollectionTest();
+		commentRepoTest();
+		reservationRepoTest();
+		userRepoTest();
+	}
+	
+	
+	private static void amenityRepoTest()
+	{
+		AmenityRepository res = AppResources.getInstance().amenityRepository;
+		
+	}
+	
+	private static void apartmentRepoTest()
+	{
+		ApartmentRepository res = AppResources.getInstance().apartmentRepository;
+		
+	}
+	
+	private static void commentRepoTest()
+	{
+		CommentRepository res = AppResources.getInstance().commentRepository;
+		
+	}
+	
+	private static void reservationRepoTest()
+	{
+		ReservationRepository res = AppResources.getInstance().reservationRepository;
+		
+	}
+	
+	private static void userRepoTest()
+	{
+		UserRepository res = AppResources.getInstance().userRepository;
+		
 	}
 	
 	private static void testRepositoryMethods() throws EntityNotFoundException {
