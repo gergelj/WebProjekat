@@ -22,13 +22,13 @@ public class UserFilterConverter {
       ISpecification<User> specification = new BooleanSpecification<User>(true);
       
       if(!filter.getUsername().isEmpty())
-    	  specification.and(new UserUsernameSpecification(filter.getUsername()));
+    	  specification = specification.and(new UserUsernameSpecification(filter.getUsername()));
       
       if(filter.getUserType() != UserType.undefined)
-    	  specification.and(new UserUserTypeSpecification(filter.getUserType()));
+    	  specification = specification.and(new UserUserTypeSpecification(filter.getUserType()));
       
       if(filter.getGender() != Gender.undefined)
-    	  specification.and(new UserGenderSpecification(filter.getGender()));
+    	  specification = specification.and(new UserGenderSpecification(filter.getGender()));
       
       return specification;
    }

@@ -52,6 +52,8 @@ import beans.Reservation;
 import beans.ReservationStatus;
 import beans.User;
 import beans.UserType;
+import dto.UserFilterDTO;
+import exceptions.DatabaseException;
 import exceptions.EntityNotFoundException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -73,6 +75,7 @@ import repository.csv.converter.UserCsvConverter;
 import repository.csv.stream.ICsvStream;
 import repository.sequencer.LongSequencer;
 import spark.Session;
+import specification.filterconverter.UserFilterConverter;
 import utils.AppResources;
 import ws.WsHandler;
 
@@ -101,7 +104,7 @@ public class SparkAppMain {
 	}
 	
 	
-	private static void testRepositories()
+	private static void testRepositories() throws DatabaseException
 	{
 		amenityRepoTest();
 		apartmentRepoTest();
@@ -136,150 +139,55 @@ public class SparkAppMain {
 		
 	}
 	
-	private static void userRepoTest()
+	private static void userRepoTest() throws DatabaseException
 	{
 		UserRepository res = AppResources.getInstance().userRepository;
 		
-	}
-	
-	private static void testRepositoryMethods() throws EntityNotFoundException {
-		   List<User> users = new ArrayList<User>();
-			users.add(new User(567, "ushiy73", "rtdyGYUguryw7", "Igor", "Jovin", false, false, Gender.male, UserType.host));
-			users.add(new User(128, "ushiy73", "rtdyGYUguryw7", "Milos", "Jovin", false, false, Gender.male, UserType.host));
-			users.add(new User(755, "ushiy73", "rtdyGYUguryw7", "Marko", "Jovin", false, false, Gender.male, UserType.host));
-			users.add(new User(56, "ushiy73", "rtdyGYUguryw7", "Jovan", "Jovin", false, false, Gender.male, UserType.host));
-			//users.add(new User(755, "ushiy73", "rtdyGYUguryw7", "Nikola", "Jovin", false, false, Gender.male, UserType.host));
-			users.add(new User(8, "ushiy73", "rtdyGYUguryw7", "Dragan", "Jovin", false, false, Gender.male, UserType.host));
-			
-			User notInList = new User(888, "ushiy73", "rtdyGYUguryw7", "Dragan", "Jovin", false, false, Gender.male, UserType.host);
-			
-			System.out.println(users.size());
-			User us = users.stream().filter(user -> user.getId() == 755).findFirst().get();
-			System.out.println(users.size());
-			
-			
-			//long maxId = users.stream().max(Comparator.comparing(User::getId)).get().getId();
-			//System.out.println(maxId);
-			
-			//User user = getById(users, 7);
-			//System.out.println(user.getName());
-			
-			/*
-			System.out.println("Before");
-			User user = getById(users, 567);
-			System.out.println(user.isDeleted());
-			delete(users, user);
-			System.out.println("After");
-			User updatedUser = getById(users, 567);
-			System.out.println(updatedUser.isDeleted());
-			 */
-			
-			//write(users);
-			//addUser(notInList);
-			//List<User> list = read();
-			
-	}
-	
-	private static List<User> read(){
-		List<User> list = new ArrayList<User>();
-		try {
-			BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream("storage/users.dsv"), "UTF8"));
-			
-			UserCsvConverter conv = new UserCsvConverter();
-			String line = null;
-			
-			while((line=rd.readLine()) != null) {
-				list.add(conv.fromCsv(line));
-			}
-			
-			rd.close();
-			
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		User user1 = new User("ushiy73", "rtdyGYUguryw7", "Igor", "Jovin", false, false, Gender.male, UserType.host);
+		User user2 = new User("huihhjh", "rtdyGYUguryw7", "Marko", "Jovin", false, false, Gender.male, UserType.guest);
+		User user3 = new User("8u88878", "rtdyGYUguryw7", "Nikola", "Jovin", false, false, Gender.male, UserType.admin);
+		User user4 = new User("ioihhse", "rtdyGYUguryw7", "Jovan", "Jovin", false, false, Gender.male, UserType.guest);
+		User user5 = new User("878hjn9ii", "rtdyGYUguryw7", "Dragan", "Jovin", false, false, Gender.male, UserType.guest);
+		User user6 = new User("i8y7dfc", "rtdyGYUguryw7", "Milorad", "Jovin", false, false, Gender.male, UserType.guest);
 		
-		return list;
-	}
-	
-	private static void write(List<User> users) {
-		try {
-			BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("storage/users.dsv"), "UTF8"));
-			
-			UserCsvConverter conv = new UserCsvConverter();
-			
-			for(User user : users) {
-				wr.write(conv.toCsv(user));
-				wr.newLine();
-			}
-			
-			wr.close();
-			
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		/*
+		res.create(user1);
+		res.create(user2);
+		res.create(user3);
+		res.create(user4);
+		res.create(user5);
+		res.create(user6);
+		*/
+		
+		//res.delete(3);
+		
+		//UserCsvConverter conv = new UserCsvConverter();
+		/*
+		List<User> users = res.getAll();
+		
+		for(User user : users) {
+			System.out.println(conv.toCsv(user));
+		}*/
+		
+		//System.out.println(conv.toCsv(res.getById(3)));
+		
+		//UserFilterDTO filter = new UserFilterDTO("", UserType.guest, Gender.female);
+		//List<User> users = res.find(UserFilterConverter.getSpecification(filter));
+		
+		//User user = res.getByUsername("ioihhse");
+		//System.out.println(conv.toCsv(user));
+		
+		//user.setGender(Gender.female);
+		//user.setName("Marina");
+		//res.update(user);
+		
+		/*
+		for(User user : users) {
+			System.out.println(conv.toCsv(user));
 		}
+		*/
 	}
 	
-	private static void addUser(User user) {
-		try {
-			BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("storage/users.dsv", true), "UTF8"));
-			
-			UserCsvConverter conv = new UserCsvConverter();
-			
-			wr.append(conv.toCsv(user));
-			wr.newLine();
-			
-			wr.close();
-			
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private static void delete(List<User> users, User entity) throws EntityNotFoundException {
-		   entity.delete();
-		   update(users, entity);
-	   }
-	   
-	   private static List<User> update(List<User> entities, User entity) throws EntityNotFoundException {
-		   int index = entities.indexOf(entity);
-		   
-		   if(index == -1)
-			   throw new EntityNotFoundException("not found");
-		   
-		   entities.set(index, entity);
-		   return entities;
-	   }
-	
-	private static User getById(List<User> users, int id) throws EntityNotFoundException {
-		   try {
-			   
-			   return users.stream().filter(entity -> entity.getId() == id).findFirst().get();
-		   }
-		   catch(NoSuchElementException e) {
-			   throw new EntityNotFoundException("not found", e);
-		   }
-	}
 
 	private static void commentConverterTest()
 	{

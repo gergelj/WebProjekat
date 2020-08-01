@@ -22,19 +22,19 @@ public class ApartmentFilterConverter {
 	   ISpecification<Apartment> specification = new BooleanSpecification<Apartment>(true);
 	   
 	   if(!filter.getCity().isEmpty())
-		   specification.and(new ApartmentCitySpecification(filter.getCity()));
+		   specification = specification.and(new ApartmentCitySpecification(filter.getCity()));
 	   
 	   if(filter.getNumberOfGuests() > 0)
-		   specification.and(new ApartmentGuestsSpecification(filter.getNumberOfGuests()));
+		   specification = specification.and(new ApartmentGuestsSpecification(filter.getNumberOfGuests()));
 	   
 	   if(filter.getNumberOfRooms() > 0)
-		   specification.and(new ApartmentRoomsSpecification(filter.getNumberOfRooms()));
+		   specification = specification.and(new ApartmentRoomsSpecification(filter.getNumberOfRooms()));
 	   
 	   if(filter.getDateRange() != null)
-		   specification.and(new ApartmentDateSpecification(filter.getDateRange()));
+		   specification = specification.and(new ApartmentDateSpecification(filter.getDateRange()));
 	   
 	   if(filter.getPriceRange() != null)
-		   specification.and(new ApartmentPriceSpecification(filter.getPriceRange()));
+		   specification = specification.and(new ApartmentPriceSpecification(filter.getPriceRange()));
 	   
 	   return specification;
    }
