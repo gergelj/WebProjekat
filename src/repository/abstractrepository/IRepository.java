@@ -8,14 +8,13 @@ package repository.abstractrepository;
 
 import java.util.*;
 
-import exceptions.EntityNotFoundException;
-import exceptions.NotUniqueException;
+import exceptions.DatabaseException;
 
 public interface IRepository <T> {
-   T getById(long id) throws EntityNotFoundException;
+   T getById(long id) throws DatabaseException;
    List<T> getAll();
-   T create(T entity) throws NotUniqueException;
-   void update(T entity) throws EntityNotFoundException;
-   void delete(long id) throws EntityNotFoundException;
+   T create(T entity) throws DatabaseException;
+   void update(T entity) throws DatabaseException;
+   void delete(long id) throws DatabaseException;
 
 }

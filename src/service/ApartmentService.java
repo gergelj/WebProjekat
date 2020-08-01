@@ -7,8 +7,7 @@
 package service;
 
 import repository.ApartmentRepository;
-import repository.AvailableDateCollectionRepository;
-import repository.BookingDateCollectionRepository;
+import repository.DateCollectionRepository;
 import beans.User;
 import beans.Apartment;
 import dto.ApartmentFilterDTO;
@@ -16,11 +15,11 @@ import java.util.*;
 
 public class ApartmentService {
    private ApartmentRepository apartmentRepository;
-   private AvailableDateCollectionRepository availableDateCollectionRepository;
-   private BookingDateCollectionRepository bookingDateCollectionRepository;
+   private DateCollectionRepository availableDateCollectionRepository;
+   private DateCollectionRepository bookingDateCollectionRepository;
 
 //Constructors
-   public ApartmentService(ApartmentRepository apartmentRepository, AvailableDateCollectionRepository availableDateCollectionRepository, BookingDateCollectionRepository bookingDateCollectionRepository) {
+   public ApartmentService(ApartmentRepository apartmentRepository, DateCollectionRepository availableDateCollectionRepository, DateCollectionRepository bookingDateCollectionRepository) {
 	   super();
 	   this.apartmentRepository = apartmentRepository;
 	   this.availableDateCollectionRepository = availableDateCollectionRepository;

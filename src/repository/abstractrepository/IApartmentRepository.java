@@ -9,11 +9,11 @@ package repository.abstractrepository;
 import java.util.*;
 
 import beans.Apartment;
-import exceptions.EntityNotFoundException;
+import exceptions.DatabaseException;
 import specification.ISpecification;
 
 public interface IApartmentRepository extends IRepository<Apartment> {
    /** @param specification */
-   List<Apartment> find(ISpecification<Apartment> specification) throws EntityNotFoundException;
+   List<Apartment> find(ISpecification<Apartment> specification) throws DatabaseException;
 
 }

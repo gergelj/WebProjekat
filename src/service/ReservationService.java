@@ -7,8 +7,7 @@
 package service;
 
 import repository.ReservationRepository;
-import repository.AvailableDateCollectionRepository;
-import repository.BookingDateCollectionRepository;
+import repository.DateCollectionRepository;
 import beans.User;
 import beans.Reservation;
 import beans.Apartment;
@@ -16,13 +15,13 @@ import java.util.*;
 
 public class ReservationService {
    private ReservationRepository reservationRepository;
-   private AvailableDateCollectionRepository availableDateCollectionRepository;
-   private BookingDateCollectionRepository bookingDateCollectionRepository;
+   private DateCollectionRepository availableDateCollectionRepository;
+   private DateCollectionRepository bookingDateCollectionRepository;
 
 
    
 //Constructors 
-   public ReservationService(ReservationRepository reservationRepository, AvailableDateCollectionRepository availableDateCollectionRepository, BookingDateCollectionRepository bookingDateCollectionRepository) {
+   public ReservationService(ReservationRepository reservationRepository, DateCollectionRepository availableDateCollectionRepository, DateCollectionRepository bookingDateCollectionRepository) {
 	super();
 	this.reservationRepository = reservationRepository;
 	this.availableDateCollectionRepository = availableDateCollectionRepository;

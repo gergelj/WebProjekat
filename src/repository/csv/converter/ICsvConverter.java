@@ -6,7 +6,6 @@
 
 package repository.csv.converter;
 
-import java.util.*;
 
 public interface ICsvConverter <T> {
    String toCsv(T entity);

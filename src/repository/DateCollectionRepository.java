@@ -7,9 +7,11 @@
 package repository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import beans.Apartment;
 import beans.DateCollection;
+import exceptions.DatabaseException;
 import exceptions.EntityNotFoundException;
 import repository.abstractrepository.IApartmentRepository;
 import repository.abstractrepository.IDateCollectionRepository;
@@ -18,16 +20,16 @@ import repository.csv.IEagerCsvRepository;
 import repository.csv.stream.ICsvStream;
 import repository.sequencer.LongSequencer;
 
-public class AvailableDateCollectionRepository extends CSVRepository<DateCollection> implements IDateCollectionRepository, IEagerCsvRepository<DateCollection> {
+public class DateCollectionRepository extends CSVRepository<DateCollection> implements IDateCollectionRepository, IEagerCsvRepository<DateCollection> {
    
 	private IApartmentRepository apartmentRepository;
 	
-	public AvailableDateCollectionRepository(ICsvStream<DateCollection> stream, LongSequencer sequencer, IApartmentRepository apartmentRepository) {
-		super("AvailableDateCollection", stream, sequencer);
+	public DateCollectionRepository(String entityName, ICsvStream<DateCollection> stream, LongSequencer sequencer, IApartmentRepository apartmentRepository) {
+		super(entityName, stream, sequencer);
 		this.apartmentRepository = apartmentRepository;
 	}
 	
-	private void bind(List<DateCollection> dateCollections) throws EntityNotFoundException
+	private void bind(List<DateCollection> dateCollections) throws DatabaseException
 	{
 		for(DateCollection dateCollection: dateCollections)
 		{
@@ -35,7 +37,7 @@ public class AvailableDateCollectionRepository extends CSVRepository<DateCollect
 		}
 	}
 	
-	public DateCollection getEager(long id) throws EntityNotFoundException {
+	public DateCollection getEager(long id) throws DatabaseException {
 		DateCollection dateCollection = getById(id);
 		
 		dateCollection.setApartment(getApartmentById(dateCollection.getApartment()));
@@ -43,7 +45,7 @@ public class AvailableDateCollectionRepository extends CSVRepository<DateCollect
 		return dateCollection;
 	}
 
-	public List<DateCollection> getAllEager() throws EntityNotFoundException {
+	public List<DateCollection> getAllEager() throws DatabaseException {
 		List<DateCollection> dateCollections = getAll();
 		
 		bind(dateCollections);
@@ -51,8 +53,25 @@ public class AvailableDateCollectionRepository extends CSVRepository<DateCollect
 		return dateCollections;
 	}
 
-	private Apartment getApartmentById(Apartment apartment) throws EntityNotFoundException
-	{
+	private Apartment getApartmentById(Apartment apartment) throws DatabaseException {
 		return apartment == null? null : apartmentRepository.getById(apartment.getId());
+	}
+	
+	
+	@Override
+	public void deleteByApartment(long apartmentId) throws DatabaseException {
+		DateCollection dc = getByApartmentId(apartmentId);
+		
+		dc.delete();
+		update(dc);
+	}
+
+	@Override
+	public DateCollection getByApartmentId(long apartmentId) throws DatabaseException {
+		try {
+			return getAll().stream().filter(dc -> dc.getApartment().getId() == apartmentId).findFirst().get();			
+		}catch(NoSuchElementException e) {
+			throw new EntityNotFoundException(String.format(this.notFoundError, this.entityName, "apartmentId", apartmentId));
+		}
 	}
 }

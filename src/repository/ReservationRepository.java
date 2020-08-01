@@ -11,7 +11,7 @@ import java.util.*;
 import beans.Apartment;
 import beans.Reservation;
 import beans.User;
-import exceptions.EntityNotFoundException;
+import exceptions.DatabaseException;
 import repository.abstractrepository.IApartmentRepository;
 import repository.abstractrepository.IReservationRepository;
 import repository.abstractrepository.IUserRepository;
@@ -29,7 +29,7 @@ public class ReservationRepository extends CSVRepository<Reservation> implements
 		super("Reservation", stream, sequencer);
 	}
    
-   private void bind(List<Reservation> reservations) throws EntityNotFoundException {
+   private void bind(List<Reservation> reservations) throws DatabaseException {
 	   for(Reservation reservation: reservations)
 	   {
 		   reservation.setApartment(getApartmentById(reservation.getApartment()));
@@ -37,7 +37,7 @@ public class ReservationRepository extends CSVRepository<Reservation> implements
 	   }
    }
    
-   public Reservation getEager(long id) throws EntityNotFoundException {
+   public Reservation getEager(long id) throws DatabaseException {
 	   Reservation reservation = getById(id);
 	   
 	   reservation.setApartment(getApartmentById(reservation.getApartment()));
@@ -46,7 +46,7 @@ public class ReservationRepository extends CSVRepository<Reservation> implements
 	   return reservation;
    }
    
-   public List<Reservation> getAllEager() throws EntityNotFoundException {
+   public List<Reservation> getAllEager() throws DatabaseException {
 	   List<Reservation> reservations = getAll();
 	   
 	   bind(reservations);
@@ -54,13 +54,11 @@ public class ReservationRepository extends CSVRepository<Reservation> implements
 	   return reservations;
    }
    
-   private Apartment getApartmentById(Apartment apartment) throws EntityNotFoundException
-   {
+   private Apartment getApartmentById(Apartment apartment) throws DatabaseException {
 	   return apartment == null ? null : apartmentRepository.getById(apartment.getId());
    }
 
-   private User getGuestById(User guest) throws EntityNotFoundException
-   {
+   private User getGuestById(User guest) throws DatabaseException {
 	   return guest == null? null : userRepository.getById(guest.getId()); 
    }
 }

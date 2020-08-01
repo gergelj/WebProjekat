@@ -8,10 +8,10 @@ package repository.csv;
 
 import java.util.*;
 
-import exceptions.EntityNotFoundException;
+import exceptions.DatabaseException;
 
 public interface IEagerCsvRepository <T> {
-   T getEager(long id) throws EntityNotFoundException;
-   List<T> getAllEager() throws EntityNotFoundException;
+   T getEager(long id) throws DatabaseException;
+   List<T> getAllEager() throws DatabaseException;
 
 }

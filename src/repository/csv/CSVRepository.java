@@ -15,12 +15,13 @@ import java.util.stream.Collectors;
 
 import beans.IDeletable;
 import beans.IIdentifiable;
+import exceptions.DatabaseException;
 import exceptions.EntityNotFoundException;
-import exceptions.NotUniqueException;
+
 
 public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRepository<T> {
-   private String notFoundError = "%s with %s:%s can not be found!";
-   private String entityName;
+   protected String notFoundError = "%s with %s:%s can not be found!";
+   protected String entityName;
    
    private ICsvStream<T> stream;
    private LongSequencer sequencer;
@@ -32,13 +33,13 @@ public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRe
 	   initializeId();
    }
    
-   public T create(T entity) throws NotUniqueException {
+   public T create(T entity) throws DatabaseException {
 	   entity.setId(this.sequencer.generateId());
 	   this.stream.appendToFile(entity);
 	   return entity;
    }
    
-   public void update(T entity) throws EntityNotFoundException {
+   public void update(T entity) throws DatabaseException {
 	   
 	   List<T> entities = this.stream.readAll();
 	   
@@ -66,7 +67,7 @@ public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRe
       this.sequencer.initialize(getMaxId(this.stream.readAll()));
    }
    
-   public T getById(long id) throws EntityNotFoundException {
+   public T getById(long id) throws DatabaseException {
 	   try {
 		   
 		   T entity = stream.readAll().stream().filter(ent -> ent.getId() == id).findFirst().get();
@@ -86,7 +87,7 @@ public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRe
       return entities.stream().filter(e -> !e.isDeleted()).collect(Collectors.toList());
    }
    
-   public void delete(long id) throws EntityNotFoundException {
+   public void delete(long id) throws DatabaseException {
 	   T entity = getById(id);
 	   entity.delete();
 	   this.update(entity);
