@@ -81,7 +81,7 @@ public class AppResources {
 		availableDateCollectionRepository.setApartmentRepository(apartmentRepository);
 		bookingDateCollectionRepository.setApartmentRepository(apartmentRepository);
 		
-		reservationRepository = new ReservationRepository(new CsvStream<Reservation>("storage/reservations.dsv", new ReservationCsvConverter()), new LongSequencer());
+		reservationRepository = new ReservationRepository(new CsvStream<Reservation>("storage/reservations.dsv", new ReservationCsvConverter()), new LongSequencer(), apartmentRepository, userRepository);
 		
 	}
 	
