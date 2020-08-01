@@ -1,11 +1,13 @@
 package utils;
 
+import beans.Account;
 import beans.Amenity;
 import beans.Apartment;
 import beans.Comment;
 import beans.DateCollection;
 import beans.Reservation;
 import beans.User;
+import repository.AccountRepository;
 import repository.AmenityRepository;
 import repository.ApartmentRepository;
 import repository.CommentRepository;
@@ -13,6 +15,7 @@ import repository.DateCollectionRepository;
 import repository.ReservationRepository;
 import repository.UserRepository;
 import repository.abstractrepository.IUserRepository;
+import repository.csv.converter.AccountCsvConverter;
 import repository.csv.converter.AmenityCsvConverter;
 import repository.csv.converter.ApartmentCsvConverter;
 import repository.csv.converter.CommentCsvConverter;
@@ -40,6 +43,7 @@ public class AppResources {
 	public CommentRepository commentRepository;
 	public ReservationRepository reservationRepository;
 	public UserRepository userRepository;
+	public AccountRepository accountRepository;
 	
 	//Services
 	public AmenityService amenityService;
@@ -66,7 +70,9 @@ public class AppResources {
 	
 	private void loadRespositories()
 	{
-		userRepository = new UserRepository(new CsvStream<User>("storage/users.dsv", new UserCsvConverter()), new LongSequencer());
+		accountRepository = new AccountRepository(new CsvStream<Account>("storage/accounts.dsv", new AccountCsvConverter()), new LongSequencer());
+		
+		userRepository = new UserRepository(new CsvStream<User>("storage/users.dsv", new UserCsvConverter()), new LongSequencer(), accountRepository);
 		
 		availableDateCollectionRepository = new DateCollectionRepository("availableDateCollection", new CsvStream<DateCollection>("storage/availabledates.dsv", new DateCollectionCsvConverter()), new LongSequencer());
 		

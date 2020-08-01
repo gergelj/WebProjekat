@@ -8,6 +8,11 @@ package service;
 
 import repository.AmenityRepository;
 import beans.Amenity;
+import beans.User;
+import beans.UserType;
+import exceptions.DatabaseException;
+import exceptions.InvalidUserException;
+
 import java.util.*;
 
 public class AmenityService {
@@ -20,27 +25,36 @@ public class AmenityService {
    }
 
 //Methods
-   public Amenity create(Amenity amenity) {
-      // TODO: implement
-      return null;
+   public Amenity create(Amenity amenity, UserType userType) throws DatabaseException, InvalidUserException {
+	  if(userType == UserType.admin)
+	  {
+		  return amenityRepository.create(amenity);
+	  }
+	  throw new InvalidUserException();
    }
    
-   public void update(Amenity amenity) {
-      // TODO: implement
+   public void update(Amenity amenity, UserType userType) throws DatabaseException, InvalidUserException {
+      if(userType == UserType.admin)
+      {
+    	  amenityRepository.update(amenity);
+      }
+      throw new InvalidUserException();
    }
    
-   public void delete(Amenity amenity) {
-      // TODO: implement
+   public void delete(Amenity amenity, UserType userType) throws DatabaseException, InvalidUserException {
+	   if(userType == UserType.admin)
+	   {
+		   amenityRepository.delete(amenity.getId());
+	   }
+	   throw new InvalidUserException();
    }
    
-   public Amenity getById(long id) {
-      // TODO: implement
-      return null;
+   public Amenity getById(long id) throws DatabaseException {
+      return amenityRepository.getById(id);
    }
    
    public List<Amenity> getAll() {
-      // TODO: implement
-      return null;
+      return amenityRepository.getAll();
    }
 
 }

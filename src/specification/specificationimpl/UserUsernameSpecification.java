@@ -20,6 +20,6 @@ public class UserUsernameSpecification extends AbstractSpecification<User> {
 
 	@Override
 	public boolean isSatisfiedBy(User candidate) {
-		return username.equals(candidate.getUsername());
+		return username.equals(candidate.getAccount().getUsername());
 	}
 }

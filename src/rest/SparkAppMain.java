@@ -293,13 +293,13 @@ public class SparkAppMain {
 	{
 		UserRepository res = AppResources.getInstance().userRepository;
 		
-		User user1 = new User("ushiy73", "rtdyGYUguryw7", "Igor", "Jovin", false, false, Gender.male, UserType.host);
-		User user2 = new User("huihhjh", "rtdyGYUguryw7", "Marko", "Jovin", false, false, Gender.male, UserType.guest);
-		User user3 = new User("8u88878", "rtdyGYUguryw7", "Nikola", "Jovin", false, false, Gender.male, UserType.admin);
-		User user4 = new User("ioihhse", "rtdyGYUguryw7", "Jovan", "Jovin", false, false, Gender.male, UserType.guest);
-		User user5 = new User("878hjn9ii", "rtdyGYUguryw7", "Dragan", "Jovin", false, false, Gender.male, UserType.guest);
-		User user6 = new User("i8y7dfc", "rtdyGYUguryw7", "Milorad", "Jovin", false, false, Gender.male, UserType.guest);
-		
+//		User user1 = new User("ushiy73", "rtdyGYUguryw7", "Igor", "Jovin", false, false, Gender.male, UserType.host);
+//		User user2 = new User("huihhjh", "rtdyGYUguryw7", "Marko", "Jovin", false, false, Gender.male, UserType.guest);
+//		User user3 = new User("8u88878", "rtdyGYUguryw7", "Nikola", "Jovin", false, false, Gender.male, UserType.admin);
+//		User user4 = new User("ioihhse", "rtdyGYUguryw7", "Jovan", "Jovin", false, false, Gender.male, UserType.guest);
+//		User user5 = new User("878hjn9ii", "rtdyGYUguryw7", "Dragan", "Jovin", false, false, Gender.male, UserType.guest);
+//		User user6 = new User("i8y7dfc", "rtdyGYUguryw7", "Milorad", "Jovin", false, false, Gender.male, UserType.guest);
+//		
 		/*
 		res.create(user1);
 		res.create(user2);
@@ -446,15 +446,15 @@ public class SparkAppMain {
 
 	private static void testUser() {
 		
-		User user = new User(567, "ushiy73", "rtdyGYUguryw7", "Igor", "Jovin", false, false, Gender.male, UserType.host);
+		//User user = new User(567, "ushiy73", "rtdyGYUguryw7", "Igor", "Jovin", false, false, Gender.male, UserType.host);
 		
 		UserCsvConverter converter = new UserCsvConverter();
 		
-		String userString = converter.toCsv(user);
-		System.out.println(userString);
+		//String userString = converter.toCsv(user);
+		//System.out.println(userString);
 		
-		String drugiString = converter.toCsv(converter.fromCsv(userString));
+		//String drugiString = converter.toCsv(converter.fromCsv(userString));
 		
-		System.out.println(userString.equals(drugiString));
+		//System.out.println(userString.equals(drugiString));
 	}
 }
