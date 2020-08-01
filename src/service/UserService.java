@@ -8,8 +8,14 @@ package service;
 
 import repository.UserRepository;
 import dto.UserDTO;
+import beans.Gender;
 import beans.User;
+import beans.UserType;
 import dto.UserFilterDTO;
+import exceptions.BadRequestException;
+import exceptions.DatabaseException;
+import exceptions.NotUniqueException;
+
 import java.util.*;
 
 public class UserService {
@@ -23,12 +29,15 @@ public class UserService {
    }
 
 //Methods
-   public void register(UserDTO user) {
-      // TODO: implement
+   public void register(UserDTO user) throws BadRequestException, DatabaseException {
+	   validateRegistration(user);
+      
+      User createdUser = new User(user.getUsername(), user.getPassword(), user.getName(), user.getSurname(), false, false, user.getGender(), UserType.guest);
+      userRepository.create(createdUser);
    }
    
    public void login(UserDTO user) {
-      // TODO: implement
+	   
    }
    
    public User getById(long id) {
@@ -41,10 +50,23 @@ public class UserService {
       return null;
    }
    
-   public void validate() {
-      // TODO: implement
+   private void validateRegistration(UserDTO user) throws BadRequestException, DatabaseException {
+	   if(user.getName().isEmpty() || user.getSurname().isEmpty() || user.getUsername().isEmpty() || user.getGender() == Gender.undefined || user.getPassword().isEmpty() || user.getControlPassword().isEmpty()) {
+		   throw new BadRequestException();
+	   }
+	   
+	   if(!isUsernameUnique(user.getUsername()))
+		   throw new NotUniqueException(String.format("Username '%s' is not unique!", user.getUsername()));
+	   
+	   if(!user.getPassword().equals(user.getControlPassword())) {
+		   throw new BadRequestException();
+	   }
    }
    
+   private boolean isUsernameUnique(String username) {
+	   return userRepository.isUsernameUnique(username);
+   }
+
    public List<User> getAll() {
       // TODO: implement
       return null;

@@ -13,9 +13,11 @@ import exceptions.DatabaseException;
 import specification.ISpecification;
 
 public interface IUserRepository extends IRepository<User> {
+	
+	boolean isUsernameUnique(String username);
 
-   List<User> find(ISpecification<User> specification);
+	List<User> find(ISpecification<User> specification);
    
-   User getByUsername(String username) throws DatabaseException;
+	User getByUsername(String username) throws DatabaseException;
 
 }

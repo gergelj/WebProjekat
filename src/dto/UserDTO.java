@@ -6,22 +6,26 @@
 
 package dto;
 
+import beans.Gender;
+
 public class UserDTO {
    private String username;
    private String name;
    private String surname;
-   private String gender;
+   private Gender gender;
    private String password;
+   private String controlPassword;
    
    
  //Constructors  
-	public UserDTO(String username, String name, String surname, String gender, String password) {
+	public UserDTO(String username, String name, String surname, Gender gender, String password, String controlPassword) {
 		super();
 		this.username = username;
 		this.name = name;
 		this.surname = surname;
 		this.gender = gender;
 		this.password = password;
+		this.controlPassword = controlPassword;
 	}
 	
 	public UserDTO() {
@@ -47,10 +51,10 @@ public class UserDTO {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
-	public String getGender() {
+	public Gender getGender() {
 		return gender;
 	}
-	public void setGender(String gender) {
+	public void setGender(Gender gender) {
 		this.gender = gender;
 	}
 	public String getPassword() {
@@ -59,5 +63,15 @@ public class UserDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public String getControlPassword() {
+		return controlPassword;
+	}
+
+	public void setControlPassword(String controlPassword) {
+		this.controlPassword = controlPassword;
+	}
+	
+	
 
 }

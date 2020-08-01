@@ -26,15 +26,7 @@ public class UserRepository extends CSVRepository<User> implements IUserReposito
 		super("User", stream, sequencer);
 	}
    
-   @Override
-   public User create(User entity) throws DatabaseException {
-	   if(isUsernameUnique(entity.getUsername()))
-		   return super.create(entity);
-	   else
-		   throw new NotUniqueException(String.format(notUniqueError, entity.getUsername()));
-   }
-   
-   private boolean isUsernameUnique(String username) {
+   public boolean isUsernameUnique(String username) {
 		try {
 			getByUsername(username);
 			return false;
