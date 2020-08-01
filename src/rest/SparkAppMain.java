@@ -64,7 +64,7 @@ import repository.csv.converter.CommentCsvConverter;
 import repository.csv.converter.DateCollectionCsvConverter;
 import repository.csv.converter.ReservationCsvConverter;
 import repository.csv.converter.UserCsvConverter;
-
+import repository.sequencer.LongSequencer;
 import spark.Session;
 import ws.WsHandler;
 
@@ -80,7 +80,8 @@ public class SparkAppMain {
 
 	public static void main(String[] args) throws Exception {
 		
-		testRepositoryMethods();
+		//testRepositoryMethods();
+		
 		
 		//amenityConverterTest();
 		//apartmentConverterTest();

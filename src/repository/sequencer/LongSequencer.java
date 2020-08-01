@@ -11,12 +11,11 @@ public class LongSequencer {
    
 
    public void initialize(long initId) {
-      // TODO: implement
+      nextId = initId;
    }
    
    public long generateId() {
-      // TODO: implement
-      return 0;
+      return ++nextId;
    }
 
 }
