@@ -22,6 +22,7 @@ import beans.User;
 public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
    private String delimiter = "~";
    private String listDelimiter = ";";
+   private String emptyChar = "♥";
   
    public String toCsv(Apartment entity) {
       StringJoiner joiner = new StringJoiner(delimiter);
@@ -93,6 +94,9 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
    {
 	   List<Picture> retVal = new ArrayList<Picture>();
 	   
+	   if(pictureString.equals(this.emptyChar))
+		   return retVal;
+	   
 	   for(String s: pictureString.split(listDelimiter))
 	   {
 		   retVal.add(new Picture(s));
@@ -104,6 +108,9 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
    private List<Amenity> getAmenityList(String amenityString)
    {
 	   List<Amenity> retVal = new ArrayList<Amenity>();
+	   
+	   if(amenityString.equals(this.emptyChar))
+		   return retVal;
 	   
 	   for(String s: amenityString.split(listDelimiter))
 	   {
@@ -117,6 +124,9 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
    {
 	   List<Comment> retVal = new ArrayList<Comment>();
 	   
+	   if(commentString.equals(this.emptyChar))
+		   return retVal;
+	   
 	   for(String s: commentString.split(listDelimiter))
 	   {
 		   retVal.add(new Comment(Long.valueOf(s)));
@@ -128,6 +138,9 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
    private String getPictureListString(List<Picture> pictures)
    {
 	   StringJoiner joiner = new StringJoiner(listDelimiter);
+	   
+	   if(pictures.isEmpty())
+		   return this.emptyChar;
 	   
 	   for(Picture p: pictures)
 	   {
@@ -153,6 +166,9 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
    {
 	   StringJoiner joiner = new StringJoiner(listDelimiter);
 	   
+	   if(amenities.isEmpty())
+		   return this.emptyChar;
+	   
 	   for(Amenity a: amenities)
 	   {
 		   joiner.add(String.valueOf(a.getId()));
@@ -164,6 +180,9 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
    private String getCommentListString(List<Comment> comments)
    {
 	   StringJoiner joiner = new StringJoiner(listDelimiter);
+	   
+	   if(comments.isEmpty())
+		   return this.emptyChar;
 	   
 	   for(Comment c: comments)
 	   {

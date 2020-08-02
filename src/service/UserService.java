@@ -8,6 +8,7 @@ package service;
 
 import repository.UserRepository;
 import dto.UserDTO;
+import beans.Account;
 import beans.Gender;
 import beans.User;
 import beans.UserType;
@@ -32,7 +33,7 @@ public class UserService {
    public void register(UserDTO user) throws BadRequestException, DatabaseException {
 	   validateRegistration(user);
       
-      User createdUser = new User(user.getUsername(), user.getPassword(), user.getName(), user.getSurname(), false, false, user.getGender(), UserType.guest);
+      User createdUser = new User(new Account(user.getUsername(), user.getPassword(), false), user.getName(), user.getSurname(), false, false, user.getGender(), UserType.guest);
       userRepository.create(createdUser);
    }
    

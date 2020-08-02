@@ -13,7 +13,6 @@ import beans.Account;
 import beans.User;
 import exceptions.DatabaseException;
 import exceptions.EntityNotFoundException;
-import exceptions.NotUniqueException;
 import repository.abstractrepository.IAccountRepository;
 import repository.abstractrepository.IUserRepository;
 import repository.csv.CSVRepository;
@@ -23,7 +22,7 @@ import repository.sequencer.LongSequencer;
 import specification.ISpecification;
 
 public class UserRepository extends CSVRepository<User> implements IUserRepository, IEagerCsvRepository<User> {
-   private String notUniqueError = "Username '%s' is not unique!";
+   //private String notUniqueError = "Username '%s' is not unique!";
    
    private IAccountRepository accountRepository;
      
@@ -33,8 +32,21 @@ public class UserRepository extends CSVRepository<User> implements IUserReposito
 		this.accountRepository = accountRepository;
 	}
    
+   @Override
+   public User create(User user) {
+	   Account account = accountRepository.create(user.getAccount());
+	   user.setAccount(account);
+	   return super.create(user);
+   }
    
-   private boolean isUsernameUnique(String username) {
+   @Override
+   public void delete(long id) throws DatabaseException {
+	   User user = getById(id);
+	   accountRepository.delete(user.getAccount().getId());
+	   super.delete(id);
+   }
+   
+   public boolean isUsernameUnique(String username) {
 		try {
 			getByUsername(username);
 			return false;
@@ -43,19 +55,24 @@ public class UserRepository extends CSVRepository<User> implements IUserReposito
 		}
    }
    
-   public List<User> find(ISpecification<User> specification) {
-      return getAll().stream().filter(user -> specification.isSatisfiedBy(user)).collect(Collectors.toList());
+   public List<User> find(ISpecification<User> specification) throws DatabaseException {
+      List<User> users = getAllEager().stream().filter(user -> specification.isSatisfiedBy(user)).collect(Collectors.toList());
+      
+      for(User user : users) {
+    	  user.getAccount().setPassword("");
+      }
+      
+      return users;
    }
 
 	@Override
 	public User getByUsername(String username) throws DatabaseException {
 		try {
-			return getAll().stream().filter(user -> user.getAccount().getUsername().equals(username)).findFirst().get();			
+			return getAllEager().stream().filter(user -> user.getAccount().getUsername().equals(username)).findFirst().get();			
 		}catch(NoSuchElementException e) {
 			throw new EntityNotFoundException(String.format(this.notFoundError, this.entityName, "username", username));
 		}
 	}
-
 
 	private void bind(List<User> users) throws DatabaseException
 	{
@@ -76,7 +93,7 @@ public class UserRepository extends CSVRepository<User> implements IUserReposito
 
 	private Account getAccountById(Account account) throws DatabaseException
 	{
-		return account == null? null : accountRepository.getById(account.getId());
+		return account == null ? null : accountRepository.getById(account.getId());
 	}
 	
 

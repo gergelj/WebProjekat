@@ -12,9 +12,7 @@ import beans.Apartment;
 import beans.Reservation;
 import beans.User;
 import exceptions.DatabaseException;
-import repository.abstractrepository.IApartmentRepository;
 import repository.abstractrepository.IReservationRepository;
-import repository.abstractrepository.IUserRepository;
 import repository.csv.CSVRepository;
 import repository.csv.IEagerCsvRepository;
 import repository.csv.stream.ICsvStream;
@@ -22,10 +20,10 @@ import repository.sequencer.LongSequencer;
 
 public class ReservationRepository extends CSVRepository<Reservation> implements IReservationRepository, IEagerCsvRepository<Reservation> {
    
-	private IApartmentRepository apartmentRepository;
-	private IUserRepository userRepository;
+	private IEagerCsvRepository<Apartment> apartmentRepository;
+	private IEagerCsvRepository<User> userRepository;
 	
-	public ReservationRepository(ICsvStream<Reservation> stream, LongSequencer sequencer, IApartmentRepository apartmentRepository, IUserRepository userRepository) {
+	public ReservationRepository(ICsvStream<Reservation> stream, LongSequencer sequencer, IEagerCsvRepository<Apartment> apartmentRepository, IEagerCsvRepository<User> userRepository) {
 		super("Reservation", stream, sequencer);
 		this.apartmentRepository = apartmentRepository;
 		this.userRepository = userRepository;
@@ -57,10 +55,10 @@ public class ReservationRepository extends CSVRepository<Reservation> implements
    }
    
    private Apartment getApartmentById(Apartment apartment) throws DatabaseException {
-	   return apartment == null ? null : apartmentRepository.getById(apartment.getId());
+	   return apartment == null ? null : apartmentRepository.getEager(apartment.getId());
    }
 
    private User getGuestById(User guest) throws DatabaseException {
-	   return guest == null? null : userRepository.getById(guest.getId()); 
+	   return guest == null? null : userRepository.getEager(guest.getId()); 
    }
 }

@@ -33,7 +33,7 @@ public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRe
 	   initializeId();
    }
    
-   public T create(T entity) throws DatabaseException {
+   public T create(T entity) {
 	   entity.setId(this.sequencer.generateId());
 	   this.stream.appendToFile(entity);
 	   return entity;

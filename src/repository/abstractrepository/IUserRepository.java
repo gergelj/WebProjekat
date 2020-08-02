@@ -16,7 +16,7 @@ public interface IUserRepository extends IRepository<User> {
 	
 	boolean isUsernameUnique(String username);
 
-	List<User> find(ISpecification<User> specification);
+	List<User> find(ISpecification<User> specification) throws DatabaseException;
    
 	User getByUsername(String username) throws DatabaseException;
 

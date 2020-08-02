@@ -13,7 +13,7 @@ import exceptions.DatabaseException;
 public interface IRepository <T> {
    T getById(long id) throws DatabaseException;
    List<T> getAll();
-   T create(T entity) throws DatabaseException;
+   T create(T entity);
    void update(T entity) throws DatabaseException;
    void delete(long id) throws DatabaseException;
 

@@ -44,7 +44,7 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
    }
    
    @Override
-   public Apartment create(Apartment apartment) throws DatabaseException {
+   public Apartment create(Apartment apartment) {
 	   apartment = super.create(apartment);
 	   
 	   DateCollection availableDate = new DateCollection(apartment, false, new ArrayList<DateRange>());

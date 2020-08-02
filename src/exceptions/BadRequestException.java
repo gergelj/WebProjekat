@@ -2,6 +2,11 @@ package exceptions;
 
 public class BadRequestException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3781839325201831284L;
+
 	public BadRequestException() {
 		// TODO Auto-generated constructor stub
 	}

@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 
 import com.google.gson.Gson;
 
+import beans.Account;
 import beans.Address;
 import beans.Amenity;
 import beans.Apartment;
@@ -33,6 +34,8 @@ import beans.ApartmentType;
 import beans.Comment;
 import beans.Location;
 import beans.Picture;
+import beans.PriceRange;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,6 +55,7 @@ import beans.Reservation;
 import beans.ReservationStatus;
 import beans.User;
 import beans.UserType;
+import dto.ApartmentFilterDTO;
 import dto.UserFilterDTO;
 import exceptions.DatabaseException;
 import exceptions.EntityNotFoundException;
@@ -67,6 +71,7 @@ import repository.DateCollectionRepository;
 import repository.ReservationRepository;
 import repository.UserRepository;
 import repository.abstractrepository.IUserRepository;
+import repository.csv.converter.AccountCsvConverter;
 import repository.csv.converter.AmenityCsvConverter;
 import repository.csv.converter.ApartmentCsvConverter;
 import repository.csv.converter.CommentCsvConverter;
@@ -76,6 +81,7 @@ import repository.csv.converter.UserCsvConverter;
 import repository.csv.stream.ICsvStream;
 import repository.sequencer.LongSequencer;
 import spark.Session;
+import specification.filterconverter.ApartmentFilterConverter;
 import specification.filterconverter.UserFilterConverter;
 import utils.AppResources;
 import ws.WsHandler;
@@ -94,9 +100,6 @@ public class SparkAppMain {
 
 	public static void main(String[] args) throws Exception {
 		
-		//testRepositoryMethods();
-		
-		
 		//amenityConverterTest();
 		//apartmentConverterTest();
 		//commentConverterTest();
@@ -107,12 +110,12 @@ public class SparkAppMain {
 	
 	private static void testRepositories() throws DatabaseException
 	{
-		amenityRepoTest();
-		apartmentRepoTest();
+		//amenityRepoTest();
+		//apartmentRepoTest();
 		//TODO: dateCollectionTest();
-		commentRepoTest();
+		//commentRepoTest();
 		reservationRepoTest();
-		userRepoTest();
+		//userRepoTest();
 	}
 	
 	private static void dateCollectoinRepoTest() {
@@ -133,6 +136,20 @@ public class SparkAppMain {
 		 * - getById
 		 * - getAll
 		 */
+		
+		Amenity am1 = new Amenity("Klima", false);
+		Amenity am2 = new Amenity("TV", false);
+		Amenity am3 = new Amenity("Internet/Wi-Fi", false);
+		Amenity am4 = new Amenity("Ves masina", false);
+		Amenity am5 = new Amenity("Pegla", false);
+		
+		/*
+		res.create(am1);
+		res.create(am2);
+		res.create(am3);
+		res.create(am4);
+		res.create(am5);
+		*/
 		
 	}
 	
@@ -244,16 +261,49 @@ public class SparkAppMain {
 		comments3.add(comRes.getById(3));		
 		
 		
-		Apartment ap1 = new Apartment(2, 10, 150.6, false, true, ApartmentType.fullApartment, loc1, userRes.getById(1), pictures1, amenities1, comments1);
-		Apartment ap2 = new Apartment(1, 3, 150.6, false, true, ApartmentType.fullApartment, loc2, userRes.getById(2), pictures2, amenities2, comments2);
-		Apartment ap3 = new Apartment(1, 4, 150.6, false, true, ApartmentType.fullApartment, loc3, userRes.getById(3), pictures3, amenities3, comments3);
-		Apartment ap4 = new Apartment(1, 5, 150.6, false, true, ApartmentType.fullApartment, loc4, userRes.getById(4), pictures4, amenities4, comments2);
-		Apartment ap5 = new Apartment(1, 3, 150.6, false, true, ApartmentType.fullApartment, loc5, userRes.getById(5), pictures5, amenities5, comments3);
+		Apartment ap1 = new Apartment(2, 10, 150.6, false, true, ApartmentType.fullApartment, loc1, userRes.getById(1), pictures1, amenities1, null);
+		Apartment ap2 = new Apartment(1, 3, 150.6, false, true, ApartmentType.fullApartment, loc2, userRes.getById(2), pictures2, null, comments2);
+		Apartment ap3 = new Apartment(1, 4, 150.6, false, true, ApartmentType.fullApartment, loc3, userRes.getById(2), null, amenities3, comments3);
+		Apartment ap4 = new Apartment(1, 5, 150.6, false, true, ApartmentType.fullApartment, loc4, userRes.getById(4), pictures4, amenities4, null);
+		Apartment ap5 = new Apartment(1, 3, 150.6, false, true, ApartmentType.fullApartment, loc5, userRes.getById(5), null, null, null);
 					
+		/*
+		res.create(ap1);
+		res.create(ap2);
+		res.create(ap3);
+		res.create(ap4);
+		res.create(ap5);
+		*/
 		
+		//res.delete(4);
+		
+		/*
+		ap5 = res.getById(5);
+		ap5.setComments(comments3);
+		ap5.setAmenities(amenities2);
+		ap5.setPictures(pictures2);
+		res.update(ap5);
+		*/
+		
+		/*
+		ApartmentFilterDTO filter = new ApartmentFilterDTO("", 0, 11, null, new PriceRange(100, 200));
+		List<Apartment> apartments = res.find(ApartmentFilterConverter.getSpecification(filter));
+		
+		
+		*/
+		
+		/*
+		List<Apartment> apartments = res.getAllEager();
+		
+		for(Apartment ap : apartments) {
+			System.out.println(ap.getHost().getName() + " @" + ap.getHost().getAccount().getUsername() + ": " + (ap.getAmenities().isEmpty() ? "" : ap.getAmenities().get(0).getName()) + " > " + (ap.getComments().isEmpty() ? "" : ap.getComments().get(0).getUser().getName()));
+			
+		}
+		*/
+		
+		//Apartment ap = res.getEager(2);
+		//System.out.println(ap.getHost().getName() + " @" + ap.getHost().getAccount().getUsername() + ": " + (ap.getAmenities().isEmpty() ? "" : ap.getAmenities().get(0).getName()) + " > " + (ap.getComments().isEmpty() ? "" : ap.getComments().get(0).getUser().getName()));
 
-		
-		//TODO: find?
 	}
 	
 	private static void commentRepoTest() throws DatabaseException
@@ -267,10 +317,12 @@ public class SparkAppMain {
 		Comment comment3 = new Comment("Ooooo K.", 3, false, false, userRepo.getById(6));
 		Comment comment4 = new Comment("Lorem Ipsum bla bla bla bla balab jhsuahbj", 4, false, false, userRepo.getById(4));
 		
-		//res.create(comment1);
-		//res.create(comment2);
-		//res.create(comment3);
-		//res.create(comment4);
+		/*
+		res.create(comment1);
+		res.create(comment2);
+		res.create(comment3);
+		res.create(comment4);
+		*/
 		
 		//res.delete(3);
 		
@@ -313,33 +365,59 @@ public class SparkAppMain {
 		
 		ReservationCsvConverter conv = new ReservationCsvConverter();
 		
-		Reservation r1 = new Reservation(apRes.getById(1), userRes.getById(1), new Date(2020, 8, 1), 5, 800.0, "Poruka1", false, ReservationStatus.accepted);
-		Reservation r2= new Reservation(apRes.getById(2), userRes.getById(2), new Date(2020, 10, 12), 5, 525.0, "Poruka2", false, ReservationStatus.accepted);
-		Reservation r3 = new Reservation(apRes.getById(3), userRes.getById(3), new Date(2020, 5, 23), 5, 123.0, "Poruka3", false, ReservationStatus.accepted);
-		Reservation r4 = new Reservation(apRes.getById(4), userRes.getById(4), new Date(2020, 1, 1), 5, 421.0, "Poruka4", false, ReservationStatus.accepted);
+		Reservation r1 = new Reservation(apRes.getById(1), userRes.getById(1), new GregorianCalendar(2020, 8-1, 1).getTime(), 5, 800.0, "Poruka1", false, ReservationStatus.accepted);
+		Reservation r2 = new Reservation(apRes.getById(2), userRes.getById(2), new GregorianCalendar(2020, 10-1, 12).getTime(), 5, 525.0, "Poruka2", false, ReservationStatus.accepted);
+		Reservation r3 = new Reservation(apRes.getById(3), userRes.getById(1), new GregorianCalendar(2020, 5-1, 23).getTime(), 5, 123.0, "Poruka3", false, ReservationStatus.accepted);
+		Reservation r4 = new Reservation(apRes.getById(2), userRes.getById(4), new GregorianCalendar(2020, 1-1, 1).getTime(), 5, 421.0, "Poruka4", false, ReservationStatus.accepted);
 		
-
+		//res.create(r1);
+		//res.create(r2);
+		//res.create(r3);
+		//res.create(r4);
 		
+		/*
+		List<Reservation> reservations = res.getAll();
+		for(Reservation re : reservations) {
+			System.out.println(conv.toCsv(re));
+		}
+		*/
+		/*
+		List<Reservation> reservations = res.getAllEager();
+		for(Reservation re : reservations) {
+			System.out.println(re.getGuest().getName() + ": " + re.getApartment().getHost().getName());
+		}*/
+		
+		/*
+		Reservation r = res.getById(2);
+		r.setMessage("Nova poruka");
+		r.setNights(99);
+		res.update(r);
+		*/
+		
+		res.delete(4);
+		//res.getById(4);
+		
+		/*
 		r2 = res.getById(1);
 		r2.setReservationStatus(ReservationStatus.created);
 		res.update(r2);
 		
 		Reservation r = res.getEager(res.getById(1).getId());
 			System.out.println(conv.toCsv(r));
-		
+		*/
 	}
 	
 	private static void userRepoTest() throws DatabaseException
 	{
 		UserRepository res = AppResources.getInstance().userRepository;
 		
-//		User user1 = new User("ushiy73", "rtdyGYUguryw7", "Igor", "Jovin", false, false, Gender.male, UserType.host);
-//		User user2 = new User("huihhjh", "rtdyGYUguryw7", "Marko", "Jovin", false, false, Gender.male, UserType.guest);
-//		User user3 = new User("8u88878", "rtdyGYUguryw7", "Nikola", "Jovin", false, false, Gender.male, UserType.admin);
-//		User user4 = new User("ioihhse", "rtdyGYUguryw7", "Jovan", "Jovin", false, false, Gender.male, UserType.guest);
-//		User user5 = new User("878hjn9ii", "rtdyGYUguryw7", "Dragan", "Jovin", false, false, Gender.male, UserType.guest);
-//		User user6 = new User("i8y7dfc", "rtdyGYUguryw7", "Milorad", "Jovin", false, false, Gender.male, UserType.guest);
-//		
+		User user1 = new User(new Account("ggg", "huigf9wdbwhbd", false), "Igor", "Jovin", false, false, Gender.male, UserType.host);
+		User user2 = new User(new Account("huihhjh", "rtdyGYUguryw7", false), "Marko", "Jovin", false, false, Gender.male, UserType.guest);
+		User user3 = new User(new Account("73buiin", "rtdyGYUguryw7", false), "Nikola", "Jovin", false, false, Gender.male, UserType.admin);
+		User user4 = new User(new Account("ioihhse", "rtdyGYUguryw7", false), "Jovan", "Jovin", false, false, Gender.male, UserType.guest);
+		User user5 = new User(new Account("878hjn9ii", "rtdyGYUguryw7", false), "Dragan", "Jovin", false, false, Gender.male, UserType.guest);
+		User user6 = new User(new Account("i8y7dfc", "rtdyGYUguryw7", false), "Milorad", "Jovin", false, false, Gender.male, UserType.guest);
+		
 		/*
 		res.create(user1);
 		res.create(user2);
@@ -349,9 +427,10 @@ public class SparkAppMain {
 		res.create(user6);
 		*/
 		
-		//res.delete(3);
+		//res.delete(12);
 		
 		//UserCsvConverter conv = new UserCsvConverter();
+		//AccountCsvConverter accConv = new AccountCsvConverter();
 		/*
 		List<User> users = res.getAll();
 		
@@ -359,13 +438,18 @@ public class SparkAppMain {
 			System.out.println(conv.toCsv(user));
 		}*/
 		
-		//System.out.println(conv.toCsv(res.getById(3)));
+		//User user = res.getById(4);
+		//System.out.println(conv.toCsv(user));
 		
-		//UserFilterDTO filter = new UserFilterDTO("", UserType.guest, Gender.female);
+		//User user = res.getEager(14);
+		//System.out.println(conv.toCsv(user) + "\n" + accConv.toCsv(user.getAccount()));
+		
+		//UserFilterDTO filter = new UserFilterDTO("ggg", UserType.undefined, Gender.undefined);
 		//List<User> users = res.find(UserFilterConverter.getSpecification(filter));
 		
-		//User user = res.getByUsername("ioihhse");
+		//User user = res.getByUsername("huihhjh");
 		//System.out.println(conv.toCsv(user));
+		//System.out.println(user.getAccount().getPassword());
 		
 		//user.setGender(Gender.female);
 		//user.setName("Marina");
