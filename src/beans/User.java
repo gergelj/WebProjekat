@@ -103,6 +103,10 @@ public class User implements IDeletable, IIdentifiable {
 		this.blocked = blocked;
 	}
 	
+	public void block() {
+		this.setBlocked(true);
+	}
+	
 	public Gender getGender() {
 		return gender;
 	}

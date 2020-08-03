@@ -1,6 +1,6 @@
 package exceptions;
 
-public class InvalidUserException extends Exception {
+public class InvalidUserException extends BadRequestException {
 
 	private static final long serialVersionUID = -1203310741509577680L;
 

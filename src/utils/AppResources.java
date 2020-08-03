@@ -101,6 +101,6 @@ public class AppResources {
 		
 		//TODO: treba dateCollection x2   reservationService = new ReservationService(reservationRepository, availableDateCollectionRepository, bookingDateCollectionRepository);
 		
-		userService = new UserService(userRepository);
+		userService = new UserService(userRepository, accountRepository, reservationService);
 	}
 }

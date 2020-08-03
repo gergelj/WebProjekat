@@ -13,12 +13,13 @@ public class UserDTO {
    private String name;
    private String surname;
    private Gender gender;
+   private String oldPassword;
    private String password;
    private String controlPassword;
    
    
  //Constructors  
-	public UserDTO(String username, String name, String surname, Gender gender, String password, String controlPassword) {
+	public UserDTO(String username, String name, String surname, Gender gender, String password, String controlPassword, String oldPassword) {
 		super();
 		this.username = username;
 		this.name = name;
@@ -26,6 +27,7 @@ public class UserDTO {
 		this.gender = gender;
 		this.password = password;
 		this.controlPassword = controlPassword;
+		this.oldPassword = oldPassword;
 	}
 	
 	public UserDTO() {
@@ -71,6 +73,15 @@ public class UserDTO {
 	public void setControlPassword(String controlPassword) {
 		this.controlPassword = controlPassword;
 	}
+
+	public String getOldPassword() {
+		return oldPassword;
+	}
+
+	public void setOldPassword(String oldPassword) {
+		this.oldPassword = oldPassword;
+	}
+	
 	
 	
 
