@@ -22,7 +22,7 @@ public class CommentRepository extends CSVRepository<Comment> implements ICommen
    
 	private IUserRepository userRepository;
 	
-	public CommentRepository(ICsvStream<Comment> stream, LongSequencer sequencer, IUserRepository userRepository) {
+	public CommentRepository(ICsvStream<Comment> stream, LongSequencer sequencer, IUserRepository userRepository) throws DatabaseException {
 		super("Comment", stream, sequencer);
 		this.userRepository =  userRepository;
 	}

@@ -26,14 +26,14 @@ public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRe
    private ICsvStream<T> stream;
    private LongSequencer sequencer;
    
-   public CSVRepository(String entityName, ICsvStream<T> stream, LongSequencer sequencer){
+   public CSVRepository(String entityName, ICsvStream<T> stream, LongSequencer sequencer) throws DatabaseException{
 	   this.entityName = entityName;
 	   this.stream = stream;
 	   this.sequencer = sequencer;
 	   initializeId();
    }
    
-   public T create(T entity) {
+   public T create(T entity) throws DatabaseException {
 	   entity.setId(this.sequencer.generateId());
 	   this.stream.appendToFile(entity);
 	   return entity;
@@ -63,7 +63,7 @@ public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRe
       return entities.stream().max(Comparator.comparing(T::getId)).get().getId();
    }
    
-   protected void initializeId() {
+   protected void initializeId() throws DatabaseException {
       this.sequencer.initialize(getMaxId(this.stream.readAll()));
    }
    
@@ -82,7 +82,7 @@ public class CSVRepository <T extends IIdentifiable & IDeletable> implements IRe
 	   }
    }
 
-   public List<T> getAll() {
+   public List<T> getAll() throws DatabaseException {
 	  List<T> entities = this.stream.readAll();
       return entities.stream().filter(e -> !e.isDeleted()).collect(Collectors.toList());
    }

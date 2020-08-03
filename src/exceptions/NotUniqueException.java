@@ -12,5 +12,6 @@ public class NotUniqueException extends DatabaseException {
 
 	public NotUniqueException(String arg0) {
 		super(arg0);
+		this.message = arg0;
 	}
 }

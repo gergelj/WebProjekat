@@ -156,7 +156,7 @@ public class UserService {
 	   if(userType != UserType.host)
 		   throw new InvalidUserException();
 	   
-      List<Reservation> reservations = reservationService.getReservationByHost(host);
+      List<Reservation> reservations = reservationService.getReservationByHost(host, userType);
       
       List<User> users = new ArrayList<User>();
       

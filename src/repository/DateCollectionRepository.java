@@ -24,7 +24,7 @@ public class DateCollectionRepository extends CSVRepository<DateCollection> impl
    
 	private IApartmentRepository apartmentRepository;
 	
-	public DateCollectionRepository(String entityName, ICsvStream<DateCollection> stream, LongSequencer sequencer) {
+	public DateCollectionRepository(String entityName, ICsvStream<DateCollection> stream, LongSequencer sequencer) throws DatabaseException {
 		super(entityName, stream, sequencer);
 	}
 	

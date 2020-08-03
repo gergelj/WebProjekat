@@ -34,7 +34,7 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
 	private IDateCollectionRepository availableDateCollectionRepository;
 	private IDateCollectionRepository bookingDateCollectionRepository;
 	
-   public ApartmentRepository(ICsvStream<Apartment> stream, LongSequencer sequencer, IUserRepository userRepository, IAmenityRepository amenityRepository, IEagerCsvRepository<Comment> commentRepository, IDateCollectionRepository availableDateCollectionRepository, IDateCollectionRepository bookingDateCollectionRepository) {
+   public ApartmentRepository(ICsvStream<Apartment> stream, LongSequencer sequencer, IUserRepository userRepository, IAmenityRepository amenityRepository, IEagerCsvRepository<Comment> commentRepository, IDateCollectionRepository availableDateCollectionRepository, IDateCollectionRepository bookingDateCollectionRepository) throws DatabaseException {
 	   super("Apartment", stream, sequencer);
 	   this.userRepository = userRepository;
 	   this.amenityRepository = amenityRepository;
@@ -44,7 +44,7 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
    }
    
    @Override
-   public Apartment create(Apartment apartment) {
+   public Apartment create(Apartment apartment) throws DatabaseException {
 	   apartment = super.create(apartment);
 	   
 	   DateCollection availableDate = new DateCollection(apartment, false, new ArrayList<DateRange>());

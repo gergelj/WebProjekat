@@ -7,6 +7,7 @@ import beans.Comment;
 import beans.DateCollection;
 import beans.Reservation;
 import beans.User;
+import exceptions.DatabaseException;
 import repository.AccountRepository;
 import repository.AmenityRepository;
 import repository.ApartmentRepository;
@@ -32,8 +33,7 @@ import service.UserService;
 
 public class AppResources {
 
-	private static AppResources instance = null;
-	
+	//private static AppResources instance = null;
 	
 	//Repositories
 	public AmenityRepository amenityRepository;
@@ -52,13 +52,14 @@ public class AppResources {
 	public ReservationService reservationService;
 	public UserService userService;
 	
-	private AppResources()
+	public AppResources() throws DatabaseException
 	{
 		loadRespositories();
 		loadServices();
 	}
 	
-	public static AppResources getInstance()
+	/*
+	public static AppResources getInstance() throws DatabaseException
 	{
 		if(instance == null)
 		{
@@ -67,8 +68,9 @@ public class AppResources {
 		
 		return instance;
 	}
+	*/
 	
-	private void loadRespositories()
+	private void loadRespositories() throws DatabaseException
 	{
 		accountRepository = new AccountRepository(new CsvStream<Account>("storage/accounts.dsv", new AccountCsvConverter()), new LongSequencer());
 		
@@ -95,11 +97,11 @@ public class AppResources {
 	{
 		amenityService = new AmenityService(amenityRepository);
 		
-		//TODO: treba dateCollection x2   apartmentService = new ApartmentService(apartmentRepository, availableDateCollectionRepository, bookingDateCollectionRepository);
+		apartmentService = new ApartmentService(apartmentRepository, availableDateCollectionRepository, bookingDateCollectionRepository);
 		
-		commentService = new CommentService(commentRepository);
+		commentService = new CommentService(commentRepository, apartmentRepository);
 		
-		//TODO: treba dateCollection x2   reservationService = new ReservationService(reservationRepository, availableDateCollectionRepository, bookingDateCollectionRepository);
+		reservationService = new ReservationService(reservationRepository, availableDateCollectionRepository, bookingDateCollectionRepository, apartmentRepository);
 		
 		userService = new UserService(userRepository, accountRepository, reservationService);
 	}

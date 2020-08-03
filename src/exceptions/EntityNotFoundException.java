@@ -13,10 +13,12 @@ public class EntityNotFoundException extends DatabaseException {
 
 	public EntityNotFoundException(String arg0) {
 		super(arg0);
+		this.message = arg0;
 	}
 
 	public EntityNotFoundException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
+		this.message = arg0;
 	}
 
 

@@ -53,7 +53,7 @@ public class AmenityService {
       return amenityRepository.getById(id);
    }
    
-   public List<Amenity> getAll() {
+   public List<Amenity> getAll() throws DatabaseException {
       return amenityRepository.getAll();
    }
 

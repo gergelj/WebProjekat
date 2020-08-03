@@ -19,18 +19,25 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import exceptions.DatabaseException;
+import exceptions.FileErrorException;
+
 public class CsvStream <T> implements ICsvStream<T> {
 	
    private String path;
    private ICsvConverter<T> converter;
    private String encoding = "UTF8";
+   
+   private String encodingErrorMessage = "Invalid encoding - '%s'";
+   private String fileNotFoundMessage = "File not found - '%s'";
+   private String fileErrorMessage = "File error - '%s'";
     
    public CsvStream(String path, ICsvConverter<T> converter) {
 	   this.path = path;
 	   this.converter = converter;
    }
    
-   public void saveAll(List<T> entities) {
+   public void saveAll(List<T> entities) throws DatabaseException {
 		try {
 			BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.path), this.encoding));
 			
@@ -42,18 +49,15 @@ public class CsvStream <T> implements ICsvStream<T> {
 			wr.close();
 			
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FileErrorException(String.format(encodingErrorMessage, this.path), e);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FileErrorException(String.format(fileNotFoundMessage, this.path), e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FileErrorException(String.format(fileErrorMessage, this.path), e);
 		}
    }
    
-   public List<T> readAll() {
+   public List<T> readAll() throws DatabaseException {
 	   List<T> entities = new ArrayList<T>();
 	   
 	   try {
@@ -67,20 +71,17 @@ public class CsvStream <T> implements ICsvStream<T> {
 			
 			rd.close();
 	   } catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FileErrorException(String.format(encodingErrorMessage, this.path), e);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FileErrorException(String.format(fileNotFoundMessage, this.path), e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FileErrorException(String.format(fileErrorMessage, this.path), e);
 		}
 	   
 	   return entities;
    }
    
-   public void appendToFile(T entity) {
+   public void appendToFile(T entity) throws DatabaseException {
 	   try {
 			BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.path, true), this.encoding));
 			
@@ -89,15 +90,12 @@ public class CsvStream <T> implements ICsvStream<T> {
 			
 			wr.close();
 			
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	   } catch (UnsupportedEncodingException e) {
+			throw new FileErrorException(String.format(encodingErrorMessage, this.path), e);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FileErrorException(String.format(fileNotFoundMessage, this.path), e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FileErrorException(String.format(fileErrorMessage, this.path), e);
 		}
    }
 

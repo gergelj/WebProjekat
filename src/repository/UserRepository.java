@@ -27,13 +27,13 @@ public class UserRepository extends CSVRepository<User> implements IUserReposito
    private IAccountRepository accountRepository;
      
    
-   public UserRepository(ICsvStream<User> stream, LongSequencer sequencer, IAccountRepository accountRepository) {
+   public UserRepository(ICsvStream<User> stream, LongSequencer sequencer, IAccountRepository accountRepository) throws DatabaseException {
 		super("User", stream, sequencer);
 		this.accountRepository = accountRepository;
 	}
    
    @Override
-   public User create(User user) {
+   public User create(User user) throws DatabaseException {
 	   Account account = accountRepository.create(user.getAccount());
 	   user.setAccount(account);
 	   return super.create(user);

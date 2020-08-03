@@ -95,16 +95,31 @@ public class SparkAppMain {
 	 * Biblioteka: https://github.com/jwtk/jjwt
 	 */
 	static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+	static AppResources resources;
 	
 	AppResources res;
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
+		
+		try {
+			resources = new AppResources();
+		} catch (DatabaseException e1) {
+			e1.printStackTrace();
+			System.out.println("Server resources failed to load");
+		}
 		
 		//amenityConverterTest();
 		//apartmentConverterTest();
 		//commentConverterTest();
 		
-		testRepositories();
+		try {
+			
+			testRepositories();
+			
+		} catch (DatabaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -119,7 +134,7 @@ public class SparkAppMain {
 	}
 	
 	private static void dateCollectoinRepoTest() {
-		DateCollectionRepository res = AppResources.getInstance().availableDateCollectionRepository;
+		DateCollectionRepository res = resources.availableDateCollectionRepository;
 		
 		DateCollection dc = new DateCollection(new Apartment(), false, new ArrayList<DateRange>());
 		
@@ -127,7 +142,7 @@ public class SparkAppMain {
 	
 	private static void amenityRepoTest()
 	{
-		AmenityRepository res = AppResources.getInstance().amenityRepository;
+		AmenityRepository res = resources.amenityRepository;
 		
 		/*RADE:
 		 * - create
@@ -166,10 +181,10 @@ public class SparkAppMain {
 		 * - find			?
 		 */
 		
-		ApartmentRepository res = AppResources.getInstance().apartmentRepository;
-		UserRepository userRes = AppResources.getInstance().userRepository;
-		AmenityRepository amRes = AppResources.getInstance().amenityRepository;
-		CommentRepository comRes = AppResources.getInstance().commentRepository;
+		ApartmentRepository res = resources.apartmentRepository;
+		UserRepository userRes = resources.userRepository;
+		AmenityRepository amRes = resources.amenityRepository;
+		CommentRepository comRes = resources.commentRepository;
 		
 		ApartmentCsvConverter conv = new ApartmentCsvConverter();
 		
@@ -308,9 +323,9 @@ public class SparkAppMain {
 	
 	private static void commentRepoTest() throws DatabaseException
 	{
-		CommentRepository res = AppResources.getInstance().commentRepository;
+		CommentRepository res = resources.commentRepository;
 		CommentCsvConverter conv = new CommentCsvConverter();
-		UserRepository userRepo = AppResources.getInstance().userRepository;
+		UserRepository userRepo = resources.userRepository;
 		
 		Comment comment1 = new Comment("Vas apartamn je potpuno sranje.\nNe zelim nikome da ode tamo vise u zivotu", 1, false, false, userRepo.getById(4));
 		Comment comment2 = new Comment("Najbolji apartman u gradu", 5, false, false, userRepo.getById(5));
@@ -359,9 +374,9 @@ public class SparkAppMain {
 		 * - getEager
 		 */
 		
-		ReservationRepository res = AppResources.getInstance().reservationRepository;
-		ApartmentRepository apRes = AppResources.getInstance().apartmentRepository;
-		UserRepository userRes = AppResources.getInstance().userRepository;
+		ReservationRepository res = resources.reservationRepository;
+		ApartmentRepository apRes = resources.apartmentRepository;
+		UserRepository userRes = resources.userRepository;
 		
 		ReservationCsvConverter conv = new ReservationCsvConverter();
 		
@@ -409,7 +424,7 @@ public class SparkAppMain {
 	
 	private static void userRepoTest() throws DatabaseException
 	{
-		UserRepository res = AppResources.getInstance().userRepository;
+		UserRepository res = resources.userRepository;
 		
 		User user1 = new User(new Account("ggg", "huigf9wdbwhbd", false), "Igor", "Jovin", false, false, Gender.male, UserType.host);
 		User user2 = new User(new Account("huihhjh", "rtdyGYUguryw7", false), "Marko", "Jovin", false, false, Gender.male, UserType.guest);

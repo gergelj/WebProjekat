@@ -155,8 +155,9 @@ public class ApartmentService {
     *  <b>Called by:</b> host<br>
     *  
     * @throws InvalidUserException
+    * @throws DatabaseException 
     */
-   public Apartment create(Apartment apartment, UserType userType) throws InvalidUserException {
+   public Apartment create(Apartment apartment, UserType userType) throws InvalidUserException, DatabaseException {
 	   if(userType == UserType.host)
 	   {
 		   apartmentRepository.create(apartment);

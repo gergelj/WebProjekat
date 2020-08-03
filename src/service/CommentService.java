@@ -34,8 +34,9 @@ public class CommentService {
     *  <b>Called by:</b> guest<br>
     *  
     * @throws InvalidUserException
+    * @throws DatabaseException 
     */
-   public void create(Comment comment, UserType userType) throws InvalidUserException {
+   public void create(Comment comment, UserType userType) throws InvalidUserException, DatabaseException {
 	   //TODO: proveriti da li treba da se proverava i status rezervacije
 	   //      strana 8 - ostavaljanej komentara
 	   //      return type je bio Comment?

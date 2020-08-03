@@ -196,7 +196,7 @@ public class ReservationService {
     * @throws DatabaseException 
     * @throws InvalidUserException
     */
-   public void create(Reservation reservation, UserType userType) throws InvalidUserException {
+   public void create(Reservation reservation, UserType userType) throws InvalidUserException, DatabaseException {
       if(userType == UserType.guest)
       {
     	 reservationRepository.create(reservation);
