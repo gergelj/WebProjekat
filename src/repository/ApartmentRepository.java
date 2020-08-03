@@ -136,5 +136,14 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
       
       return apartments;
    }
-
+   
+   public List<Comment> getAllComments(Apartment apartment)
+   {
+	   return apartment.getComments();
+   }
+   
+   public DateCollection getAvailableDatesForApartment(Apartment apartment) throws DatabaseException
+   {
+	   return availableDateCollectionRepository.getByApartmentId(apartment.getId());
+   }
 }
