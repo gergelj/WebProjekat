@@ -56,11 +56,18 @@ import beans.ReservationStatus;
 import beans.User;
 import beans.UserType;
 import dto.ApartmentFilterDTO;
+import dto.ErrorMessageDTO;
+import dto.TokenDTO;
+import dto.UserDTO;
 import dto.UserFilterDTO;
+import exceptions.BadRequestException;
 import exceptions.DatabaseException;
 import exceptions.EntityNotFoundException;
+import exceptions.InvalidUserException;
+import exceptions.NotUniqueException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -96,10 +103,12 @@ public class SparkAppMain {
 	 */
 	static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	static AppResources resources;
+	static UserCsvConverter userConverter = new UserCsvConverter();
+	private static int minutesUntilTokenExpires = 30;
 	
-	AppResources res;
+	//AppResources res;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		try {
 			resources = new AppResources();
@@ -112,6 +121,7 @@ public class SparkAppMain {
 		//apartmentConverterTest();
 		//commentConverterTest();
 		
+		/*
 		try {
 			
 			testRepositories();
@@ -120,16 +130,124 @@ public class SparkAppMain {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
+		
+		
+		port(8080);
+
+		webSocket("/ws", WsHandler.class);
+
+		staticFiles.externalLocation(new File("./static").getCanonicalPath());
+		
+		get("/rest/vazduhbnb/test", (req, res) -> {
+			return "Works";
+		});
+		
+		post("/rest/vazduhbnb/login", (req, res) -> {
+			//TODO: obavezno detaljnije pogledati
+			
+			res.type("application/json");
+			String payload = req.body();
+			UserDTO u = g.fromJson(payload, UserDTO.class);
+			
+			User loggedInUser = null;
+			
+			try{
+				loggedInUser = resources.userService.login(u);
+				
+				String jws = getJwtToken(loggedInUser);
+				
+				System.out.println("Returned JWT: " + jws);
+				
+				return g.toJson(new TokenDTO(jws), TokenDTO.class);
+				
+				//TODO: povratna vrednost kod exception-a
+			}catch(InvalidUserException ex) {
+				res.status(403); //forbidden (blocked user)
+				ex.printStackTrace();
+			}catch(BadRequestException ex) {
+				res.status(400);
+				ex.printStackTrace();
+			} catch(DatabaseException ex) {
+				res.status(500);
+				ex.printStackTrace();
+			}
+			
+			return g.toJson(loggedInUser);
+		});
+		
+		get("/rest/vazduhbnb/testloginJWT", (req, res) -> {
+			//TODO: obavezno detaljnije pogledati
+			String auth = req.headers("Authorization");
+			System.out.println("Authorization: " + auth);
+			if ((auth != null) && (auth.contains("Bearer "))) {
+				String jwt = auth.substring(auth.indexOf("Bearer ") + 7);
+				try {
+				    Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
+				    // ako nije bacio izuzetak, onda je OK
+					return "User " + claims.getBody().getSubject() + " logged in.";
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+			}
+			return "No user logged in.";
+		});
+		
+		post("/rest/vazduhbnb/register", (request, response) -> {
+			
+			response.type("application/json");
+			String payload = request.body();
+			
+			UserDTO u = g.fromJson(payload, UserDTO.class);
+			
+			try {
+				User registeredUser = resources.userService.register(u);
+				response.status(200); // OK
+				String jws = getJwtToken(registeredUser);
+				System.out.println("Registered user: " + registeredUser.getAccount().getUsername() + " with JWTToken: " + jws);
+				
+				return g.toJson(new TokenDTO(jws), TokenDTO.class);
+				
+			} catch(NotUniqueException ex) {
+				response.status(409); // username is not unique
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			} catch(BadRequestException ex) {
+				response.status(400); // data is invalid
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			} catch (DatabaseException ex) {
+				response.status(500); // server-side error
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		get("/*", (request, response) -> {
+			response.status(404);
+			response.redirect("/404.html");
+			return "";
+		});
+		
 	}
 	
-	
+	private static String getJwtToken(User user) {
+		
+		JwtBuilder jwtBuilder = Jwts.builder();
+		jwtBuilder.setSubject(userConverter.toCsv(user));
+		
+		// Token je validan 30 minuta!
+		jwtBuilder.setExpiration(new Date(new Date().getTime() + 1000*minutesUntilTokenExpires*60L));
+		jwtBuilder.setIssuedAt(new Date());
+		
+		
+		return jwtBuilder.signWith(key).compact();
+	}
+
 	private static void testRepositories() throws DatabaseException
 	{
 		//amenityRepoTest();
 		//apartmentRepoTest();
 		//TODO: dateCollectionTest();
 		//commentRepoTest();
-		reservationRepoTest();
+		//reservationRepoTest();
 		//userRepoTest();
 	}
 	
