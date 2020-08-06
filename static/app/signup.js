@@ -1,6 +1,6 @@
 $(document).ready(function(){
     let forma = $("#registration-form");
-
+    
     forma.submit(function(){
         let userData = getFormData(forma);
 
@@ -24,9 +24,9 @@ $(document).ready(function(){
                             window.localStorage.setItem('jwt', responseData.token);
                             window.location.href = "index.html";
                         } break;
-                        case 400: alert(responseData.message); break;
-                        case 409: notUniqueUsernameError(); break;
-                        case 500: alert("Server error. Try again later."); break;
+                        case 400: pushErrorNotification("An error occured", responseData.message);/*alert(responseData.message)*/; break; //invalid data
+                        case 409: notUniqueUsernameError(); break; // username not unique
+                        case 500: pushErrorNotification("An error occured", "Please try again later.");/*alert("Server error. Try again later.");*/ break; // server-side error
                     }
                     //console.log(data);
                 }
