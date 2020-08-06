@@ -115,6 +115,7 @@ public class SparkAppMain {
 		} catch (DatabaseException e1) {
 			e1.printStackTrace();
 			System.out.println("Server resources failed to load");
+			return;
 		}
 		
 		//amenityConverterTest();
