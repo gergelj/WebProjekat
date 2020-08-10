@@ -1,8 +1,8 @@
 $(document).ready(function(){
     var config = 
     {
-        positionX: "center",
-        positionY: "top"
+        positionX: "center",
+        positionY: "top"
     };
     mkNotifications(config);
 });

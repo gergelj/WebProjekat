@@ -56,8 +56,6 @@ function checkPassword(password, controlPassowrd, oldPassword)
     }
     else
     {
-        if(oldPasswordCorrect(oldPasswordInput))
-        {
             if(!checkPasswordLength(password))
             {
                 addInvalidClass(passwordInput);
@@ -95,15 +93,6 @@ function checkPassword(password, controlPassowrd, oldPassword)
 
                 return false;
             }
-        }
-        else
-        {
-            addInvalidClass(oldPasswordInput);
-
-            addErrorMessage(oldPasswordInput, "Invalid old password.");
-
-            return false;
-        }
     }
 }
 
@@ -124,7 +113,6 @@ function checkBasicData(name, element, dataName)
 
 function addAllInvalidClasses(oldPasswordInput, passwordInput, controlPasswordInput)
 {
-    addInvalidClass(oldPasswordInput);
     addInvalidClass(passwordInput);
     addInvalidClass(controlPasswordInput);
 }
@@ -144,7 +132,7 @@ function removeValidationClass(element)
 
 function addValidClass(element)
 {
-    element.addClass("is-valid");
+    //element.addClass("is-valid");
 }
 
 function addInvalidClass(element)
@@ -162,11 +150,6 @@ function addErrorMessage(element, message)
     element.siblings(".invalid-feedback").html(message);
 }
 
-function oldPasswordCorrect(oldPassword)
-{
-    return true;
-}
-
 function checkPasswordLength(password)
 {
     return password.length >= 8 && password.length<=20;
@@ -176,7 +159,16 @@ var profile = new Vue({
     el:'#container',
     data:
     {
-        user: {account: {}}
+        user: {account: {}},
+        selected: null,
+        options: [
+           { value: 'male', text: 'Male' },
+           { value: 'female', text: 'Female' },
+           { value: 'other', text: 'Other' }
+        ],
+        oldPassword: '',
+        password: '',
+        controlPassword: ''
     },
     mounted()
     {
@@ -190,6 +182,56 @@ var profile = new Vue({
                     'Authorization': 'Bearer ' + jwt
                 }
             })
-            .then(response => (this.user = response.data))
+            .then(response => {
+                this.user = response.data;
+                this.selected = this.user.gender;
+            })
+            .catch(function(error){
+                console.log(error.response)
+                    switch(error.response.status)
+                    {
+                        case 400:
+                            pushErrorNotification("Bad request",'Bad request sent');
+                            break;    
+                        case 500:
+                            pushErrorNotification('Internal server error','Please try again later.');
+                            break;
+                    }
+            })
+    },
+    methods:
+    {
+        updateUser: function()
+        {
+            let userDto={
+                username: this.user.account.username,
+                name: this.user.name,
+                surname: this.user.surname,
+                gender: this.selected,
+                oldPassword: this.oldPassword,
+                password: this.password,
+                controlPassword: this.controlPassword
+            }
+
+            axios
+                .put("rest/vazduhbnb/updateUser", userDto)
+                .then(response => {
+                    console.log("uspesno updejtovan");
+                    pushSuccessNotification('Success!','User updated successfully!');
+                })
+                .catch(function(error){
+                    console.log(error.response)
+                    switch(error.response.status)
+                    {
+                        case 409:
+                            pushErrorNotification("Invalid Password",'You entered wrong old password!');
+                            break;    
+                        case 500:
+                            pushErrorNotification('Internal server error','Please try again later.');
+                            break;
+                    }
+                })
+        }
+
     }
 });

@@ -17,6 +17,7 @@ import beans.UserType;
 import dto.UserFilterDTO;
 import exceptions.BadRequestException;
 import exceptions.DatabaseException;
+import exceptions.InvalidPasswordException;
 import exceptions.InvalidUserException;
 import exceptions.NotUniqueException;
 
@@ -115,7 +116,7 @@ public class UserService {
    public User update(UserDTO user) throws BadRequestException, DatabaseException {
 	   
       validatePersonalInfoFields(user);
-      
+            
       User updateUser = userRepository.getByUsername(user.getUsername());
       updateUser.setName(user.getName());
       updateUser.setSurname(user.getSurname());
@@ -129,7 +130,7 @@ public class UserService {
     		  accountRepository.update(updateUser.getAccount());
     	  }
     	  else {
-    		  throw new BadRequestException(oldPasswordError);
+    		  throw new InvalidPasswordException(oldPasswordError);
     	  }
       }
        
