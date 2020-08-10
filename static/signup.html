@@ -11,46 +11,155 @@
     <link rel="manifest" href="/site.webmanifest">
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="css/bootstrap-vue.min.css"/>
     <link rel="stylesheet" href="css/mk-notifications.min.css">
     <link rel="stylesheet" href="css/webfonts.min.css">
     <link rel="stylesheet" href="css/page.css">
     <link rel="stylesheet" href="css/navbar.css">
     <style>
         body{
-            background-image: url('../images/index.jpg');
+            background-image: url('images/index.jpg');
             background-size: cover;
             background-position: center;
             position: relative;
             background-attachment: fixed;
-            padding-top: 50px;
         }
     </style>
 </head>
 <body>
-    <div>
-        <nav class="navbar navbar-expand-md fixed-top">
-            <a class="navbar-brand" href="index.html">
-                <img src="images/logo-white.png" height="30px">
-            </a>
-            <button class="navbar-toggler navbar-dark" type="button" data-toggle="collapse" data-target="#main-navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="main-navigation">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.html">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </div>
     
+    <div id="app">
+        <navigation-bar></navigation-bar>
+        
+        <b-container>
+            <b-row>
+                <b-col md="5" class="mx-auto">
+                    <b-card
+                        class="mt-5"
+                        no-body
+                        border-variant="danger"
+                        bg-variant="light"
+                        >
+
+                        <template v-slot:header>
+                            <h4 align="center" class="mb-0">Sign Up</h4>
+                        </template>
+
+                        <b-card-body>
+                            <b-form novalidate>
+                                <b-form-group id="input-group-username"
+                                    label="Username *"
+                                    label-for="input-username">
+
+                                    <b-form-input id="input-username"
+                                        v-model="username"
+                                        :state="usernameValidation"
+                                        trim>
+                                    </b-form-input>
+
+                                    <b-form-invalid-feedback >
+                                        {{usernameErrorMessage}}
+                                    </b-form-invalid-feedback>
+                                </b-form-group>
+
+                                <b-form-group id="input-group-password"
+                                    label="Password *"
+                                    label-for="input-password">
+
+                                    <b-form-input id="input-password"
+                                        v-model="password"
+                                        :state="passwordValidation"
+                                        type="password"
+                                        trim>
+                                    </b-form-input>
+
+                                    <b-form-invalid-feedback >
+                                        {{passwordErrorMessage}}
+                                    </b-form-invalid-feedback>
+                                </b-form-group>
+
+                                <b-form-group id="input-group-control-password"
+                                    label="Confirm password *"
+                                    label-for="input-control-password">
+
+                                    <b-form-input id="input-control-password"
+                                        v-model="controlPassword"
+                                        :state="controlPasswordValidation"
+                                        type="password"
+                                        trim>
+                                    </b-form-input>
+
+                                    <b-form-invalid-feedback >
+                                        {{controlPasswordErrorMessage}}
+                                    </b-form-invalid-feedback>
+                                </b-form-group>
+
+                                <b-form-group id="input-group-name"
+                                    label="First Name *"
+                                    label-for="input-name">
+
+                                    <b-form-input id="input-name"
+                                        v-model="name"
+                                        :state="nameValidation"
+                                        trim>
+                                    </b-form-input>
+
+                                    <b-form-invalid-feedback >
+                                        {{nameErrorMessage}}
+                                    </b-form-invalid-feedback>
+                                </b-form-group>
+
+                                <b-form-group id="input-group-surname"
+                                    label="Last Name *"
+                                    label-for="input-surname">
+
+                                    <b-form-input id="input-surname"
+                                        v-model="surname"
+                                        :state="surnameValidation"
+                                        trim>
+                                    </b-form-input>
+
+                                    <b-form-invalid-feedback >
+                                        {{surnameErrorMessage}}
+                                    </b-form-invalid-feedback>
+                                </b-form-group>
+
+                                <b-form-group id="input-group-gender"
+                                    label="Gender *"
+                                    label-for="input-gender">
+
+                                    <b-form-select id="input-gender"
+                                        v-model="gender"
+                                        :options="genderOptions">
+                                    </b-form-input>
+                                </b-form-group>
+
+                                <b-row align-h="center">
+                                    <b-button variant="primary" @click="submit" :disabled="!isDataValid">Sign Up</b-button>
+                                  </b-row>
+
+                            </b-form>
+                        </b-card-body>
+
+                        <b-card-footer>
+                            <b-row align-h="between">
+                                <b-col cols="auto" align-self="center">Already have an account?</b-col>
+                                <b-col cols="auto" align-self="center">
+                                    <b-button href="login.html" variant="outline-info">Log In</b-button>
+                                </b-col>
+                            </b-row>
+
+                        </b-card-footer>
+
+                    </b-card>
+                </b-col>
+            </b-row>
+        </b-container>
+
+
+    </div>
+   
+    <!--
     <div class="container">
         <div class="row">
 			<div class="col-md-5 mx-auto">
@@ -120,7 +229,6 @@
         <div class="row mb-5">
             <div class="col-md-5 mx-auto">
                 <div class="mycard form mt-5 text-center d-flex justify-content-center">
-                    <a href="javascript:toast('Hello');">Click me!</a>
                     <div>
                         Already have an account?
                     </div>
@@ -129,11 +237,14 @@
             </div>
         </div>
     </div>
-
+-->
+    <script src="js/vue.min.js"></script>
+    <script src="js/bootstrap-vue.min.js"></script>
     <script src="js/jquery-3.5.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="js/axios.min.js"></script>
     <script src="js/mk-notifications.min.js"></script>
-    <script src="app/signup.js"></script>
+    <script src="js/components/navigation-bar.js"></script>
     <script src="js/notification.js"></script>
+    <script src="app/signup.js"></script>
 </body>
 </html>

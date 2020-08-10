@@ -6,23 +6,20 @@ import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 import static spark.Spark.webSocket;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
+
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.http.Part;
+import javax.xml.bind.DatatypeConverter;
 
 import com.google.gson.Gson;
 
@@ -34,18 +31,9 @@ import beans.ApartmentType;
 import beans.Comment;
 import beans.Location;
 import beans.Picture;
-import beans.PriceRange;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.StringJoiner;
-
-import com.google.gson.Gson;
 
 import beans.Apartment;
 import beans.DateCollection;
@@ -55,14 +43,12 @@ import beans.Reservation;
 import beans.ReservationStatus;
 import beans.User;
 import beans.UserType;
-import dto.ApartmentFilterDTO;
+import dto.ApartmentDTO;
 import dto.ErrorMessageDTO;
 import dto.TokenDTO;
 import dto.UserDTO;
-import dto.UserFilterDTO;
 import exceptions.BadRequestException;
 import exceptions.DatabaseException;
-import exceptions.EntityNotFoundException;
 import exceptions.InvalidUserException;
 import exceptions.NotUniqueException;
 import io.jsonwebtoken.Claims;
@@ -77,19 +63,14 @@ import repository.CommentRepository;
 import repository.DateCollectionRepository;
 import repository.ReservationRepository;
 import repository.UserRepository;
-import repository.abstractrepository.IUserRepository;
-import repository.csv.converter.AccountCsvConverter;
 import repository.csv.converter.AmenityCsvConverter;
 import repository.csv.converter.ApartmentCsvConverter;
 import repository.csv.converter.CommentCsvConverter;
 import repository.csv.converter.DateCollectionCsvConverter;
 import repository.csv.converter.ReservationCsvConverter;
 import repository.csv.converter.UserCsvConverter;
-import repository.csv.stream.ICsvStream;
-import repository.sequencer.LongSequencer;
 import spark.Session;
-import specification.filterconverter.ApartmentFilterConverter;
-import specification.filterconverter.UserFilterConverter;
+import spark.utils.IOUtils;
 import utils.AppResources;
 import ws.WsHandler;
 
@@ -160,7 +141,7 @@ public class SparkAppMain {
 				
 				System.out.println("Returned JWT: " + jws);
 				
-				return g.toJson(new TokenDTO(jws), TokenDTO.class);
+				return g.toJson(new TokenDTO(jws, loggedInUser.getAccount().getUsername(), loggedInUser.getUserType()), TokenDTO.class);
 				
 				//TODO: povratna vrednost kod exception-a
 			}catch(InvalidUserException ex) {
@@ -207,7 +188,7 @@ public class SparkAppMain {
 				String jws = getJwtToken(registeredUser);
 				System.out.println("Registered user: " + registeredUser.getAccount().getUsername() + " with JWTToken: " + jws);
 				
-				return g.toJson(new TokenDTO(jws), TokenDTO.class);
+				return g.toJson(new TokenDTO(jws, registeredUser.getAccount().getUsername(), registeredUser.getUserType()), TokenDTO.class);
 				
 			} catch(NotUniqueException ex) {
 				response.status(409); // username is not unique
@@ -221,6 +202,25 @@ public class SparkAppMain {
 			}
 		});
 		
+		post("/rest/vazduhbnb/apartment", (request, response) -> {
+
+			String payload = request.body();
+			
+			ApartmentDTO apartment = g.fromJson(payload, ApartmentDTO.class);
+			
+			try{
+				List<Picture> pictures = savePictures(apartment.getPictures());
+				
+			}catch(DatabaseException e){
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO("Internal Server Error"), ErrorMessageDTO.class);
+			}
+
+			
+			return "Whatever";
+			
+		});
+		
 		get("/*", (request, response) -> {
 			response.status(404);
 			response.redirect("/404.html");
@@ -229,6 +229,46 @@ public class SparkAppMain {
 		
 	}
 	
+	private static List<Picture> savePictures(List<String> pictures) throws DatabaseException {
+		List<Picture> retVal = new ArrayList<Picture>();
+		
+		for(String pictureString : pictures) {
+			
+			String[] strings = pictureString.split(",");
+	        String extension = "";
+	        
+	        try {		        	
+	        	extension = strings[0].split(";")[0].split("/")[1];
+	        }catch(Exception e) {
+	        	
+	        }
+	        
+	        if(extension.equals(""))
+	        	extension = "bin"; // fallback extension
+	        
+	        String filename = "uploads" + File.separator + new Date().getTime();
+	        
+	        //convert base64 string to binary data
+	        byte[] data = DatatypeConverter.parseBase64Binary(strings[1]);
+	        File file = new File("static" + File.separator + filename + "." + extension);
+	        
+	        if(file.exists())
+	        	filename += "-" + new Date().getTime();
+	        
+	        
+	        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+	            outputStream.write(data);
+	            
+	            retVal.add(new Picture(filename + "." + extension));
+	            
+	        } catch (IOException e) {
+	        	throw new DatabaseException("Internal Server Error");
+	        }
+		}
+		
+		return retVal;
+	}
+
 	private static String getJwtToken(User user) {
 		
 		JwtBuilder jwtBuilder = Jwts.builder();

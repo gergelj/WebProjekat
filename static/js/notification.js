@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var config = 
+    let config = 
     {
         positionX: "center",
         positionY: "top"
