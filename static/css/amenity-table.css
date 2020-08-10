@@ -1,0 +1,43 @@
+#tabela, th,td
+{
+    width: 90%;
+    margin:auto;
+    background-clip: padding-box;
+    border-radius: 1rem;
+    border-style: solid;
+    border-width: 1px;
+}
+
+th,td
+{
+    height: 50px;
+    width: auto;
+    border-radius: 1rem;
+    justify-content: center;
+}
+
+
+#amenities
+{
+    margin-left: 10%;
+    margin-right: 10%;
+    background-color: rgba(255, 255, 255, 0.8);
+    background-clip: padding-box;
+    border-radius: 1rem;
+}
+
+#form1
+{
+    margin-left: 0;
+    width: 48%;
+    padding: 2%;
+    float: left;
+}
+
+#form2
+{
+    float: left;
+    margin-right: 0;
+    width: 48%;
+    padding: 2%;
+}

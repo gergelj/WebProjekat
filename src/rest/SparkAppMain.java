@@ -3,6 +3,7 @@ package rest;
 import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
+import static spark.Spark.put;
 import static spark.Spark.staticFiles;
 import static spark.Spark.webSocket;
 
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +51,8 @@ import dto.TokenDTO;
 import dto.UserDTO;
 import exceptions.BadRequestException;
 import exceptions.DatabaseException;
+import exceptions.EntityNotFoundException;
+import exceptions.InvalidPasswordException;
 import exceptions.InvalidUserException;
 import exceptions.NotUniqueException;
 import io.jsonwebtoken.Claims;
@@ -69,6 +73,10 @@ import repository.csv.converter.CommentCsvConverter;
 import repository.csv.converter.DateCollectionCsvConverter;
 import repository.csv.converter.ReservationCsvConverter;
 import repository.csv.converter.UserCsvConverter;
+import repository.csv.stream.ICsvStream;
+import repository.sequencer.LongSequencer;
+import service.UserService;
+import spark.Request;
 import spark.Session;
 import spark.utils.IOUtils;
 import utils.AppResources;
@@ -86,6 +94,7 @@ public class SparkAppMain {
 	static AppResources resources;
 	static UserCsvConverter userConverter = new UserCsvConverter();
 	private static int minutesUntilTokenExpires = 30;
+	
 	
 	//AppResources res;
 
@@ -115,7 +124,7 @@ public class SparkAppMain {
 		*/
 		
 		
-		port(8080);
+		port(8088);
 
 		webSocket("/ws", WsHandler.class);
 
@@ -124,6 +133,7 @@ public class SparkAppMain {
 		get("/rest/vazduhbnb/test", (req, res) -> {
 			return "Works";
 		});
+		
 		
 		post("/rest/vazduhbnb/login", (req, res) -> {
 			//TODO: obavezno detaljnije pogledati
@@ -146,34 +156,18 @@ public class SparkAppMain {
 				//TODO: povratna vrednost kod exception-a
 			}catch(InvalidUserException ex) {
 				res.status(403); //forbidden (blocked user)
-				ex.printStackTrace();
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}catch(BadRequestException ex) {
 				res.status(400);
-				ex.printStackTrace();
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			} catch(DatabaseException ex) {
 				res.status(500);
-				ex.printStackTrace();
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}
 			
-			return g.toJson(loggedInUser);
 		});
+				
 		
-		get("/rest/vazduhbnb/testloginJWT", (req, res) -> {
-			//TODO: obavezno detaljnije pogledati
-			String auth = req.headers("Authorization");
-			System.out.println("Authorization: " + auth);
-			if ((auth != null) && (auth.contains("Bearer "))) {
-				String jwt = auth.substring(auth.indexOf("Bearer ") + 7);
-				try {
-				    Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
-				    // ako nije bacio izuzetak, onda je OK
-					return "User " + claims.getBody().getSubject() + " logged in.";
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
-			}
-			return "No user logged in.";
-		});
 		
 		post("/rest/vazduhbnb/register", (request, response) -> {
 			
@@ -221,12 +215,171 @@ public class SparkAppMain {
 			
 		});
 		
+		get("/rest/vazduhbnb/profile", (request, response)->{
+			User loggedinUser = getLoggedInUser(request);
+			
+			if(loggedinUser == null)
+			{
+				response.status(400);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			try{
+				
+				return g.toJson(resources.userService.getById(loggedinUser.getId()), User.class);
+				
+				//TODO: povratna vrednost kod exception-a
+			} catch(DatabaseException ex) {
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+			
+		});
+		
+		put("/rest/vazduhbnb/updateUser", (request, response)->{
+			response.type("application/json");
+			String payload = request.body();
+			
+			UserDTO updatedUser = g.fromJson(payload, UserDTO.class);
+			
+			try {
+				User user = resources.userService.update(updatedUser);
+				return g.toJson(resources.userService.getById(user.getId()), User.class);
+			}
+			catch(DatabaseException ex)
+			{
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class );
+			}
+			catch(InvalidPasswordException ex)
+			{
+				response.status(409);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+			catch(BadRequestException ex)
+			{
+				response.status(400);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		put("/rest/vazduhbnb/updateAmenityName", (request, response)->{
+			response.type("application/json");
+
+			String payload = request.body();
+			Amenity updatedAmenity = g.fromJson(payload, Amenity.class);
+						
+			try
+			{
+				resources.amenityService.update(updatedAmenity);
+				return g.toJson(updatedAmenity);
+			}
+			catch(DatabaseException ex)
+			{
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		put("/rest/vazduhbnb/deleteAmenity", (request, response)->{
+			response.type("application/json");
+			
+			String payload = request.body();
+			Amenity deletedAmenity = g.fromJson(payload, Amenity.class);
+			
+			try {
+				resources.amenityService.delete(deletedAmenity);
+				return g.toJson(deletedAmenity);
+			}
+			catch(DatabaseException ex)
+			{
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		post("/rest/vazduhbnb/addNewAmenity", (request, response)->{
+			response.type("application/json");
+			
+			String payload = request.body();
+			
+			String amenityName = g.fromJson(payload, String.class);
+			
+			System.out.println(amenityName);
+			
+			try {
+				resources.amenityService.create(new Amenity(amenityName, false));
+				return g.toJson(amenityName);
+			}
+			catch (DatabaseException ex) {
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		get("/rest/vazduhbnb/amenities", (request, response)->{
+			response.type("application/json");
+			
+			try
+			{
+				List<Amenity> amenities = resources.amenityService.getAll();
+				return g.toJson(amenities);
+			}
+			catch(DatabaseException ex)
+			{
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		get("/rest/vazduhbnb/userType", (request, response)->{
+			response.type("application/json");
+			
+			User loggedinUser = getLoggedInUser(request);
+			if(loggedinUser != null)
+				return g.toJson(loggedinUser.getUserType());
+			return g.toJson(UserType.undefined);
+		});
+		
+		
+		
 		get("/*", (request, response) -> {
 			response.status(404);
 			response.redirect("/404.html");
 			return "";
 		});
 		
+		get("/rest/vazduhbnb/testloginJWT", (req, res) -> {
+			//TODO: obavezno detaljnije pogledati
+			String auth = req.headers("Authorization");
+			System.out.println("Authorization: " + auth);
+			if ((auth != null) && (auth.contains("Bearer "))) {
+				String jwt = auth.substring(auth.indexOf("Bearer ") + 7);
+				try {
+				    Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
+				    // ako nije bacio izuzetak, onda je OK
+					return "User " + claims.getBody().getSubject() + " logged in.";
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+			}
+			return "No user logged in.";
+		});
+	}
+	
+	private static User getLoggedInUser(Request request) {
+		String auth = request.headers("Authorization");
+		if ((auth != null) && (auth.contains("Bearer "))) {
+			String jwt = auth.substring(auth.indexOf("Bearer ") + 7);
+			try {
+			    Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
+			    // ako nije bacio izuzetak, onda je OK
+				System.out.println("User " + claims.getBody().getSubject() + " logged in.");
+				return userConverter.fromCsv(claims.getBody().getSubject());
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		return null;
 	}
 	
 	private static List<Picture> savePictures(List<String> pictures) throws DatabaseException {
