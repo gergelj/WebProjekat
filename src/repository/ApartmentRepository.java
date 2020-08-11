@@ -13,7 +13,6 @@ import beans.Amenity;
 import beans.Apartment;
 import beans.Comment;
 import beans.DateCollection;
-import beans.DateRange;
 import beans.User;
 import exceptions.DatabaseException;
 import repository.abstractrepository.IAmenityRepository;
@@ -41,19 +40,6 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
 	   this.commentRepository = commentRepository;
 	   this.availableDateCollectionRepository = availableDateCollectionRepository;
 	   this.bookingDateCollectionRepository = bookingDateCollectionRepository;
-   }
-   
-   @Override
-   public Apartment create(Apartment apartment) throws DatabaseException {
-	   apartment = super.create(apartment);
-	   
-	   DateCollection availableDate = new DateCollection(apartment, false, new ArrayList<DateRange>());
-	   DateCollection bookingDate = new DateCollection(apartment, false, new ArrayList<DateRange>());
-	   
-	   availableDateCollectionRepository.create(availableDate);
-	   bookingDateCollectionRepository.create(bookingDate);
-	   
-	   return apartment;
    }
    
    @Override

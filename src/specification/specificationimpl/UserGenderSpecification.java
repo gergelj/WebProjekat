@@ -6,8 +6,8 @@
 
 package specification.specificationimpl;
 
-import beans.Gender;
 import beans.User;
+import beans.enums.Gender;
 import specification.AbstractSpecification;
 
 public class UserGenderSpecification extends AbstractSpecification<User> {

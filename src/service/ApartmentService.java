@@ -10,7 +10,7 @@ import repository.ApartmentRepository;
 import repository.CommentRepository;
 import repository.DateCollectionRepository;
 import beans.User;
-import beans.UserType;
+import beans.enums.UserType;
 import beans.Apartment;
 import beans.Comment;
 import beans.DateCollection;

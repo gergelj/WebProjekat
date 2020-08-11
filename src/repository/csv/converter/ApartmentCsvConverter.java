@@ -13,11 +13,11 @@ import java.util.StringJoiner;
 import beans.Address;
 import beans.Amenity;
 import beans.Apartment;
-import beans.ApartmentType;
 import beans.Comment;
 import beans.Location;
 import beans.Picture;
 import beans.User;
+import beans.enums.ApartmentType;
 
 public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
    private String delimiter = "~";

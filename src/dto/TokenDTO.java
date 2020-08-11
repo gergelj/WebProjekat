@@ -1,6 +1,6 @@
 package dto;
 
-import beans.UserType;
+import beans.enums.UserType;
 
 public class TokenDTO {
 	

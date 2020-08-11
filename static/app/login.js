@@ -21,6 +21,8 @@ $(document).ready(function()
                     switch(data.status){
                         case 200: {
                             window.localStorage.setItem('jwt', responseData.token);
+                            window.localStorage.setItem('username', responseData.username);
+                            window.localStorage.setItem('usertype', responseData.userType);
                             window.location.href = "index.html";
                         } break;
                         case 400: alert(responseData.message); break;

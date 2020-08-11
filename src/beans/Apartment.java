@@ -8,6 +8,10 @@ package beans;
 
 import java.util.*;
 
+import beans.enums.ApartmentType;
+import beans.interfaces.IDeletable;
+import beans.interfaces.IIdentifiable;
+
 public class Apartment implements IIdentifiable, IDeletable {
    private int numberOfRooms;
    private int numberOfGuests;

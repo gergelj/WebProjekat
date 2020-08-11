@@ -15,13 +15,12 @@ import java.util.StringJoiner;
 
 import beans.Apartment;
 import beans.DateCollection;
-import beans.DateRange;
 
 public class DateCollectionCsvConverter implements ICsvConverter<DateCollection> {
    private String delimiter = "~";
    private String listDelimiter = ";";
-   private String listDelimiter2 = "_";
    private String dateFormat = "dd.MM.yyyy.";
+   private String emptyChar = "♥";
    private SimpleDateFormat formatter;
    
    public DateCollectionCsvConverter() {
@@ -39,17 +38,17 @@ public class DateCollectionCsvConverter implements ICsvConverter<DateCollection>
       return joiner.toString();
    }
    
-   private CharSequence getDateList(List<DateRange> dates) {
+   private CharSequence getDateList(List<Date> dates) {
 	   if(dates == null) 
-		   return "♥";
+		   return emptyChar;
 	   
 	   if(dates.isEmpty()) 
-		   return "♥";
+		   return emptyChar;
 	   
 	   StringJoiner joiner = new StringJoiner(listDelimiter);
 	   
-	   for(DateRange date : dates){
-		   joiner.add(formatter.format(date.getStart()) + listDelimiter2 + formatter.format(date.getEnd()));
+	   for(Date date : dates){
+		   joiner.add(formatter.format(date));
 	   }
 	   
 	   return joiner.toString();
@@ -61,33 +60,29 @@ public class DateCollectionCsvConverter implements ICsvConverter<DateCollection>
       long id = Long.valueOf(tokens[0]);
       Apartment apartment = tokens[1].equals("") ? null : new Apartment(Long.valueOf(tokens[1]));
       boolean deleted = Boolean.valueOf(tokens[2]);
-      List<DateRange> dates = getDateFromCsv(tokens[3]);
+      List<Date> dates = getDateFromCsv(tokens[3]);
       
       return new DateCollection(id, apartment, deleted, dates);
    }
 
-	private List<DateRange> getDateFromCsv(String list) {
-		List<DateRange> retVal = new ArrayList<DateRange>();
+	private List<Date> getDateFromCsv(String list) {
+		List<Date> retVal = new ArrayList<Date>();
 		
-		if(list.equals("♥")) 
+		if(list.equals(emptyChar)) 
 			return retVal;
 		
 		String[] tokens = list.split(listDelimiter);
 		
 		for(String token : tokens) {
-			String[] parts = token.split(listDelimiter2);
 			
 			try {
-				Date start = formatter.parse(parts[0]);
-				Date end = formatter.parse(parts[1]);
+				Date date = formatter.parse(token);
 				
-				DateRange dateRange = new DateRange(start, end);
-				retVal.add(dateRange);
+				retVal.add(date);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}
 		
 		return retVal;

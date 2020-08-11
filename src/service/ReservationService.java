@@ -10,11 +10,11 @@ import repository.ReservationRepository;
 import repository.ApartmentRepository;
 import repository.DateCollectionRepository;
 import beans.User;
-import beans.UserType;
+import beans.enums.ReservationStatus;
+import beans.enums.UserType;
 import exceptions.DatabaseException;
 import exceptions.InvalidUserException;
 import beans.Reservation;
-import beans.ReservationStatus;
 import beans.Apartment;
 import beans.DateCollection;
 

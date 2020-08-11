@@ -4,7 +4,7 @@
  * Purpose: Defines the Class ReservationStatus
  ***********************************************************************/
 
-package beans;
+package beans.enums;
 
 public enum ReservationStatus {
    created,

@@ -9,7 +9,7 @@ package service;
 import repository.AmenityRepository;
 import beans.Amenity;
 import beans.User;
-import beans.UserType;
+import beans.enums.UserType;
 import exceptions.DatabaseException;
 import exceptions.InvalidUserException;
 

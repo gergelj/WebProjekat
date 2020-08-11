@@ -6,8 +6,8 @@
 
 package dto;
 
-import beans.UserType;
-import beans.Gender;
+import beans.enums.Gender;
+import beans.enums.UserType;
 
 
 public class UserFilterDTO {

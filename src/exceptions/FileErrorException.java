@@ -2,6 +2,11 @@ package exceptions;
 
 public class FileErrorException extends DatabaseException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4403648172551340022L;
+
 	public FileErrorException() {
 		// TODO Auto-generated constructor stub
 	}

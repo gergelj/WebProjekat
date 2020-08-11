@@ -29,7 +29,6 @@ import beans.Account;
 import beans.Address;
 import beans.Amenity;
 import beans.Apartment;
-import beans.ApartmentType;
 import beans.Comment;
 import beans.Location;
 import beans.Picture;
@@ -40,11 +39,12 @@ import java.util.List;
 import beans.Apartment;
 import beans.DateCollection;
 import beans.DateRange;
-import beans.Gender;
 import beans.Reservation;
-import beans.ReservationStatus;
 import beans.User;
-import beans.UserType;
+import beans.enums.ApartmentType;
+import beans.enums.Gender;
+import beans.enums.ReservationStatus;
+import beans.enums.UserType;
 import dto.ApartmentDTO;
 import dto.ErrorMessageDTO;
 import dto.TokenDTO;
@@ -94,11 +94,9 @@ public class SparkAppMain {
 	static AppResources resources;
 	static UserCsvConverter userConverter = new UserCsvConverter();
 	private static int minutesUntilTokenExpires = 30;
-	
-	
-	//AppResources res;
 
 	public static void main(String[] args) throws IOException {
+		
 		
 		try {
 			resources = new AppResources();
@@ -107,22 +105,6 @@ public class SparkAppMain {
 			System.out.println("Server resources failed to load");
 			return;
 		}
-		
-		//amenityConverterTest();
-		//apartmentConverterTest();
-		//commentConverterTest();
-		
-		/*
-		try {
-			
-			testRepositories();
-			
-		} catch (DatabaseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
-		
 		
 		port(8088);
 
@@ -364,6 +346,7 @@ public class SparkAppMain {
 			}
 			return "No user logged in.";
 		});
+		
 	}
 	
 	private static User getLoggedInUser(Request request) {
@@ -448,7 +431,7 @@ public class SparkAppMain {
 	private static void dateCollectoinRepoTest() {
 		DateCollectionRepository res = resources.availableDateCollectionRepository;
 		
-		DateCollection dc = new DateCollection(new Apartment(), false, new ArrayList<DateRange>());
+		//DateCollection dc = new DateCollection(new Apartment(), false, new ArrayList<DateRange>());
 		
 	}
 	
@@ -863,22 +846,61 @@ public class SparkAppMain {
 	}
 
 
-	private static void testDateCollection() {
+	private static void testDateCollection() throws DatabaseException {
+		DateCollectionRepository repo = (new AppResources()).availableDateCollectionRepository;
 		
-		List<DateRange> dates = new ArrayList<DateRange>();
-		dates.add(new DateRange(new Date(), new Date()));
-		dates.add(new DateRange(new GregorianCalendar(2015,6-1,4).getTime(), new GregorianCalendar(2015,7-1,15).getTime()));
-		DateCollection dateCollection = new DateCollection(458, new Apartment(96), false, dates);
+		List<Date> dates = new ArrayList<Date>();
+		dates.add(new Date());
+		dates.add(new GregorianCalendar(2015,6-1,4).getTime());
+		dates.add(new GregorianCalendar(2015,7-1,15).getTime());
+		dates.add(new GregorianCalendar(2018,9-1,23).getTime());
+		DateCollection dateCollection1 = new DateCollection(new Apartment(3), false, dates);
+		
+		List<Date> dates2 = new ArrayList<Date>();
+		dates2.add(new Date());
+		dates2.add(new GregorianCalendar(2015,6-1,4).getTime());
+		dates2.add(new GregorianCalendar(2015,7-1,15).getTime());
+		dates2.add(new GregorianCalendar(2018,9-1,23).getTime());
+		DateCollection dateCollection2 = new DateCollection(new Apartment(5), false, dates2);
 		
 		DateCollectionCsvConverter converter = new DateCollectionCsvConverter();
 		
-		String dateCollectionString = converter.toCsv(dateCollection);
+		/*String dateCollectionString = converter.toCsv(dateCollection);
 		System.out.println(dateCollectionString);
 		String dateCollectionString2 = converter.toCsv(converter.fromCsv(dateCollectionString));
 		System.out.println(dateCollectionString2);
 		
 		System.out.println(dateCollectionString.equals(dateCollectionString2));
+		*/
 		
+		//repo.create(dateCollection1);
+		//repo.create(dateCollection2);
+		
+		//List<DateCollection> dc = repo.getAll();
+		//dc.forEach(c -> System.out.println(converter.toCsv(c)));
+		
+		/*
+		List<DateCollection> eagerdc = repo.getAllEager();
+		for(DateCollection c : eagerdc) {
+			System.out.println(c.getApartment().getLocation().getAddress().getStreet());
+		}
+		*/
+		/*
+		DateCollection dc = repo.getEager(96);
+		System.out.println(dc.getApartment().getLocation().getAddress().getStreet());
+		*/
+		/*
+		DateCollection dc = repo.getByApartmentId(5);
+		System.out.println(converter.toCsv(dc));
+		dc.addDates(new Date());
+		repo.update(dc);
+		DateCollection newdc = repo.getByApartmentId(5);
+		System.out.println(converter.toCsv(newdc));
+		*/
+		/*
+		repo.delete(2);
+		repo.getById(2);
+		*/
 	}
 
 	private static void testReservation() {

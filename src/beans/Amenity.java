@@ -6,6 +6,9 @@
 
 package beans;
 
+import beans.interfaces.IDeletable;
+import beans.interfaces.IIdentifiable;
+
 public class Amenity implements IIdentifiable, IDeletable {
 	private long id;
 	private String name;

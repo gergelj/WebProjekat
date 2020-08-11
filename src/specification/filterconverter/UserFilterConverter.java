@@ -12,9 +12,9 @@ import specification.specificationimpl.BooleanSpecification;
 import specification.specificationimpl.UserGenderSpecification;
 import specification.specificationimpl.UserUserTypeSpecification;
 import specification.specificationimpl.UserUsernameSpecification;
-import beans.Gender;
 import beans.User;
-import beans.UserType;
+import beans.enums.Gender;
+import beans.enums.UserType;
 
 public class UserFilterConverter {
 

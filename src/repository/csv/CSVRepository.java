@@ -13,8 +13,8 @@ import repository.sequencer.LongSequencer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import beans.IDeletable;
-import beans.IIdentifiable;
+import beans.interfaces.IDeletable;
+import beans.interfaces.IIdentifiable;
 import exceptions.DatabaseException;
 import exceptions.EntityNotFoundException;
 

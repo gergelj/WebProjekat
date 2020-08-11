@@ -8,8 +8,11 @@ package beans;
 
 import java.util.*;
 
+import beans.interfaces.IDeletable;
+import beans.interfaces.IIdentifiable;
+
 public class DateCollection implements IIdentifiable, IDeletable {
-   private List<DateRange> dates;
+   private List<Date> dates;
    private long id;
    private boolean deleted;
    
@@ -17,7 +20,7 @@ public class DateCollection implements IIdentifiable, IDeletable {
    
 
  //Constructors
-	public DateCollection(long id, Apartment apartment, boolean deleted, List<DateRange> dates) {
+	public DateCollection(long id, Apartment apartment, boolean deleted, List<Date> dates) {
 		super();
 		this.dates = dates;
 		this.id = id;
@@ -28,23 +31,49 @@ public class DateCollection implements IIdentifiable, IDeletable {
 	public DateCollection() {
 		super();
 		
-		this.dates = new ArrayList<DateRange>();
+		this.dates = new ArrayList<Date>();
 	}
 	
-	public DateCollection(Apartment apartment, boolean deleted, List<DateRange> dates) {
+	public DateCollection(Apartment apartment, boolean deleted, List<Date> dates) {
 		super();
 		this.dates = dates;
 		this.deleted = deleted;
 		this.apartment = apartment;
 	}
 
-//Getters and Setters
-	public List<DateRange> getDates() {
+//Getters and Setters	
+	public List<Date> getDates() {
+		if (dates == null)
+			dates = new ArrayList<Date>();
 		return dates;
 	}
-	
-	public void setDates(List<DateRange> dates) {
-		this.dates = dates;
+
+	public void setDates(List<Date> newDates) {
+		removeAllDates();
+		for (Iterator<Date> iter = newDates.iterator(); iter.hasNext();)
+			addDates((Date)iter.next());
+	}
+	   
+	public void addDates(Date newDate) {
+		if (newDate == null)
+			return;
+		if (this.dates == null)
+			this.dates = new ArrayList<Date>();
+		if (!this.dates.contains(newDate))
+			this.dates.add(newDate);
+	   }
+	   
+	public void removeDates(Date oldDate) {
+		if (oldDate == null)
+			return;
+		if (this.dates != null)
+			if (this.dates.contains(oldDate))
+				this.dates.remove(oldDate);
+	}
+	   
+	public void removeAllDates() {
+		if (dates != null)
+			dates.clear();
 	}
 	
 	public boolean isDeleted() {

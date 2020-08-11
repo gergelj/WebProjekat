@@ -163,7 +163,7 @@
                     <picture-viewer v-model="pictures" emptymessage="No pictures added" height="600"></picture-viewer>
                 </b-col>
                 <b-col>
-
+                    <v-date-picker v-model="" :min-date='new Date()' is-inline :columns="$screens({ default: 1, lg: 2 })" mode="multiple"/>
                 </b-col>
             </b-row>
         </b-form>
@@ -181,6 +181,7 @@
     <script src="js/components/leaflet-map.js"></script>
     <script src="js/components/picture-viewer.js"></script>
     <script src="js/components/picture-uploader.js"></script>
+    <script src="js/v-calendar.umd.min.js"></script>
     <script src="app/apartment.js"></script>
 </body>
 </html>

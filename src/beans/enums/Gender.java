@@ -1,14 +1,16 @@
 /***********************************************************************
- * Module:  ApartmentType.java
+ * Module:  Gender.java
  * Author:  Geri
- * Purpose: Defines the Class ApartmentType
+ * Purpose: Defines the Class Gender
  ***********************************************************************/
 
-package beans;
+package beans.enums;
 
 
-public enum ApartmentType {
-   fullApartment,
-   room;
+public enum Gender {
+   undefined,
+   male,
+   female,
+   other;
 
 }
