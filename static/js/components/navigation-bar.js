@@ -122,11 +122,6 @@ Vue.component("navigation-bar", {
     }
 });
 
-
-/*var navBar = new Vue({
-    el : "#navBar"
-});*/
-
 function signOut(){
     window.localStorage.removeItem("jwt");
     window.localStorage.removeItem("username");

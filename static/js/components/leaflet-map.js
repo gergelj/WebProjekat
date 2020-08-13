@@ -13,13 +13,13 @@ Vue.component("leaflet-map", {
     },
     template: `
 <div>
-    <b-button v-if="mode=='input'" variant="outline-primary" class="mb-2" @click="locateMe">
-        <i class="fas fa-map-marker-alt"></i>
-        Locate me
-    </b-button>
     <div id="mapid">
 
     </div>
+    <b-button v-if="mode=='input'" variant="outline-primary" class="mt-2" @click="locateMe">
+        <i class="fas fa-map-marker-alt"></i>
+        Locate me
+    </b-button>
 </div>
 `
     ,

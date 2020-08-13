@@ -8,17 +8,19 @@ package repository.csv.converter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import beans.Apartment;
 import beans.DateCollection;
+import beans.enums.DateStatus;
 
 public class DateCollectionCsvConverter implements ICsvConverter<DateCollection> {
    private String delimiter = "~";
    private String listDelimiter = ";";
+   private String listDelimiter2 = "_";
    private String dateFormat = "dd.MM.yyyy.";
    private String emptyChar = "♥";
    private SimpleDateFormat formatter;
@@ -38,7 +40,7 @@ public class DateCollectionCsvConverter implements ICsvConverter<DateCollection>
       return joiner.toString();
    }
    
-   private CharSequence getDateList(List<Date> dates) {
+   private CharSequence getDateList(Map<Date, DateStatus> dates) {
 	   if(dates == null) 
 		   return emptyChar;
 	   
@@ -47,8 +49,8 @@ public class DateCollectionCsvConverter implements ICsvConverter<DateCollection>
 	   
 	   StringJoiner joiner = new StringJoiner(listDelimiter);
 	   
-	   for(Date date : dates){
-		   joiner.add(formatter.format(date));
+	   for(Date date : dates.keySet()){
+		   joiner.add(formatter.format(date) + listDelimiter2 + dates.get(date));
 	   }
 	   
 	   return joiner.toString();
@@ -60,13 +62,13 @@ public class DateCollectionCsvConverter implements ICsvConverter<DateCollection>
       long id = Long.valueOf(tokens[0]);
       Apartment apartment = tokens[1].equals("") ? null : new Apartment(Long.valueOf(tokens[1]));
       boolean deleted = Boolean.valueOf(tokens[2]);
-      List<Date> dates = getDateFromCsv(tokens[3]);
+      Map<Date, DateStatus> dates = getDateFromCsv(tokens[3]);
       
       return new DateCollection(id, apartment, deleted, dates);
    }
 
-	private List<Date> getDateFromCsv(String list) {
-		List<Date> retVal = new ArrayList<Date>();
+	private Map<Date, DateStatus> getDateFromCsv(String list) {
+		Map<Date, DateStatus> retVal = new HashMap<Date, DateStatus>();
 		
 		if(list.equals(emptyChar)) 
 			return retVal;
@@ -76,15 +78,16 @@ public class DateCollectionCsvConverter implements ICsvConverter<DateCollection>
 		for(String token : tokens) {
 			
 			try {
-				Date date = formatter.parse(token);
+				String[] parts = token.split(listDelimiter2);
+				Date date = formatter.parse(parts[0]);
+				DateStatus status = DateStatus.valueOf(parts[1]);
 				
-				retVal.add(date);
+				retVal.put(date, status);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
 		return retVal;
 	}
 

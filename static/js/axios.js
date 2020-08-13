@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 /* axios v0.19.2 | (c) 2020 by Matt Zabriskie */
-=======
-/* axios v0.19.0-beta.1 | (c) 2018 by Matt Zabriskie */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -69,15 +65,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var utils = __webpack_require__(2);
 	var bind = __webpack_require__(3);
-<<<<<<< HEAD
 	var Axios = __webpack_require__(4);
 	var mergeConfig = __webpack_require__(22);
 	var defaults = __webpack_require__(10);
-=======
-	var Axios = __webpack_require__(5);
-	var mergeConfig = __webpack_require__(22);
-	var defaults = __webpack_require__(11);
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	
 	/**
 	 * Create an instance of Axios
@@ -112,11 +102,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Expose Cancel & CancelToken
 	axios.Cancel = __webpack_require__(23);
 	axios.CancelToken = __webpack_require__(24);
-<<<<<<< HEAD
 	axios.isCancel = __webpack_require__(9);
-=======
-	axios.isCancel = __webpack_require__(10);
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	
 	// Expose all/spread
 	axios.all = function all(promises) {
@@ -137,10 +123,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 	
 	var bind = __webpack_require__(3);
-<<<<<<< HEAD
-=======
-	var isBuffer = __webpack_require__(4);
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	
 	/*global toString:true*/
 	
@@ -159,7 +141,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	/**
-<<<<<<< HEAD
 	 * Determine if a value is undefined
 	 *
 	 * @param {Object} val The value to test
@@ -181,8 +162,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	/**
-=======
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	 * Determine if a value is an ArrayBuffer
 	 *
 	 * @param {Object} val The value to test
@@ -239,19 +218,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	/**
-<<<<<<< HEAD
-=======
-	 * Determine if a value is undefined
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if the value is undefined, otherwise false
-	 */
-	function isUndefined(val) {
-	  return typeof val === 'undefined';
-	}
-	
-	/**
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	 * Determine if a value is an Object
 	 *
 	 * @param {Object} val The value to test
@@ -519,40 +485,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 4 */
-<<<<<<< HEAD
-=======
-/***/ (function(module, exports) {
-
-	/*!
-	 * Determine if an object is a Buffer
-	 *
-	 * @author   Feross Aboukhadijeh <https://feross.org>
-	 * @license  MIT
-	 */
-	
-	module.exports = function isBuffer (obj) {
-	  return obj != null && obj.constructor != null &&
-	    typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-	}
-
-
-/***/ }),
-/* 5 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var utils = __webpack_require__(2);
-<<<<<<< HEAD
 	var buildURL = __webpack_require__(5);
 	var InterceptorManager = __webpack_require__(6);
 	var dispatchRequest = __webpack_require__(7);
-=======
-	var buildURL = __webpack_require__(6);
-	var InterceptorManager = __webpack_require__(7);
-	var dispatchRequest = __webpack_require__(8);
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	var mergeConfig = __webpack_require__(22);
 	
 	/**
@@ -584,7 +524,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  config = mergeConfig(this.defaults, config);
-<<<<<<< HEAD
 	
 	  // Set config.method
 	  if (config.method) {
@@ -594,9 +533,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  } else {
 	    config.method = 'get';
 	  }
-=======
-	  config.method = config.method ? config.method.toLowerCase() : 'get';
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	
 	  // Hook up interceptors middleware
 	  var chain = [dispatchRequest, undefined];
@@ -648,11 +584,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 5 */
-=======
-/* 6 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -716,14 +648,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  if (serializedParams) {
-<<<<<<< HEAD
 	    var hashmarkIndex = url.indexOf('#');
 	    if (hashmarkIndex !== -1) {
 	      url = url.slice(0, hashmarkIndex);
 	    }
 	
-=======
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
 	  }
 	
@@ -732,11 +661,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 6 */
-=======
-/* 7 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -794,27 +719,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 7 */
-=======
-/* 8 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var utils = __webpack_require__(2);
-<<<<<<< HEAD
 	var transformData = __webpack_require__(8);
 	var isCancel = __webpack_require__(9);
 	var defaults = __webpack_require__(10);
-=======
-	var transformData = __webpack_require__(9);
-	var isCancel = __webpack_require__(10);
-	var defaults = __webpack_require__(11);
-	var isAbsoluteURL = __webpack_require__(20);
-	var combineURLs = __webpack_require__(21);
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	
 	/**
 	 * Throws a `Cancel` if cancellation has been requested.
@@ -834,14 +747,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = function dispatchRequest(config) {
 	  throwIfCancellationRequested(config);
 	
-<<<<<<< HEAD
-=======
-	  // Support baseURL config
-	  if (config.baseURL && !isAbsoluteURL(config.url)) {
-	    config.url = combineURLs(config.baseURL, config.url);
-	  }
-	
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	  // Ensure headers exist
 	  config.headers = config.headers || {};
 	
@@ -856,11 +761,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  config.headers = utils.merge(
 	    config.headers.common || {},
 	    config.headers[config.method] || {},
-<<<<<<< HEAD
 	    config.headers
-=======
-	    config.headers || {}
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	  );
 	
 	  utils.forEach(
@@ -903,11 +804,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 8 */
-=======
-/* 9 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -933,11 +830,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 9 */
-=======
-/* 10 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -948,21 +841,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 10 */
-=======
-/* 11 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var utils = __webpack_require__(2);
-<<<<<<< HEAD
 	var normalizeHeaderName = __webpack_require__(11);
-=======
-	var normalizeHeaderName = __webpack_require__(12);
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	
 	var DEFAULT_CONTENT_TYPE = {
 	  'Content-Type': 'application/x-www-form-urlencoded'
@@ -976,22 +861,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function getDefaultAdapter() {
 	  var adapter;
-<<<<<<< HEAD
 	  if (typeof XMLHttpRequest !== 'undefined') {
 	    // For browsers use XHR adapter
 	    adapter = __webpack_require__(12);
 	  } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
 	    // For node use HTTP adapter
 	    adapter = __webpack_require__(12);
-=======
-	  // Only Node.JS has a process variable that is of [[Class]] process
-	  if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
-	    // For node use HTTP adapter
-	    adapter = __webpack_require__(13);
-	  } else if (typeof XMLHttpRequest !== 'undefined') {
-	    // For browsers use XHR adapter
-	    adapter = __webpack_require__(13);
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	  }
 	  return adapter;
 	}
@@ -1069,11 +944,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 11 */
-=======
-/* 12 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1091,30 +962,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 12 */
-=======
-/* 13 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var utils = __webpack_require__(2);
-<<<<<<< HEAD
 	var settle = __webpack_require__(13);
 	var buildURL = __webpack_require__(5);
 	var buildFullPath = __webpack_require__(16);
 	var parseHeaders = __webpack_require__(19);
 	var isURLSameOrigin = __webpack_require__(20);
 	var createError = __webpack_require__(14);
-=======
-	var settle = __webpack_require__(14);
-	var buildURL = __webpack_require__(6);
-	var parseHeaders = __webpack_require__(17);
-	var isURLSameOrigin = __webpack_require__(18);
-	var createError = __webpack_require__(15);
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	
 	module.exports = function xhrAdapter(config) {
 	  return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -1134,12 +993,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
 	    }
 	
-<<<<<<< HEAD
 	    var fullPath = buildFullPath(config.baseURL, config.url);
 	    request.open(config.method.toUpperCase(), buildURL(fullPath, config.params, config.paramsSerializer), true);
-=======
-	    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	
 	    // Set the request timeout in MS
 	    request.timeout = config.timeout;
@@ -1200,15 +1055,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    // Handle timeout
 	    request.ontimeout = function handleTimeout() {
-<<<<<<< HEAD
 	      var timeoutErrorMessage = 'timeout of ' + config.timeout + 'ms exceeded';
 	      if (config.timeoutErrorMessage) {
 	        timeoutErrorMessage = config.timeoutErrorMessage;
 	      }
 	      reject(createError(timeoutErrorMessage, config, 'ECONNABORTED',
-=======
-	      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED',
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	        request));
 	
 	      // Clean up request
@@ -1219,17 +1070,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // This is only done if running in a standard browser environment.
 	    // Specifically not if we're in a web worker, or react-native.
 	    if (utils.isStandardBrowserEnv()) {
-<<<<<<< HEAD
 	      var cookies = __webpack_require__(21);
 	
 	      // Add xsrf header
 	      var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
-=======
-	      var cookies = __webpack_require__(19);
-	
-	      // Add xsrf header
-	      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	        cookies.read(config.xsrfCookieName) :
 	        undefined;
 	
@@ -1252,13 +1096,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    // Add withCredentials to request if needed
-<<<<<<< HEAD
 	    if (!utils.isUndefined(config.withCredentials)) {
 	      request.withCredentials = !!config.withCredentials;
-=======
-	    if (config.withCredentials) {
-	      request.withCredentials = true;
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	    }
 	
 	    // Add responseType to request if needed
@@ -1309,20 +1148,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 13 */
-=======
-/* 14 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-<<<<<<< HEAD
 	var createError = __webpack_require__(14);
-=======
-	var createError = __webpack_require__(15);
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	
 	/**
 	 * Resolve or reject a Promise based on response status.
@@ -1348,20 +1179,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 14 */
-=======
-/* 15 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-<<<<<<< HEAD
 	var enhanceError = __webpack_require__(15);
-=======
-	var enhanceError = __webpack_require__(16);
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	
 	/**
 	 * Create an Error with the specified message, config, error code, request and response.
@@ -1380,11 +1203,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 15 */
-=======
-/* 16 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1404,16 +1223,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (code) {
 	    error.code = code;
 	  }
-<<<<<<< HEAD
 	
 	  error.request = request;
 	  error.response = response;
 	  error.isAxiosError = true;
 	
-=======
-	  error.request = request;
-	  error.response = response;
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	  error.toJSON = function() {
 	    return {
 	      // Standard
@@ -1437,7 +1251,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1505,9 +1318,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 19 */
-=======
-/* 17 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1566,11 +1376,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 20 */
-=======
-/* 18 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1644,11 +1450,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
 /* 21 */
-=======
-/* 19 */
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1707,49 +1509,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-<<<<<<< HEAD
-=======
-/* 20 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	/**
-	 * Determines whether the specified URL is absolute
-	 *
-	 * @param {string} url The URL to test
-	 * @returns {boolean} True if the specified URL is absolute, otherwise false
-	 */
-	module.exports = function isAbsoluteURL(url) {
-	  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
-	  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
-	  // by any combination of letters, digits, plus, period, or hyphen.
-	  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
-	};
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	/**
-	 * Creates a new URL by combining the specified URLs
-	 *
-	 * @param {string} baseURL The base URL
-	 * @param {string} relativeURL The relative URL
-	 * @returns {string} The combined URL
-	 */
-	module.exports = function combineURLs(baseURL, relativeURL) {
-	  return relativeURL
-	    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
-	    : baseURL;
-	};
-
-
-/***/ }),
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1770,7 +1529,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  config2 = config2 || {};
 	  var config = {};
 	
-<<<<<<< HEAD
 	  var valueFromConfig2Keys = ['url', 'method', 'params', 'data'];
 	  var mergeDeepPropertiesKeys = ['headers', 'auth', 'proxy'];
 	  var defaultToConfig2Keys = [
@@ -1782,19 +1540,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ];
 	
 	  utils.forEach(valueFromConfig2Keys, function valueFromConfig2(prop) {
-=======
-	  utils.forEach(['url', 'method', 'params', 'data'], function valueFromConfig2(prop) {
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	    if (typeof config2[prop] !== 'undefined') {
 	      config[prop] = config2[prop];
 	    }
 	  });
 	
-<<<<<<< HEAD
 	  utils.forEach(mergeDeepPropertiesKeys, function mergeDeepProperties(prop) {
-=======
-	  utils.forEach(['headers', 'auth', 'proxy'], function mergeDeepProperties(prop) {
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	    if (utils.isObject(config2[prop])) {
 	      config[prop] = utils.deepMerge(config1[prop], config2[prop]);
 	    } else if (typeof config2[prop] !== 'undefined') {
@@ -1806,7 +1557,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  });
 	
-<<<<<<< HEAD
 	  utils.forEach(defaultToConfig2Keys, function defaultToConfig2(prop) {
 	    if (typeof config2[prop] !== 'undefined') {
 	      config[prop] = config2[prop];
@@ -1826,15 +1576,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	
 	  utils.forEach(otherKeys, function otherKeysDefaultToConfig2(prop) {
-=======
-	  utils.forEach([
-	    'baseURL', 'transformRequest', 'transformResponse', 'paramsSerializer',
-	    'timeout', 'withCredentials', 'adapter', 'responseType', 'xsrfCookieName',
-	    'xsrfHeaderName', 'onUploadProgress', 'onDownloadProgress', 'maxContentLength',
-	    'validateStatus', 'maxRedirects', 'httpAgent', 'httpsAgent', 'cancelToken',
-	    'socketPath'
-	  ], function defaultToConfig2(prop) {
->>>>>>> eba3646d465c77467abb1edfecd1e11589ced5a3
 	    if (typeof config2[prop] !== 'undefined') {
 	      config[prop] = config2[prop];
 	    } else if (typeof config1[prop] !== 'undefined') {

@@ -30,24 +30,14 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
 	private IUserRepository userRepository;
 	private IAmenityRepository amenityRepository;
 	private IEagerCsvRepository<Comment> commentRepository;
-	private IDateCollectionRepository availableDateCollectionRepository;
-	private IDateCollectionRepository bookingDateCollectionRepository;
+	private IDateCollectionRepository dateCollectionRepository;
 	
-   public ApartmentRepository(ICsvStream<Apartment> stream, LongSequencer sequencer, IUserRepository userRepository, IAmenityRepository amenityRepository, IEagerCsvRepository<Comment> commentRepository, IDateCollectionRepository availableDateCollectionRepository, IDateCollectionRepository bookingDateCollectionRepository) throws DatabaseException {
+   public ApartmentRepository(ICsvStream<Apartment> stream, LongSequencer sequencer, IUserRepository userRepository, IAmenityRepository amenityRepository, IEagerCsvRepository<Comment> commentRepository, IDateCollectionRepository dateCollectionRepository) throws DatabaseException {
 	   super("Apartment", stream, sequencer);
 	   this.userRepository = userRepository;
 	   this.amenityRepository = amenityRepository;
 	   this.commentRepository = commentRepository;
-	   this.availableDateCollectionRepository = availableDateCollectionRepository;
-	   this.bookingDateCollectionRepository = bookingDateCollectionRepository;
-   }
-   
-   @Override
-   public void delete(long id) throws DatabaseException {
-	   super.delete(id);
-	   
-	   availableDateCollectionRepository.deleteByApartment(id);
-	   bookingDateCollectionRepository.deleteByApartment(id);
+	   this.dateCollectionRepository = dateCollectionRepository;
    }
    
    private void bind(List<Apartment> apartments) throws DatabaseException {
@@ -128,8 +118,9 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
 	   return apartment.getComments();
    }
    
-   public DateCollection getAvailableDatesForApartment(Apartment apartment) throws DatabaseException
+   public List<Date> getAvailableDatesForApartment(Apartment apartment) throws DatabaseException
    {
-	   return availableDateCollectionRepository.getByApartmentId(apartment.getId());
+	   DateCollection dc = dateCollectionRepository.getByApartmentId(apartment.getId());
+	   return dc.getAvailableDates();
    }
 }

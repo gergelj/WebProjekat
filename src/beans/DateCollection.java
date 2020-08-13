@@ -6,13 +6,16 @@
 
 package beans;
 
+import java.text.DateFormat;
 import java.util.*;
 
+import beans.enums.DateStatus;
 import beans.interfaces.IDeletable;
 import beans.interfaces.IIdentifiable;
+import java.util.stream.Collectors;
 
 public class DateCollection implements IIdentifiable, IDeletable {
-   private List<Date> dates;
+   private Map<Date, DateStatus> dates;
    private long id;
    private boolean deleted;
    
@@ -20,7 +23,7 @@ public class DateCollection implements IIdentifiable, IDeletable {
    
 
  //Constructors
-	public DateCollection(long id, Apartment apartment, boolean deleted, List<Date> dates) {
+	public DateCollection(long id, Apartment apartment, boolean deleted, Map<Date, DateStatus> dates) {
 		super();
 		this.dates = dates;
 		this.id = id;
@@ -31,10 +34,10 @@ public class DateCollection implements IIdentifiable, IDeletable {
 	public DateCollection() {
 		super();
 		
-		this.dates = new ArrayList<Date>();
+		this.dates = new HashMap<Date, DateStatus>();
 	}
 	
-	public DateCollection(Apartment apartment, boolean deleted, List<Date> dates) {
+	public DateCollection(Apartment apartment, boolean deleted, Map<Date, DateStatus> dates) {
 		super();
 		this.dates = dates;
 		this.deleted = deleted;
@@ -42,38 +45,99 @@ public class DateCollection implements IIdentifiable, IDeletable {
 	}
 
 //Getters and Setters	
-	public List<Date> getDates() {
+	public Map<Date, DateStatus> getDates() {
 		if (dates == null)
-			dates = new ArrayList<Date>();
+			dates = new HashMap<Date, DateStatus>();
 		return dates;
 	}
 
-	public void setDates(List<Date> newDates) {
+	public void setDates(Map<Date, DateStatus> newDates) {
 		removeAllDates();
-		for (Iterator<Date> iter = newDates.iterator(); iter.hasNext();)
-			addDates((Date)iter.next());
+		for (Date key : newDates.keySet())
+			addDate(key, newDates.get(key));
 	}
 	   
-	public void addDates(Date newDate) {
+	public void addDate(Date newDate, DateStatus newStatus) {
 		if (newDate == null)
 			return;
 		if (this.dates == null)
-			this.dates = new ArrayList<Date>();
-		if (!this.dates.contains(newDate))
-			this.dates.add(newDate);
+			this.dates = new HashMap<Date, DateStatus>();
+		if (!this.dates.containsKey(newDate))
+			this.dates.put(newDate, newStatus);
 	   }
 	   
-	public void removeDates(Date oldDate) {
+	public void removeDate(Date oldDate) {
 		if (oldDate == null)
 			return;
 		if (this.dates != null)
-			if (this.dates.contains(oldDate))
+			if (this.dates.containsKey(oldDate))
 				this.dates.remove(oldDate);
 	}
 	   
 	public void removeAllDates() {
 		if (dates != null)
 			dates.clear();
+	}
+	
+	public void addAvailableForBookingDate(Date date) throws IllegalArgumentException {
+		if(dates.containsKey(date)) {
+			if(dates.get(date) == DateStatus.booked) {
+				throw new IllegalArgumentException("Date " + DateFormat.getInstance().format(date) + " can't be added, it is already booked.");
+			}
+		}
+		else {
+			dates.put(date, DateStatus.free);
+		}
+	}
+	
+	public void removeAvailableForBookingDate(Date date) throws NoSuchElementException, IllegalArgumentException {
+		if(dates.containsKey(date)) {
+			if(dates.get(date) == DateStatus.free) {
+				dates.remove(date);
+			}
+			else {
+				throw new IllegalArgumentException("Date " + DateFormat.getInstance().format(date) + " can't be removed, it is already booked.");
+			}
+		}
+		else {
+			throw new NoSuchElementException("Date " + DateFormat.getInstance().format(date) + " can't be removed, it was previously not added as available for booking.");
+		}
+	}
+	
+	public void addBookedDate(Date date) throws IllegalArgumentException, NoSuchElementException {
+		if(dates.containsKey(date)) {
+			if(dates.get(date) == DateStatus.free) {
+				dates.put(date, DateStatus.booked);
+			}
+			else {
+				throw new IllegalArgumentException("Date " + DateFormat.getInstance().format(date) + " is already booked.");
+			}
+		}
+		else {
+			throw new NoSuchElementException("Date " + DateFormat.getInstance().format(date) + " is not available for booking.");
+		}
+	}
+	
+	public void removeBookedDate(Date date) {
+		if(dates.containsKey(date)) {
+			if(dates.get(date) == DateStatus.booked) {
+				dates.put(date, DateStatus.free);
+			}
+			else {
+				throw new IllegalArgumentException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was previously not booked.");
+			}
+		}
+		else {
+			throw new NoSuchElementException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was prevoiusly not found in the system.");			
+		}
+	}
+	
+	public List<Date> getAvailableDates(){
+		return dates.entrySet().stream().filter(e -> DateStatus.free.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
+	}
+	
+	public List<Date> getBookedDates(){
+		return dates.entrySet().stream().filter(e -> DateStatus.booked.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
 	}
 	
 	public boolean isDeleted() {

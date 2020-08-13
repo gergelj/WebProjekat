@@ -22,18 +22,16 @@ import java.util.*;
 
 public class ReservationService {
    private ReservationRepository reservationRepository;
-   private DateCollectionRepository availableDateCollectionRepository;
-   private DateCollectionRepository bookingDateCollectionRepository;
+   private DateCollectionRepository dateCollectionRepository;
    private ApartmentRepository apartmentRepository;
 
 
    
 //Constructors 
-   public ReservationService(ReservationRepository reservationRepository, DateCollectionRepository availableDateCollectionRepository, DateCollectionRepository bookingDateCollectionRepository, ApartmentRepository apartmentRepository) {
+   public ReservationService(ReservationRepository reservationRepository, DateCollectionRepository dateCollectionRepository, ApartmentRepository apartmentRepository) {
 	super();
 	this.reservationRepository = reservationRepository;
-	this.availableDateCollectionRepository = availableDateCollectionRepository;
-	this.bookingDateCollectionRepository = bookingDateCollectionRepository;
+	this.dateCollectionRepository = dateCollectionRepository;
 	this.apartmentRepository = apartmentRepository;
    }
 
@@ -212,7 +210,7 @@ public class ReservationService {
     * @throws DatabaseException 
     * @throws InvalidUserException
     */
-   public DateCollection getAvailableDatesForApartment(Apartment apartment) throws DatabaseException {
+   public List<Date> getAvailableDatesForApartment(Apartment apartment) throws DatabaseException {
       return apartmentRepository.getAvailableDatesForApartment(apartment);
    }
    

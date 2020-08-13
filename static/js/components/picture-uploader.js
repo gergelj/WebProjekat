@@ -10,19 +10,19 @@ Vue.component("picture-uploader", {
     },
     template: `
 <div>
-    <b-form>
+    <b-form inline>
         <b-form-file
-            v-model="files"
-            :state="validation"
-            accept="image/*"
-            placeholder="Choose a file or drop it here..."
-            drop-placeholder="Drop file here..."
-            :file-name-formatter="formatNames"
-            v-on:change="onFileChange"
-            multiple>
+        v-model="files"
+        :state="validation"
+        accept="image/*"
+                placeholder="Choose a file or drop it here..."
+                drop-placeholder="Drop file here..."
+                :file-name-formatter="formatNames"
+                v-on:change="onFileChange"
+                multiple>
         </b-form-file>
         <b-form-invalid-feedback :state="validation">
-            {{errorMessage}}
+        {{errorMessage}}
         </b-form-invalid-feedback>
 
         <b-button variant="danger" v-on:click="removeImage" :disabled="value.length==0">Remove pictures</b-button>

@@ -18,7 +18,7 @@ Vue.component("picture-viewer", {
         :indicators="value.length > 1"
         background="#ababab"
         v-bind:style="carouselStyle"
-        style="text-shadow: 1px 1px 2px #333;"
+        img-height="height"
     >
 
         <b-carousel-slide v-for="p in value" :img-src="p"></b-carousel-slide>

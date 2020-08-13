@@ -13,17 +13,27 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.security.Key;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Part;
 import javax.xml.bind.DatatypeConverter;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import beans.Account;
 import beans.Address;
@@ -34,6 +44,7 @@ import beans.Location;
 import beans.Picture;
 
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 import beans.Apartment;
@@ -42,6 +53,7 @@ import beans.DateRange;
 import beans.Reservation;
 import beans.User;
 import beans.enums.ApartmentType;
+import beans.enums.DateStatus;
 import beans.enums.Gender;
 import beans.enums.ReservationStatus;
 import beans.enums.UserType;
@@ -84,7 +96,7 @@ import ws.WsHandler;
 
 public class SparkAppMain {
 
-	private static Gson g = new Gson();
+	private static Gson g;
 
 	/**
 	 * Kljuc za potpisivanje JWT tokena.
@@ -96,6 +108,8 @@ public class SparkAppMain {
 	private static int minutesUntilTokenExpires = 30;
 
 	public static void main(String[] args) throws IOException {
+		
+		g = getGson();
 		
 		
 		try {
@@ -179,19 +193,32 @@ public class SparkAppMain {
 		});
 		
 		post("/rest/vazduhbnb/apartment", (request, response) -> {
-
-			String payload = request.body();
+			response.type("application/json");
 			
+			User loggedInUser = getLoggedInUser(request);
+			if(loggedInUser == null) {
+				response.status(401);
+				return g.toJson(new ErrorMessageDTO("Unauthorized access."), ErrorMessageDTO.class);
+			}
+			
+			String payload = request.body();
 			ApartmentDTO apartment = g.fromJson(payload, ApartmentDTO.class);
 			
 			try{
-				List<Picture> pictures = savePictures(apartment.getPictures());
+				resources.apartmentService.create(apartment, loggedInUser);
 				
 			}catch(DatabaseException e){
 				response.status(500);
 				return g.toJson(new ErrorMessageDTO("Internal Server Error"), ErrorMessageDTO.class);
+			}catch(InvalidUserException e) {
+				response.status(403);
+				return g.toJson(new ErrorMessageDTO("User doesn't have permission."), ErrorMessageDTO.class);
+			}catch(BadRequestException e) {
+				response.status(400);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}
 
+			
 			
 			return "Whatever";
 			
@@ -348,6 +375,29 @@ public class SparkAppMain {
 		});
 		
 	}
+
+	private static Gson getGson() {
+		// Creates the json object which will manage the information received 
+		GsonBuilder builder = new GsonBuilder(); 
+
+		// Register an adapter to manage the date types as long values 
+		builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() { 
+		   public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+		      return new Date(json.getAsJsonPrimitive().getAsLong()); 
+		   }
+		});
+		
+		builder.registerTypeAdapter(Date.class, new JsonSerializer<Date>() {
+
+			@Override
+			public JsonElement serialize(Date src, Type type, JsonSerializationContext context) {
+				return src == null ? null : new JsonPrimitive(src.getTime());
+			}
+			
+		});
+
+		return builder.create();
+	}
 	
 	private static User getLoggedInUser(Request request) {
 		String auth = request.headers("Authorization");
@@ -365,45 +415,6 @@ public class SparkAppMain {
 		return null;
 	}
 	
-	private static List<Picture> savePictures(List<String> pictures) throws DatabaseException {
-		List<Picture> retVal = new ArrayList<Picture>();
-		
-		for(String pictureString : pictures) {
-			
-			String[] strings = pictureString.split(",");
-	        String extension = "";
-	        
-	        try {		        	
-	        	extension = strings[0].split(";")[0].split("/")[1];
-	        }catch(Exception e) {
-	        	
-	        }
-	        
-	        if(extension.equals(""))
-	        	extension = "bin"; // fallback extension
-	        
-	        String filename = "uploads" + File.separator + new Date().getTime();
-	        
-	        //convert base64 string to binary data
-	        byte[] data = DatatypeConverter.parseBase64Binary(strings[1]);
-	        File file = new File("static" + File.separator + filename + "." + extension);
-	        
-	        if(file.exists())
-	        	filename += "-" + new Date().getTime();
-	        
-	        
-	        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-	            outputStream.write(data);
-	            
-	            retVal.add(new Picture(filename + "." + extension));
-	            
-	        } catch (IOException e) {
-	        	throw new DatabaseException("Internal Server Error");
-	        }
-		}
-		
-		return retVal;
-	}
 
 	private static String getJwtToken(User user) {
 		
@@ -417,7 +428,7 @@ public class SparkAppMain {
 		
 		return jwtBuilder.signWith(key).compact();
 	}
-
+/*
 	private static void testRepositories() throws DatabaseException
 	{
 		//amenityRepoTest();
@@ -427,25 +438,27 @@ public class SparkAppMain {
 		//reservationRepoTest();
 		//userRepoTest();
 	}
-	
+	*/
+	/*
 	private static void dateCollectoinRepoTest() {
 		DateCollectionRepository res = resources.availableDateCollectionRepository;
 		
 		//DateCollection dc = new DateCollection(new Apartment(), false, new ArrayList<DateRange>());
 		
 	}
-	
+	*/
+	/*
 	private static void amenityRepoTest()
 	{
 		AmenityRepository res = resources.amenityRepository;
 		
-		/*RADE:
-		 * - create
-		 * - update
-		 * - delete
-		 * - getById
-		 * - getAll
-		 */
+		//RADE:
+		 // - create
+		 // - update
+		 // - delete
+		 // - getById
+		 //- getAll
+		 
 		
 		Amenity am1 = new Amenity("Klima", false);
 		Amenity am2 = new Amenity("TV", false);
@@ -453,28 +466,29 @@ public class SparkAppMain {
 		Amenity am4 = new Amenity("Ves masina", false);
 		Amenity am5 = new Amenity("Pegla", false);
 		
-		/*
+		
 		res.create(am1);
 		res.create(am2);
 		res.create(am3);
 		res.create(am4);
 		res.create(am5);
-		*/
+		
 		
 	}
-	
+	*/
+	/*
 	private static void apartmentRepoTest() throws DatabaseException
 	{
-		/*RADE:
-		 * - create
-		 * - update
-		 * - getById
-		 * - delete
-		 * - getAll
-		 * - getEager		?
-		 * - getAllEager	?
-		 * - find			?
-		 */
+		/RADE:
+		 // - create
+		 // - update
+		 // - getById
+		 // - delete
+		 // - getAll
+		 // - getEager		?
+		 // - getAllEager	?
+		 // - find			?
+		 
 		
 		ApartmentRepository res = resources.apartmentRepository;
 		UserRepository userRes = resources.userRepository;
@@ -609,13 +623,14 @@ public class SparkAppMain {
 			System.out.println(ap.getHost().getName() + " @" + ap.getHost().getAccount().getUsername() + ": " + (ap.getAmenities().isEmpty() ? "" : ap.getAmenities().get(0).getName()) + " > " + (ap.getComments().isEmpty() ? "" : ap.getComments().get(0).getUser().getName()));
 			
 		}
-		*/
+		
 		
 		//Apartment ap = res.getEager(2);
 		//System.out.println(ap.getHost().getName() + " @" + ap.getHost().getAccount().getUsername() + ": " + (ap.getAmenities().isEmpty() ? "" : ap.getAmenities().get(0).getName()) + " > " + (ap.getComments().isEmpty() ? "" : ap.getComments().get(0).getUser().getName()));
 
 	}
-	
+	*/
+	/*
 	private static void commentRepoTest() throws DatabaseException
 	{
 		CommentRepository res = resources.commentRepository;
@@ -653,21 +668,22 @@ public class SparkAppMain {
 		for(Comment comment : comments) {
 			System.out.println(comment.getUser().getName() + ": " + comment.getText());
 		}
-		*/
+		
 		
 	}
-	
+	*/
+	/*
 	private static void reservationRepoTest() throws DatabaseException
 	{
-		/*RADE:
-		 * - create
-		 * - update
-		 * - getById
-		 * - delete
-		 * - getAll
-		 * - getAllEager
-		 * - getEager
-		 */
+		//RADE:
+		 // - create
+		 // - update
+		 // - getById
+		 // - delete
+		 // - getAll
+		 // - getAllEager
+		 // - getEager
+		 
 		
 		ReservationRepository res = resources.reservationRepository;
 		ApartmentRepository apRes = resources.apartmentRepository;
@@ -704,7 +720,7 @@ public class SparkAppMain {
 		res.update(r);
 		*/
 		
-		res.delete(4);
+		//res.delete(4);
 		//res.getById(4);
 		
 		/*
@@ -714,9 +730,10 @@ public class SparkAppMain {
 		
 		Reservation r = res.getEager(res.getById(1).getId());
 			System.out.println(conv.toCsv(r));
-		*/
+		
 	}
-	
+	*/
+	/*
 	private static void userRepoTest() throws DatabaseException
 	{
 		UserRepository res = resources.userRepository;
@@ -769,9 +786,10 @@ public class SparkAppMain {
 		for(User user : users) {
 			System.out.println(conv.toCsv(user));
 		}
-		*/
+		
 	}
-	
+	*/
+	/*
 
 	private static void commentConverterTest()
 	{
@@ -849,22 +867,35 @@ public class SparkAppMain {
 	private static void testDateCollection() throws DatabaseException {
 		DateCollectionRepository repo = (new AppResources()).availableDateCollectionRepository;
 		
-		List<Date> dates = new ArrayList<Date>();
-		dates.add(new Date());
-		dates.add(new GregorianCalendar(2015,6-1,4).getTime());
-		dates.add(new GregorianCalendar(2015,7-1,15).getTime());
-		dates.add(new GregorianCalendar(2018,9-1,23).getTime());
+		Map<Date, DateStatus> dates = new HashMap<Date, DateStatus>();
+		dates.put(new Date(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,3-1,15).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,11-1,4).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,8-1,4).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,5-1,15).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,7-1,11).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,7-1,18).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,6-1,7).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,7-1,14).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2018,9-1,13).getTime(), DateStatus.free);
 		DateCollection dateCollection1 = new DateCollection(new Apartment(3), false, dates);
 		
+		/*
 		List<Date> dates2 = new ArrayList<Date>();
 		dates2.add(new Date());
 		dates2.add(new GregorianCalendar(2015,6-1,4).getTime());
 		dates2.add(new GregorianCalendar(2015,7-1,15).getTime());
 		dates2.add(new GregorianCalendar(2018,9-1,23).getTime());
 		DateCollection dateCollection2 = new DateCollection(new Apartment(5), false, dates2);
-		
+		*/
+		/*
 		DateCollectionCsvConverter converter = new DateCollectionCsvConverter();
-		
+		String str1 = converter.toCsv(dateCollection1);
+		System.out.println("STR1   " + str1);
+		String str2 = converter.toCsv(converter.fromCsv(str1));
+		System.out.println("STR2   " + str2);
+		System.out.println(str1.equals(str2));
+		*/
 		/*String dateCollectionString = converter.toCsv(dateCollection);
 		System.out.println(dateCollectionString);
 		String dateCollectionString2 = converter.toCsv(converter.fromCsv(dateCollectionString));
@@ -900,9 +931,10 @@ public class SparkAppMain {
 		/*
 		repo.delete(2);
 		repo.getById(2);
-		*/
+		
 	}
-
+*/
+	/*
 	private static void testReservation() {
 		
 		Reservation reservation = new Reservation(7845, new Apartment(56), new User(new Long(55)), new Date(), 8, 568.75, "hdsuidskjuib udhsoudn udhwubwkdiuwhkj UINnd eijbe\njwdhwjdnk uidhwbdhwuhbUHUHGUY8wehkj idudu djbdbjhd i.", false, ReservationStatus.accepted);
@@ -930,4 +962,5 @@ public class SparkAppMain {
 		
 		//System.out.println(userString.equals(drugiString));
 	}
+	*/
 }
