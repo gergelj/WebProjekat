@@ -144,6 +144,22 @@
                                             <b-form-spinbutton id="nested-guests" v-model="numberOfGuests" min="1" max="100"></b-form-spinbutton>
                                         </b-form-group>
 
+                                        <b-form-group
+                                        label-cols-sm="5"
+                                        label="Check In Hour"
+                                        label-align-sm="right"
+                                        label-for="nested-checkin">
+                                            <b-form-spinbutton id="nested-checkin" v-model="checkInHour" min="12" max="20"></b-form-spinbutton>
+                                        </b-form-group>
+
+                                        <b-form-group
+                                        label-cols-sm="5"
+                                        label="Check Out Hour"
+                                        label-align-sm="right"
+                                        label-for="nested-checkout">
+                                            <b-form-spinbutton id="nested-checkout" v-model="checkOutHour" min="8" max="11"></b-form-spinbutton>
+                                        </b-form-group>
+
                                     </b-container>
                                     <b-container fluid>
                                         <!-- booking dates -->
@@ -196,6 +212,6 @@
     <script src="js/components/picture-uploader.js"></script>
     <script src="js/v-calendar.umd.min.js"></script>
     <script src="js/components/amenity-list.js"></script>
-    <script src="app/apartment.js"></script>
+    <script src="app/new-apartment.js"></script>
 </body>
 </html>

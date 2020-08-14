@@ -13,6 +13,9 @@ var app = new Vue({
         city: '',
         postalCode: '',
         position: {lat:0, lng:0},
+
+        checkInHour: 14,
+        checkOutHour: 10,
         
         pictures: [],
         amenities: [],
@@ -64,7 +67,9 @@ var app = new Vue({
                     postalCode : this.postalCode,
                     pictures : this.pictures,
                     amenities : this.amenities,
-                    bookingDates : this.bookingDates.map(d => d.getTime())
+                    bookingDates : this.bookingDates.map(d => d.getTime()),
+                    checkInHour: this.checkInHour,
+                    checkOutHour: this.checkOutHour
                 }
 
                 let jwt = window.localStorage.getItem('jwt');

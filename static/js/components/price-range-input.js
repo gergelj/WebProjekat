@@ -1,5 +1,5 @@
 Vue.component("price-range-input", {
-    props: ['value', 'disabled'],
+    props: ['value', 'disabled'], // value - {startPrice, endPrice}
     data: function(){
         return{
             startPriceString: 0,
@@ -29,10 +29,18 @@ Vue.component("price-range-input", {
     watch:{
         value: function(){
             this.$emit('input', this.value);
+        },
+        priceValid:function(){
+            if(!this.priceValid)
+            this.value = null;
         }
     },
     computed:{
         priceValidation : function(){
+            if(this.disabled){
+                return null;
+            }
+            
             this.startPrice = parseFloat(this.startPriceString);
             this.endPrice = parseFloat(this.endPriceString);
 

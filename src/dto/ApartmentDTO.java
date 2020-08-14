@@ -20,11 +20,31 @@ public class ApartmentDTO {
 	private String city;
 	private String postalCode;
 	
+	private int checkInHour;
+	private int checkOutHour;
+	
 	private List<String> pictures;
 	private List<Amenity> amenities;
 	private List<Date> bookingDates;
 
 	
+	
+	public int getCheckInHour() {
+		return checkInHour;
+	}
+
+	public void setCheckInHour(int checkInHour) {
+		this.checkInHour = checkInHour;
+	}
+
+	public int getCheckOutHour() {
+		return checkOutHour;
+	}
+
+	public void setCheckOutHour(int checkOutHour) {
+		this.checkOutHour = checkOutHour;
+	}
+
 	public ApartmentType getApartmentType() {
 		return apartmentType;
 	}
