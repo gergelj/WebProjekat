@@ -21,6 +21,7 @@ Vue.component("tabela-js",{
          :items="items" 
          :fields="fields"
          select-mode="single"
+         id="tabela"
          ></b-table>
     </div>
     ` 
@@ -30,9 +31,7 @@ Vue.component("tabela-js",{
         let jwt = window.localStorage.getItem('jwt');
         if(!jwt)
             jwt='';
-        console.log(jwt);
         
-
         axios
         .get('rest/vazduhbnb/amenities',{
             headers:{
@@ -55,14 +54,45 @@ Vue.component("tabela-js",{
             }
         });
 
-        /*this.$root.$on('deleteAmenity', (deletedAmenity)=>{
-            let i = items.indexOf(deletedAmenity);
+        this.$root.$on('deleteAmenity', (deletedAmenity)=>{
+            this.deletedAmenity = deletedAmenity
 
-            if(i > -1)
+            let index = this.items.findIndex(i => i.id === deletedAmenity.id);
+
+            if(index > -1)
             {
-                items.splice(i, 1);
+                this.items.splice(index, 1);
             }
-        });*/
+
+            app.$forceUpdate();
+        });
+
+        this.$root.$on('addedAmenity', (addedAmenityName)=> {
+            
+                axios
+                    .get('rest/vazduhbnb/amenities',{
+                        headers:{
+                            'Authorization': 'Bearer ' + jwt
+                        }
+                    })
+                    .then(response =>{
+                        this.items = response.data;  
+                    })
+                    .catch(function(error){
+                        console.log(error.response)
+                        switch(error.response.status)
+                    {
+                        case 500:
+                            pushErrorNotification('Interval server error','Please try again later')
+                            break;
+                        case 403:
+                            pushErrorNotification("Forbiden","You must be logged in as admin");
+                        break;
+                    }
+                    });
+                
+                app.$forceUpdate();
+        });
     },
     methods:
     {
@@ -89,9 +119,7 @@ Vue.component("tabela-js",{
 Vue.component("name-form",{
     data: function(){
         return{
-            mode: "BROWSE",
-            selectedAmenity: {} ,
-            seachField: ""
+            selectedAmenity: {}
         }
     },
     template:`
@@ -102,7 +130,7 @@ Vue.component("name-form",{
         <b-form-input 
         v-model="selectedAmenity.name" 
         :formatter="formatter"
-        placeholder="Selected amenity's name will be written here"></b-form-input>
+        placeholder="Selected amenity will be shown here"></b-form-input>
 
         <br>
         <b-button 
@@ -179,15 +207,22 @@ Vue.component("name-form",{
                 .then(response =>{
                     console.log('amenity deleted successfully');
                     pushSuccessNotification('Success!','Amenity deleted successfully!');
+                    this.$root.$emit('deleteAmenity', deletedAmenity);
+                    this.selectedAmenity = {};
+                    app.$forceUpdate();
+                })
+                .catch(function(error){
+                    switch(error.response.status)
+                    {
+                        case 500:
+                            pushErrorNotification('Error!', "You've selected not existing amenity!");
+                            break;
+                    }
                 });
-            window.location.reload();
-
-            this.$root.$emit('deleteAmenity', deletedAmenity);
-        }
-            
 
             
-    }
+        }       
+    },
 })
 
 Vue.component("add-form",{
@@ -229,13 +264,13 @@ Vue.component("add-form",{
                     .post('rest/vazduhbnb/addNewAmenity', this.name)
                     .then(response =>{
                         pushSuccessNotification('Success!', 'You added new amenity to the list!');
-                        window.location.reload();
+                        this.$root.$emit('addedAmenity', this.name);
                     })
             }
         }
     }
 });
-
+ 
 var app = new Vue({
     el: "#amenities"
 })

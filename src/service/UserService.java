@@ -91,6 +91,11 @@ public class UserService {
 	   }
    }
    
+   public void delete(long id) throws DatabaseException
+   {
+	   userRepository.delete(id);
+   }
+   
    public User login(UserDTO user) throws BadRequestException, DatabaseException {
 	   
 	   if(user.getUsername().isEmpty() || user.getPassword().isEmpty())
@@ -141,10 +146,7 @@ public class UserService {
 	   return userRepository.isUsernameUnique(username);
    }
 
-   public List<User> getAll(UserType userType) throws InvalidUserException, DatabaseException {
-      if(userType != UserType.admin)
-    	  throw new InvalidUserException();
-      
+   public List<User> getAll() throws DatabaseException {      
       List<User> users = userRepository.getAllEager();
       for(User user : users)
     	  user.getAccount().setPassword("");
@@ -172,10 +174,10 @@ public class UserService {
       return null;
    }
    
-   public User blockUser(User user, UserType userType) throws InvalidUserException, DatabaseException {
+   public User blockUser(User user) throws DatabaseException, InvalidUserException {
 	   
-	   if(userType != UserType.admin)
-		   throw new InvalidUserException();
+	   /*if(userType != UserType.admin)
+		   throw new InvalidUserException();*/
 	   
 	   User blockedUser = userRepository.getEager(user.getId());
 	   blockedUser.block();
@@ -183,6 +185,16 @@ public class UserService {
 	   
 	   blockedUser.getAccount().setPassword("");
 	   return blockedUser;
+   }
+   
+   public User unblockUser(User user) throws DatabaseException
+   {
+	   User unblockedUser = userRepository.getEager(user.getId());
+	   unblockedUser.setBlocked(false);
+	   userRepository.update(unblockedUser);
+	   
+	   unblockedUser.getAccount().setPassword("");
+	   return unblockedUser;
    }
 
 }
