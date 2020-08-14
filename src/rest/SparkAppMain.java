@@ -114,7 +114,7 @@ public class SparkAppMain {
 	
 	//AppResources res;
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, DatabaseException {
 		
 		try {
 			resources = new AppResources();
@@ -138,7 +138,8 @@ public class SparkAppMain {
 			e.printStackTrace();
 		}
 		*/
-		
+		commentRepoTest();
+		apartmentRepoTest();
 		
 		port(8088);
 
@@ -299,7 +300,7 @@ public class SparkAppMain {
 			
 			String payload = request.body();
 			
-			String amenityName = g.fromJson(payload, String.class);
+			String amenityName = g.fromJson(g.toJson(payload), String.class);
 			
 			System.out.println(amenityName);
 			
@@ -337,7 +338,113 @@ public class SparkAppMain {
 			return g.toJson(UserType.undefined);
 		});
 		
+		get("/rest/vazduhbnb/getAllUsers", (request, response) ->{
+			response.type("application/json");
+			
+			User user = getLoggedInUser(request);
+			
+			try
+			{
+				List<User> users = new ArrayList<User>();
+				if(user.getUserType() == UserType.admin)
+				{
+					users = resources.userService.getAll();
+				}
+				else if(user.getUserType() == UserType.host)
+				{
+					users = resources.userService.getGuestsByHost(user, user.getUserType());
+				}
+				return g.toJson(users);
+			}
+			catch(DatabaseException ex)
+			{
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+		});
 		
+		put("/rest/vazduhbnb/deleteUser", (request, response) ->{
+			response.type("application/json");
+			
+			String payload = request.body();
+			
+			long id = g.fromJson(payload, long.class);
+			
+			if(id < 1)
+			{
+				response.status(400);
+				return g.toJson("Index lower than minimal");
+			}
+			
+			try
+			{
+				resources.userService.delete(id);
+				return g.toJson(id);
+			}
+			catch(DatabaseException ex)
+			{
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		put("/rest/vazduhbnb/blockUser", (request, response) ->{
+			response.type("application/json");
+			
+			String payload = request.body();
+			
+			User user = g.fromJson(payload, User.class);
+			
+			if(user == null)
+			{
+				response.status(400);
+				return g.toJson("User is null");
+			}
+			
+			try
+			{
+				resources.userService.blockUser(user);
+				return g.toJson(user);
+			}
+			catch(DatabaseException ex)
+			{
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		put("/rest/vazduhbnb/unblockUser", (request, response) ->{
+			response.type("application/json");
+			
+			String payload = request.body();
+			
+			User user = g.fromJson(payload, User.class);
+			
+			if(user == null)
+			{
+				response.status(400);
+				return g.toJson("User is null");
+			}
+			
+			try
+			{
+				User unblockedUser = resources.userService.unblockUser(user);
+				return g.toJson(unblockedUser);
+			}
+			catch(DatabaseException ex)
+			{
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		get("/rest/vazduhbnb/getLoggedinUser", (request, response)->{
+			response.type("application/json");
+			
+			User user = getLoggedInUser(request);
+			
+			return g.toJson(user);
+		});
 		
 		get("/*", (request, response) -> {
 			response.status(404);
@@ -548,16 +655,13 @@ public class SparkAppMain {
 		Apartment ap1 = new Apartment(2, 10, 150.6, false, true, ApartmentType.fullApartment, loc1, userRes.getById(1), pictures1, amenities1, null);
 		Apartment ap2 = new Apartment(1, 3, 150.6, false, true, ApartmentType.fullApartment, loc2, userRes.getById(2), pictures2, null, comments2);
 		Apartment ap3 = new Apartment(1, 4, 150.6, false, true, ApartmentType.fullApartment, loc3, userRes.getById(2), null, amenities3, comments3);
-		Apartment ap4 = new Apartment(1, 5, 150.6, false, true, ApartmentType.fullApartment, loc4, userRes.getById(4), pictures4, amenities4, null);
-		Apartment ap5 = new Apartment(1, 3, 150.6, false, true, ApartmentType.fullApartment, loc5, userRes.getById(5), null, null, null);
+
 					
-		/*
+		
 		res.create(ap1);
 		res.create(ap2);
 		res.create(ap3);
-		res.create(ap4);
-		res.create(ap5);
-		*/
+		
 		
 		//res.delete(4);
 		
@@ -596,17 +700,17 @@ public class SparkAppMain {
 		CommentCsvConverter conv = new CommentCsvConverter();
 		UserRepository userRepo = resources.userRepository;
 		
-		Comment comment1 = new Comment("Vas apartamn je potpuno sranje.\nNe zelim nikome da ode tamo vise u zivotu", 1, false, false, userRepo.getById(4));
-		Comment comment2 = new Comment("Najbolji apartman u gradu", 5, false, false, userRepo.getById(5));
-		Comment comment3 = new Comment("Ooooo K.", 3, false, false, userRepo.getById(6));
-		Comment comment4 = new Comment("Lorem Ipsum bla bla bla bla balab jhsuahbj", 4, false, false, userRepo.getById(4));
+		Comment comment1 = new Comment("Vas apartamn je potpuno sranje.\nNe zelim nikome da ode tamo vise u zivotu", 1, false, false, userRepo.getById(8));
+		Comment comment2 = new Comment("Najbolji apartman u gradu", 5, false, false, userRepo.getById(8));
+		Comment comment3 = new Comment("Ooooo K.", 3, false, false, userRepo.getById(8));
+		Comment comment4 = new Comment("Lorem Ipsum bla bla bla bla balab jhsuahbj", 8, false, false, userRepo.getById(8));
 		
-		/*
+		
 		res.create(comment1);
 		res.create(comment2);
 		res.create(comment3);
 		res.create(comment4);
-		*/
+		
 		
 		//res.delete(3);
 		
