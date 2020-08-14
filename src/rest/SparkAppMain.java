@@ -344,6 +344,7 @@ public class SparkAppMain {
 			response.type("application/json");
 			
 			User loggedinUser = getLoggedInUser(request);
+			response.status(200);
 			if(loggedinUser != null)
 				return g.toJson(loggedinUser.getUserType());
 			return g.toJson(UserType.undefined);

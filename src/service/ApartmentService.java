@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
-import javax.xml.bind.DatatypeConverter;
 
 public class ApartmentService {
    private ApartmentRepository apartmentRepository;
@@ -238,7 +237,8 @@ public class ApartmentService {
 	        String filename = "uploads" + File.separator + new Date().getTime();
 	        
 	        //convert base64 string to binary data
-	        byte[] data = DatatypeConverter.parseBase64Binary(strings[1]);
+	        byte[] data = Base64.getDecoder().decode(strings[1].getBytes());
+	        
 	        File file = new File("static" + File.separator + filename + "." + extension);
 	        
 	        if(file.exists())

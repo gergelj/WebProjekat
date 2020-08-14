@@ -1,151 +1,142 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>JAX-RS demo</title>
-<script src="jquery.min.js"></script>
-<script type="text/javascript">
-function getFormData($form){
-    var unindexed_array = $form.serializeArray();
-    var indexed_array = {};
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home page</title>
 
-    $.map(unindexed_array, function(n, i){
-        indexed_array[n['name']] = n['value'];
-    });
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="css/bootstrap-vue.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/webfonts.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/mk-notifications.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/navbar.css"/>
 
-    return indexed_array;
-}
-
-/*
- * Šalje AJAX zahtev ka testjson REST servisu.
- * Kao parametar POST metode, šalje objekat klase Student, zapakovan u JSON.
- * Prima takođe JSON string, koji je takođe objekat klase Student, a koji 
- * vraća testjson REST servis.
- */
-function sendStudent() {
-	var $form = $("#jsonform");
-	var data = getFormData($form);
-	var s = JSON.stringify(data);
-	$.ajax({
-		url: "rest/demo/testjson",
-		type:"POST",
-		data: s,
-		contentType:"application/json",
-		dataType:"json",
-		complete: function(data) {
-			$( "#result" ).html( data.responseText );
-		}
-	});
-}
-
-function login() {
-	var $form = $("#login");
-	var data = getFormData($form);
-	var s = JSON.stringify(data);
-	$.ajax({
-		url: "rest/demo/login",
-		type:"POST",
-		data: s,
-		contentType:"application/json",
-		dataType:"json",
-		complete: function(data) {
-			$( "#resultLogin" ).html( data.responseText );
-		}
-	});
-}
-
-function loginJWT() {
-	var $form = $("#login");
-	var data = getFormData($form);
-	var s = JSON.stringify(data);
-	$.ajax({
-		url: "rest/demo/loginJWT",
-		type:"POST",
-		data: s,
-		contentType:"application/json",
-		dataType:"json",
-		complete: function(data) {
-			$( "#resultLoginJWT" ).html( data.responseText );
-			window.localStorage.setItem('jwt', data.responseText);
-		}
-	});
-}
-
-function testJWT() {
-	var sjwt = window.localStorage.getItem('jwt');
-	var jwt;
-	if (!sjwt) 
-		jwt = '';
-	else 
-		jwt = JSON.parse(sjwt).JWTToken;
-	$.ajax({
-		url: "rest/demo/testloginJWT",
-		type:"GET",
-		headers: {
-	        'Authorization':'Bearer ' + jwt
-	    },
-		contentType:"application/json",
-		dataType:"json",
-		complete: function(data) {
-			$( "#resultLoginJWT" ).html( data.responseText );
-		}
-	});
-}
-
-</script>
 </head>
 <body>
+    <div id="app">
+        <navigation-bar></navigation-bar>
 
-	<a href="rest/demo/test">Test</a> <br />
-	<a href="rest/demo/book/101-456-890">Test PathParam</a> <br />
-	<a href="rest/demo/books?num=123456">Test QueryParam</a> <br />
-	<a href="rest/demo/testheader">Test HeaderParam</a> <br />
-	<a href="rest/demo/testcookie">Test CookieParam</a> <br />
-	
-	<form action="/rest/demo/forma" method="post">
-	<fieldset>
-	<legend>Test forme, preko x-www-form-urlencoded </legend>
-		<input type="text" name="ime" value="Pera"/><br />
-		<input type="text" name="prezime" value="Perić" /><br />
-		<input type="submit" value="submit" /> <br />
-	</fieldset>
-	</form> <br />
-	
-	<form id="jsonform">
-	<fieldset>
-	<legend>Test forme i JSON</legend>
-		<input type="text" name="ime" value="Pera"/><br />
-		<input type="text" name="prezime" value="Perić" /><br />
-		<input type="button" value="submit" onclick="sendStudent()"/> <br />
-		<fieldset><div id="result">Rezultat poziva</div></fieldset>
-	</fieldset>
-	</form> <br />
+        <!--
 
-	<form id="login" >
-	<fieldset>
-	<legend>Prijava na sistem</legend>
-		<input type="text" name="username" value="Pera"/><br />
-		<input type="text" name="password" value="Perić" /><br />
-		<input type="button" value="submit" onclick="login()"/> <br />
-		<fieldset><div id="resultLogin">Rezultat poziva</div></fieldset><br />
-	<a href="rest/demo/testlogin">Test Login logike</a> <br />
-	<a href="rest/demo/logout">Logout</a> <br />
-	</fieldset>
-	</form> <br />
+        
+        <b-form-checkbox
+            id="checkbox-1"
+            v-model=""
+            name="checkbox-1"
+            value=""
+            unchecked-value=""
+            button button-variant="outline-danger"
+            switch>
+            <label>Texttt</label>
+            <b-form-input :disabled="!status"></b-form-input>
+        </b-form-checkbox>
+-->
+        <b-container>
+                <b-card no-body>
+                    <template v-slot:header>
+                        <h4 class="mb-0">Search</h4>
+                    </template>
 
-	<form id="loginJWT" >
-	<fieldset>
-	<legend>Prijava na sistem upotrebom JWT</legend>
-		<input type="text" name="username" value="Pera"/><br />
-		<input type="text" name="password" value="Perić" /><br />
-		<input type="button" value="submit" onclick="loginJWT()"/> <br />
-		<fieldset><div id="resultLoginJWT">Rezultat poziva</div></fieldset><br />
-	<a href="rest/demo/testloginJWT">Test Login logike koji ne radi (jer ne ugrađuje token u zahtev - nije cookie)</a> <br />
-	<a href="javascript:testJWT()">Test Login logike</a> <br />
-	<a href="javascript:window.localStorage.removeItem('jwt'); alert('Logged off')">Logout</a> <br />
-	</fieldset>
-	</form> <br />
+                    <b-container>
+                        <b-row align-h="center">
+                            <b-form inline>
+                                <b-form-input v-model="city" placeholder="Enter city name" class="mr-3"></b-form-input>
+                                <b-button>Search</b-button>
+                            </b-form>
+                        </b-row>
 
-	<a href="chat.html">WebSocket chat primer</a>
+
+                        <b-row class="mt-2" align-h="center">
+                            <b-form inline>
+                                <v-date-picker v-model="dateRange" :min-date='new Date()' is-inline :columns="$screens({ default: 1, lg: 3 })" mode="range"/>
+                                <b-button>Clear dates</b-button>
+
+                            </b-form>
+                            <!--
+
+                                <b-form-checkbox
+                                    id="checkbox-date"
+                                    v-model="dateRangeStatus"
+                                    name="checkbox-3"
+                                    value="checked"
+                                    unchecked-value="unchecked"
+                                    button button-variant="outline-info">
+                                    Dates
+                                </b-form-checkbox>
+                            -->
+                            
+                        </b-row>
+                        <b-row align-h="end">
+                        </b-row>
+
+                        <b-row align-h="center" class="mt-2">
+                            <b-form inline>
+                                    <b-form-checkbox
+                                    class="mr-3"
+                                        id="checkbox-guests"
+                                        v-model="priceStatus"
+                                        name="checkbox-4"
+                                        value="checked"
+                                        unchecked-value="unchecked"
+                                        button button-variant="outline-info">
+                                        Price Range
+                                    </b-form-checkbox>
+                                    <price-range-input v-model="priceRange" :disabled="priceStatus == 'unchecked'"></price-range-input>
+                            </b-form>
+                        </b-row>
+
+                        <b-row align-h="center" class="mt-2">
+
+                            <b-form inline >
+                                <b-form-checkbox
+                                    class="mr-3"
+                                    id="checkbox-rooms"
+                                    v-model="numberOfRoomsStatus"
+                                    name="checkbox-1"
+                                    value="checked"
+                                    unchecked-value="unchecked"
+                                    button button-variant="outline-info">
+                                    Number of Rooms
+                                </b-form-checkbox>
+                                
+                                <b-form-spinbutton v-model="numberOfRooms" min="0" max="100" :disabled="numberOfRoomsStatus == 'unchecked'"></b-form-spinbutton>
+                            </b-form>
+
+                            <b-form inline>
+                                <b-form-checkbox
+                                    class="ml-5 mr-3"
+
+                                    id="checkbox-guests"
+                                    v-model="numberOfGuestsStatus"
+                                    name="checkbox-2"
+                                    value="checked"
+                                    unchecked-value="unchecked"
+                                    button button-variant="outline-info">
+                                    Number of Guests
+                                </b-form-checkbox>
+                                <b-form-spinbutton v-model="numberOfGuests" min="0" max="100" :disabled="numberOfGuestsStatus == 'unchecked'"></b-form-spinbutton>
+                            </b-form>
+
+                        </b-row>
+
+                    </b-container>
+                </b-card>
+        </b-container>
+        
+
+    
+
+
+    </div>
+    
+    <script src="js/vue.min.js"></script>
+    <script src="js/bootstrap-vue.min.js"></script>
+    <script src="js/jquery-3.5.1.min.js"></script>
+    <script src="js/mk-notifications.min.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/components/navigation-bar.js"></script>
+    <script src="js/components/price-range-input.js"></script>
+    <script src="js/v-calendar.umd.min.js"></script>
+    <script src="app/homepage.js"></script>
 </body>
 </html>
