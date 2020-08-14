@@ -6,6 +6,9 @@
 
 package beans;
 
+import beans.interfaces.IDeletable;
+import beans.interfaces.IIdentifiable;
+
 public class Comment implements IDeletable, IIdentifiable {
    private long id;
    private String text;

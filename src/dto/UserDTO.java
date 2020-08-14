@@ -6,7 +6,7 @@
 
 package dto;
 
-import beans.Gender;
+import beans.enums.Gender;
 
 public class UserDTO {
    private String username;

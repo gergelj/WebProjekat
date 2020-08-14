@@ -4,7 +4,7 @@
  * Purpose: Defines the Class UserType
  ***********************************************************************/
 
-package beans;
+package beans.enums;
 
 public enum UserType {
    undefined,

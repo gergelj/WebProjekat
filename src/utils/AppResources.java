@@ -36,14 +36,13 @@ public class AppResources {
 	//private static AppResources instance = null;
 	
 	//Repositories
-	public AmenityRepository amenityRepository;
-	public ApartmentRepository apartmentRepository;
-	public DateCollectionRepository availableDateCollectionRepository;
-	public DateCollectionRepository bookingDateCollectionRepository;
-	public CommentRepository commentRepository;
-	public ReservationRepository reservationRepository;
-	public UserRepository userRepository;
-	public AccountRepository accountRepository;
+	private AmenityRepository amenityRepository;
+	private ApartmentRepository apartmentRepository;
+	private DateCollectionRepository dateCollectionRepository;
+	private CommentRepository commentRepository;
+	private ReservationRepository reservationRepository;
+	private UserRepository userRepository;
+	private AccountRepository accountRepository;
 	
 	//Services
 	public AmenityService amenityService;
@@ -58,36 +57,21 @@ public class AppResources {
 		loadServices();
 	}
 	
-	/*
-	public static AppResources getInstance() throws DatabaseException
-	{
-		if(instance == null)
-		{
-			instance = new AppResources();
-		}
-		
-		return instance;
-	}
-	*/
-	
 	private void loadRespositories() throws DatabaseException
 	{
 		accountRepository = new AccountRepository(new CsvStream<Account>("storage/accounts.dsv", new AccountCsvConverter()), new LongSequencer());
 		
 		userRepository = new UserRepository(new CsvStream<User>("storage/users.dsv", new UserCsvConverter()), new LongSequencer(), accountRepository);
 		
-		availableDateCollectionRepository = new DateCollectionRepository("availableDateCollection", new CsvStream<DateCollection>("storage/availabledates.dsv", new DateCollectionCsvConverter()), new LongSequencer());
-		
-		bookingDateCollectionRepository = new DateCollectionRepository("bookingDateCollection", new CsvStream<DateCollection>("storage/bookingdates.dsv", new DateCollectionCsvConverter()), new LongSequencer());
+		dateCollectionRepository = new DateCollectionRepository(new CsvStream<DateCollection>("storage/datecollection.dsv", new DateCollectionCsvConverter()), new LongSequencer());
 		
 		amenityRepository = new AmenityRepository(new CsvStream<Amenity>("storage/amenities.dsv", new AmenityCsvConverter()), new LongSequencer());
 		
 		commentRepository = new CommentRepository(new CsvStream<Comment>("storage/comments.dsv", new CommentCsvConverter()), new LongSequencer(), userRepository);
 		
-		apartmentRepository = new ApartmentRepository(new CsvStream<Apartment>("storage/apartments.dsv", new ApartmentCsvConverter()), new LongSequencer(), userRepository, amenityRepository, commentRepository, availableDateCollectionRepository, bookingDateCollectionRepository);
+		apartmentRepository = new ApartmentRepository(new CsvStream<Apartment>("storage/apartments.dsv", new ApartmentCsvConverter()), new LongSequencer(), userRepository, amenityRepository, commentRepository, dateCollectionRepository);
 		
-		availableDateCollectionRepository.setApartmentRepository(apartmentRepository);
-		bookingDateCollectionRepository.setApartmentRepository(apartmentRepository);
+		dateCollectionRepository.setApartmentRepository(apartmentRepository);
 		
 		reservationRepository = new ReservationRepository(new CsvStream<Reservation>("storage/reservations.dsv", new ReservationCsvConverter()), new LongSequencer(), apartmentRepository, userRepository);
 		
@@ -97,11 +81,11 @@ public class AppResources {
 	{
 		amenityService = new AmenityService(amenityRepository);
 		
-		apartmentService = new ApartmentService(apartmentRepository, availableDateCollectionRepository, bookingDateCollectionRepository);
+		apartmentService = new ApartmentService(apartmentRepository, dateCollectionRepository);
 		
 		commentService = new CommentService(commentRepository, apartmentRepository);
 		
-		reservationService = new ReservationService(reservationRepository, availableDateCollectionRepository, bookingDateCollectionRepository, apartmentRepository);
+		reservationService = new ReservationService(reservationRepository, dateCollectionRepository, apartmentRepository);
 		
 		userService = new UserService(userRepository, accountRepository, reservationService);
 	}

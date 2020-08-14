@@ -9,9 +9,9 @@ package repository.csv.converter;
 import java.util.StringJoiner;
 
 import beans.Account;
-import beans.Gender;
 import beans.User;
-import beans.UserType;
+import beans.enums.Gender;
+import beans.enums.UserType;
 
 public class UserCsvConverter implements ICsvConverter<User> {
    private String delimiter = "~";

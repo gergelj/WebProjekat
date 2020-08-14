@@ -8,6 +8,10 @@ package beans;
 
 import java.util.*;
 
+import beans.enums.ReservationStatus;
+import beans.interfaces.IDeletable;
+import beans.interfaces.IIdentifiable;
+
 public class Reservation implements IDeletable, IIdentifiable {
    private Date checkIn;
    private int nights;

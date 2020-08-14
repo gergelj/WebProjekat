@@ -11,7 +11,7 @@ import repository.CommentRepository;
 import beans.Apartment;
 import beans.Comment;
 import beans.User;
-import beans.UserType;
+import beans.enums.UserType;
 import exceptions.DatabaseException;
 import exceptions.InvalidUserException;
 

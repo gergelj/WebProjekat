@@ -4,9 +4,8 @@
  * Purpose: Defines the Interface IIdentifiable
  ***********************************************************************/
 
-package beans;
+package beans.interfaces;
 
-import java.util.*;
 
 public interface IIdentifiable{
    long getId();

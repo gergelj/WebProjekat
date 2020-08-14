@@ -7,7 +7,7 @@
 package specification.specificationimpl;
 
 import beans.User;
-import beans.UserType;
+import beans.enums.UserType;
 import specification.AbstractSpecification;
 
 public class UserUserTypeSpecification extends AbstractSpecification<User> {

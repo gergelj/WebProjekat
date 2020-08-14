@@ -1,5 +1,8 @@
 package beans;
 
+import beans.interfaces.IDeletable;
+import beans.interfaces.IIdentifiable;
+
 public class Account implements IIdentifiable, IDeletable{
 	private long id;
 	private String username;

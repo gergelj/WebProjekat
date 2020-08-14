@@ -85,3 +85,5 @@ local.properties
 
 # Delimiter-separated value files
 *.dsv
+
+static/uploads/

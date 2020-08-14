@@ -4,7 +4,7 @@
  * Purpose: Defines the Interface IDeletable
  ***********************************************************************/
 
-package beans;
+package beans.interfaces;
 
 public interface IDeletable {
 	boolean isDeleted();

@@ -7,61 +7,60 @@ import static spark.Spark.put;
 import static spark.Spark.staticFiles;
 import static spark.Spark.webSocket;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.security.Key;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
+
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.http.Part;
+import javax.xml.bind.DatatypeConverter;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import beans.Account;
 import beans.Address;
 import beans.Amenity;
 import beans.Apartment;
-import beans.ApartmentType;
 import beans.Comment;
 import beans.Location;
 import beans.Picture;
-import beans.PriceRange;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
-import java.util.StringJoiner;
-
-import com.google.gson.Gson;
 
 import beans.Apartment;
 import beans.DateCollection;
 import beans.DateRange;
-import beans.Gender;
 import beans.Reservation;
-import beans.ReservationStatus;
 import beans.User;
-import beans.UserType;
-import dto.ApartmentFilterDTO;
+import beans.enums.ApartmentType;
+import beans.enums.DateStatus;
+import beans.enums.Gender;
+import beans.enums.ReservationStatus;
+import beans.enums.UserType;
+import dto.ApartmentDTO;
 import dto.ErrorMessageDTO;
 import dto.TokenDTO;
 import dto.UserDTO;
-import dto.UserFilterDTO;
 import exceptions.BadRequestException;
 import exceptions.DatabaseException;
 import exceptions.EntityNotFoundException;
@@ -80,8 +79,6 @@ import repository.CommentRepository;
 import repository.DateCollectionRepository;
 import repository.ReservationRepository;
 import repository.UserRepository;
-import repository.abstractrepository.IUserRepository;
-import repository.csv.converter.AccountCsvConverter;
 import repository.csv.converter.AmenityCsvConverter;
 import repository.csv.converter.ApartmentCsvConverter;
 import repository.csv.converter.CommentCsvConverter;
@@ -93,14 +90,13 @@ import repository.sequencer.LongSequencer;
 import service.UserService;
 import spark.Request;
 import spark.Session;
-import specification.filterconverter.ApartmentFilterConverter;
-import specification.filterconverter.UserFilterConverter;
+import spark.utils.IOUtils;
 import utils.AppResources;
 import ws.WsHandler;
 
 public class SparkAppMain {
 
-	private static Gson g = new Gson();
+	private static Gson g;
 
 	/**
 	 * Kljuc za potpisivanje JWT tokena.
@@ -110,11 +106,11 @@ public class SparkAppMain {
 	static AppResources resources;
 	static UserCsvConverter userConverter = new UserCsvConverter();
 	private static int minutesUntilTokenExpires = 30;
-	
-	
-	//AppResources res;
 
 	public static void main(String[] args) throws IOException, DatabaseException {
+		
+		g = getGson();
+		
 		
 		try {
 			resources = new AppResources();
@@ -123,23 +119,6 @@ public class SparkAppMain {
 			System.out.println("Server resources failed to load");
 			return;
 		}
-		
-		//amenityConverterTest();
-		//apartmentConverterTest();
-		//commentConverterTest();
-		
-		/*
-		try {
-			
-			testRepositories();
-			
-		} catch (DatabaseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
-		commentRepoTest();
-		apartmentRepoTest();
 		
 		port(8088);
 
@@ -168,7 +147,7 @@ public class SparkAppMain {
 				
 				System.out.println("Returned JWT: " + jws);
 				
-				return g.toJson(new TokenDTO(jws), TokenDTO.class);
+				return g.toJson(new TokenDTO(jws, loggedInUser.getAccount().getUsername(), loggedInUser.getUserType()), TokenDTO.class);
 				
 				//TODO: povratna vrednost kod exception-a
 			}catch(InvalidUserException ex) {
@@ -199,7 +178,7 @@ public class SparkAppMain {
 				String jws = getJwtToken(registeredUser);
 				System.out.println("Registered user: " + registeredUser.getAccount().getUsername() + " with JWTToken: " + jws);
 				
-				return g.toJson(new TokenDTO(jws), TokenDTO.class);
+				return g.toJson(new TokenDTO(jws, registeredUser.getAccount().getUsername(), registeredUser.getUserType()), TokenDTO.class);
 				
 			} catch(NotUniqueException ex) {
 				response.status(409); // username is not unique
@@ -211,6 +190,38 @@ public class SparkAppMain {
 				response.status(500); // server-side error
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}
+		});
+		
+		post("/rest/vazduhbnb/apartment", (request, response) -> {
+			response.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(request);
+			if(loggedInUser == null) {
+				response.status(401);
+				return g.toJson(new ErrorMessageDTO("Unauthorized access."), ErrorMessageDTO.class);
+			}
+			
+			String payload = request.body();
+			ApartmentDTO apartment = g.fromJson(payload, ApartmentDTO.class);
+			
+			try{
+				resources.apartmentService.create(apartment, loggedInUser);
+				
+			}catch(DatabaseException e){
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO("Internal Server Error"), ErrorMessageDTO.class);
+			}catch(InvalidUserException e) {
+				response.status(403);
+				return g.toJson(new ErrorMessageDTO("User doesn't have permission."), ErrorMessageDTO.class);
+			}catch(BadRequestException e) {
+				response.status(400);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}
+
+			
+			
+			return "Whatever";
+			
 		});
 		
 		get("/rest/vazduhbnb/profile", (request, response)->{
@@ -468,6 +479,30 @@ public class SparkAppMain {
 			}
 			return "No user logged in.";
 		});
+		
+	}
+
+	private static Gson getGson() {
+		// Creates the json object which will manage the information received 
+		GsonBuilder builder = new GsonBuilder(); 
+
+		// Register an adapter to manage the date types as long values 
+		builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() { 
+		   public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+		      return new Date(json.getAsJsonPrimitive().getAsLong()); 
+		   }
+		});
+		
+		builder.registerTypeAdapter(Date.class, new JsonSerializer<Date>() {
+
+			@Override
+			public JsonElement serialize(Date src, Type type, JsonSerializationContext context) {
+				return src == null ? null : new JsonPrimitive(src.getTime());
+			}
+			
+		});
+
+		return builder.create();
 	}
 	
 	private static User getLoggedInUser(Request request) {
@@ -486,6 +521,7 @@ public class SparkAppMain {
 		return null;
 	}
 	
+
 	private static String getJwtToken(User user) {
 		
 		JwtBuilder jwtBuilder = Jwts.builder();
@@ -498,7 +534,7 @@ public class SparkAppMain {
 		
 		return jwtBuilder.signWith(key).compact();
 	}
-
+/*
 	private static void testRepositories() throws DatabaseException
 	{
 		//amenityRepoTest();
@@ -508,25 +544,27 @@ public class SparkAppMain {
 		//reservationRepoTest();
 		//userRepoTest();
 	}
-	
+	*/
+	/*
 	private static void dateCollectoinRepoTest() {
 		DateCollectionRepository res = resources.availableDateCollectionRepository;
 		
-		DateCollection dc = new DateCollection(new Apartment(), false, new ArrayList<DateRange>());
+		//DateCollection dc = new DateCollection(new Apartment(), false, new ArrayList<DateRange>());
 		
 	}
-	
+	*/
+	/*
 	private static void amenityRepoTest()
 	{
 		AmenityRepository res = resources.amenityRepository;
 		
-		/*RADE:
-		 * - create
-		 * - update
-		 * - delete
-		 * - getById
-		 * - getAll
-		 */
+		//RADE:
+		 // - create
+		 // - update
+		 // - delete
+		 // - getById
+		 //- getAll
+		 
 		
 		Amenity am1 = new Amenity("Klima", false);
 		Amenity am2 = new Amenity("TV", false);
@@ -534,28 +572,29 @@ public class SparkAppMain {
 		Amenity am4 = new Amenity("Ves masina", false);
 		Amenity am5 = new Amenity("Pegla", false);
 		
-		/*
+		
 		res.create(am1);
 		res.create(am2);
 		res.create(am3);
 		res.create(am4);
 		res.create(am5);
-		*/
+		
 		
 	}
-	
+	*/
+	/*
 	private static void apartmentRepoTest() throws DatabaseException
 	{
-		/*RADE:
-		 * - create
-		 * - update
-		 * - getById
-		 * - delete
-		 * - getAll
-		 * - getEager		?
-		 * - getAllEager	?
-		 * - find			?
-		 */
+		/RADE:
+		 // - create
+		 // - update
+		 // - getById
+		 // - delete
+		 // - getAll
+		 // - getEager		?
+		 // - getAllEager	?
+		 // - find			?
+		 
 		
 		ApartmentRepository res = resources.apartmentRepository;
 		UserRepository userRes = resources.userRepository;
@@ -687,13 +726,14 @@ public class SparkAppMain {
 			System.out.println(ap.getHost().getName() + " @" + ap.getHost().getAccount().getUsername() + ": " + (ap.getAmenities().isEmpty() ? "" : ap.getAmenities().get(0).getName()) + " > " + (ap.getComments().isEmpty() ? "" : ap.getComments().get(0).getUser().getName()));
 			
 		}
-		*/
+		
 		
 		//Apartment ap = res.getEager(2);
 		//System.out.println(ap.getHost().getName() + " @" + ap.getHost().getAccount().getUsername() + ": " + (ap.getAmenities().isEmpty() ? "" : ap.getAmenities().get(0).getName()) + " > " + (ap.getComments().isEmpty() ? "" : ap.getComments().get(0).getUser().getName()));
 
 	}
-	
+	*/
+	/*
 	private static void commentRepoTest() throws DatabaseException
 	{
 		CommentRepository res = resources.commentRepository;
@@ -731,21 +771,22 @@ public class SparkAppMain {
 		for(Comment comment : comments) {
 			System.out.println(comment.getUser().getName() + ": " + comment.getText());
 		}
-		*/
+		
 		
 	}
-	
+	*/
+	/*
 	private static void reservationRepoTest() throws DatabaseException
 	{
-		/*RADE:
-		 * - create
-		 * - update
-		 * - getById
-		 * - delete
-		 * - getAll
-		 * - getAllEager
-		 * - getEager
-		 */
+		//RADE:
+		 // - create
+		 // - update
+		 // - getById
+		 // - delete
+		 // - getAll
+		 // - getAllEager
+		 // - getEager
+		 
 		
 		ReservationRepository res = resources.reservationRepository;
 		ApartmentRepository apRes = resources.apartmentRepository;
@@ -782,7 +823,7 @@ public class SparkAppMain {
 		res.update(r);
 		*/
 		
-		res.delete(4);
+		//res.delete(4);
 		//res.getById(4);
 		
 		/*
@@ -792,9 +833,10 @@ public class SparkAppMain {
 		
 		Reservation r = res.getEager(res.getById(1).getId());
 			System.out.println(conv.toCsv(r));
-		*/
+		
 	}
-	
+	*/
+	/*
 	private static void userRepoTest() throws DatabaseException
 	{
 		UserRepository res = resources.userRepository;
@@ -847,9 +889,10 @@ public class SparkAppMain {
 		for(User user : users) {
 			System.out.println(conv.toCsv(user));
 		}
-		*/
+		
 	}
-	
+	*/
+	/*
 
 	private static void commentConverterTest()
 	{
@@ -924,24 +967,77 @@ public class SparkAppMain {
 	}
 
 
-	private static void testDateCollection() {
+	private static void testDateCollection() throws DatabaseException {
+		DateCollectionRepository repo = (new AppResources()).availableDateCollectionRepository;
 		
-		List<DateRange> dates = new ArrayList<DateRange>();
-		dates.add(new DateRange(new Date(), new Date()));
-		dates.add(new DateRange(new GregorianCalendar(2015,6-1,4).getTime(), new GregorianCalendar(2015,7-1,15).getTime()));
-		DateCollection dateCollection = new DateCollection(458, new Apartment(96), false, dates);
+		Map<Date, DateStatus> dates = new HashMap<Date, DateStatus>();
+		dates.put(new Date(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,3-1,15).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,11-1,4).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,8-1,4).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,5-1,15).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,7-1,11).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,7-1,18).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,6-1,7).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2015,7-1,14).getTime(), DateStatus.free);
+		dates.put(new GregorianCalendar(2018,9-1,13).getTime(), DateStatus.free);
+		DateCollection dateCollection1 = new DateCollection(new Apartment(3), false, dates);
 		
+		/*
+		List<Date> dates2 = new ArrayList<Date>();
+		dates2.add(new Date());
+		dates2.add(new GregorianCalendar(2015,6-1,4).getTime());
+		dates2.add(new GregorianCalendar(2015,7-1,15).getTime());
+		dates2.add(new GregorianCalendar(2018,9-1,23).getTime());
+		DateCollection dateCollection2 = new DateCollection(new Apartment(5), false, dates2);
+		*/
+		/*
 		DateCollectionCsvConverter converter = new DateCollectionCsvConverter();
-		
-		String dateCollectionString = converter.toCsv(dateCollection);
+		String str1 = converter.toCsv(dateCollection1);
+		System.out.println("STR1   " + str1);
+		String str2 = converter.toCsv(converter.fromCsv(str1));
+		System.out.println("STR2   " + str2);
+		System.out.println(str1.equals(str2));
+		*/
+		/*String dateCollectionString = converter.toCsv(dateCollection);
 		System.out.println(dateCollectionString);
 		String dateCollectionString2 = converter.toCsv(converter.fromCsv(dateCollectionString));
 		System.out.println(dateCollectionString2);
 		
 		System.out.println(dateCollectionString.equals(dateCollectionString2));
+		*/
+		
+		//repo.create(dateCollection1);
+		//repo.create(dateCollection2);
+		
+		//List<DateCollection> dc = repo.getAll();
+		//dc.forEach(c -> System.out.println(converter.toCsv(c)));
+		
+		/*
+		List<DateCollection> eagerdc = repo.getAllEager();
+		for(DateCollection c : eagerdc) {
+			System.out.println(c.getApartment().getLocation().getAddress().getStreet());
+		}
+		*/
+		/*
+		DateCollection dc = repo.getEager(96);
+		System.out.println(dc.getApartment().getLocation().getAddress().getStreet());
+		*/
+		/*
+		DateCollection dc = repo.getByApartmentId(5);
+		System.out.println(converter.toCsv(dc));
+		dc.addDates(new Date());
+		repo.update(dc);
+		DateCollection newdc = repo.getByApartmentId(5);
+		System.out.println(converter.toCsv(newdc));
+		*/
+		/*
+		repo.delete(2);
+		repo.getById(2);
 		
 	}
-
+*/
+	/*
 	private static void testReservation() {
 		
 		Reservation reservation = new Reservation(7845, new Apartment(56), new User(new Long(55)), new Date(), 8, 568.75, "hdsuidskjuib udhsoudn udhwubwkdiuwhkj UINnd eijbe\njwdhwjdnk uidhwbdhwuhbUHUHGUY8wehkj idudu djbdbjhd i.", false, ReservationStatus.accepted);
@@ -969,4 +1065,5 @@ public class SparkAppMain {
 		
 		//System.out.println(userString.equals(drugiString));
 	}
+	*/
 }

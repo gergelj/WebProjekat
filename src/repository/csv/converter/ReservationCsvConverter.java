@@ -13,8 +13,8 @@ import java.util.StringJoiner;
 
 import beans.Apartment;
 import beans.Reservation;
-import beans.ReservationStatus;
 import beans.User;
+import beans.enums.ReservationStatus;
 
 public class ReservationCsvConverter implements ICsvConverter<Reservation> {
    private String delimiter = "~";

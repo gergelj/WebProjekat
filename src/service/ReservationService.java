@@ -10,11 +10,11 @@ import repository.ReservationRepository;
 import repository.ApartmentRepository;
 import repository.DateCollectionRepository;
 import beans.User;
-import beans.UserType;
+import beans.enums.ReservationStatus;
+import beans.enums.UserType;
 import exceptions.DatabaseException;
 import exceptions.InvalidUserException;
 import beans.Reservation;
-import beans.ReservationStatus;
 import beans.Apartment;
 import beans.DateCollection;
 
@@ -22,18 +22,16 @@ import java.util.*;
 
 public class ReservationService {
    private ReservationRepository reservationRepository;
-   private DateCollectionRepository availableDateCollectionRepository;
-   private DateCollectionRepository bookingDateCollectionRepository;
+   private DateCollectionRepository dateCollectionRepository;
    private ApartmentRepository apartmentRepository;
 
 
    
 //Constructors 
-   public ReservationService(ReservationRepository reservationRepository, DateCollectionRepository availableDateCollectionRepository, DateCollectionRepository bookingDateCollectionRepository, ApartmentRepository apartmentRepository) {
+   public ReservationService(ReservationRepository reservationRepository, DateCollectionRepository dateCollectionRepository, ApartmentRepository apartmentRepository) {
 	super();
 	this.reservationRepository = reservationRepository;
-	this.availableDateCollectionRepository = availableDateCollectionRepository;
-	this.bookingDateCollectionRepository = bookingDateCollectionRepository;
+	this.dateCollectionRepository = dateCollectionRepository;
 	this.apartmentRepository = apartmentRepository;
    }
 
@@ -212,7 +210,7 @@ public class ReservationService {
     * @throws DatabaseException 
     * @throws InvalidUserException
     */
-   public DateCollection getAvailableDatesForApartment(Apartment apartment) throws DatabaseException {
+   public List<Date> getAvailableDatesForApartment(Apartment apartment) throws DatabaseException {
       return apartmentRepository.getAvailableDatesForApartment(apartment);
    }
    

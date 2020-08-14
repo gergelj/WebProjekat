@@ -6,6 +6,11 @@
 
 package beans;
 
+import beans.enums.Gender;
+import beans.enums.UserType;
+import beans.interfaces.IDeletable;
+import beans.interfaces.IIdentifiable;
+
 public class User implements IDeletable, IIdentifiable {
    private Account account;
    private String name;

@@ -2,6 +2,11 @@ package exceptions;
 
 public class InvalidPasswordException extends BadRequestException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5877398777770166904L;
+
 	public InvalidPasswordException() {
 		// TODO Auto-generated constructor stub
 	}
