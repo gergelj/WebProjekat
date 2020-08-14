@@ -4,5 +4,8 @@ public enum DateStatus {
 
 	undefined,
 	free,
-	booked
+	booked,
+	checkIn,
+	checkOut,
+	checkInOut
 }

@@ -64,6 +64,7 @@ import dto.UserDTO;
 import exceptions.BadRequestException;
 import exceptions.DatabaseException;
 import exceptions.EntityNotFoundException;
+import exceptions.InvalidDateException;
 import exceptions.InvalidPasswordException;
 import exceptions.InvalidUserException;
 import exceptions.NotUniqueException;
@@ -111,7 +112,7 @@ public class SparkAppMain {
 		
 		g = getGson();
 		
-		
+
 		try {
 			resources = new AppResources();
 		} catch (DatabaseException e1) {

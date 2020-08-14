@@ -7,32 +7,24 @@
 package service;
 
 import repository.ReservationRepository;
-import repository.ApartmentRepository;
-import repository.DateCollectionRepository;
+import repository.abstractrepository.IDateCollectionRepository;
 import beans.User;
 import beans.enums.ReservationStatus;
 import beans.enums.UserType;
 import exceptions.DatabaseException;
 import exceptions.InvalidUserException;
 import beans.Reservation;
-import beans.Apartment;
-import beans.DateCollection;
-
 import java.util.*;
 
 public class ReservationService {
    private ReservationRepository reservationRepository;
-   private DateCollectionRepository dateCollectionRepository;
-   private ApartmentRepository apartmentRepository;
-
-
+   private IDateCollectionRepository dateCollectionRepository;
    
-//Constructors 
-   public ReservationService(ReservationRepository reservationRepository, DateCollectionRepository dateCollectionRepository, ApartmentRepository apartmentRepository) {
-	super();
-	this.reservationRepository = reservationRepository;
-	this.dateCollectionRepository = dateCollectionRepository;
-	this.apartmentRepository = apartmentRepository;
+   //Constructors 
+   public ReservationService(ReservationRepository reservationRepository, IDateCollectionRepository dateCollectionRepository) {
+	   super();
+	   this.reservationRepository = reservationRepository;
+	   this.dateCollectionRepository = dateCollectionRepository;
    }
 
 //Methods
@@ -200,18 +192,6 @@ public class ReservationService {
     	 reservationRepository.create(reservation);
       }
       throw new InvalidUserException();
-   }
-   
-   
-   /** Returns all <b>available dates</b> for specified apartment<br><br>
-    *  
-    *  <b>Called by:</b> guest, host, admin or undefined user<br>
-    *  
-    * @throws DatabaseException 
-    * @throws InvalidUserException
-    */
-   public List<Date> getAvailableDatesForApartment(Apartment apartment) throws DatabaseException {
-      return apartmentRepository.getAvailableDatesForApartment(apartment);
    }
    
    

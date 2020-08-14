@@ -8,6 +8,8 @@ package service;
 
 import repository.ApartmentRepository;
 import repository.DateCollectionRepository;
+import specification.ISpecification;
+import specification.filterconverter.ApartmentFilterConverter;
 import beans.User;
 import beans.enums.DateStatus;
 import beans.enums.UserType;
@@ -20,6 +22,7 @@ import dto.ApartmentDTO;
 import dto.ApartmentFilterDTO;
 import exceptions.BadRequestException;
 import exceptions.DatabaseException;
+import exceptions.InvalidDateException;
 import exceptions.InvalidUserException;
 
 import java.io.BufferedOutputStream;
@@ -28,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class ApartmentService {
@@ -188,15 +192,11 @@ public class ApartmentService {
 		   DateCollection dc = new DateCollection(createdApartment, false, new HashMap<Date, DateStatus>());
 
 		   for(Date date : bookingDates) {
-			   try {
-				   dc.addAvailableForBookingDate(date);				   
-			   }
-			   catch(IllegalArgumentException e) {}
+			   dc.addAvailableForBookingDate(date);
 		   }
 		   
 		   dateCollectionRepository.create(dc);
-		   
-		   
+		      
 		   return createdApartment;
 	   }
 	   else {		   
@@ -266,17 +266,21 @@ public class ApartmentService {
     * @throws DatabaseException 
     * @throws InvalidUserException
     */
-   public List<Apartment> find(ApartmentFilterDTO filter, UserType userType) {
+   public List<Apartment> find(ApartmentFilterDTO filter, User loggedInUser) throws DatabaseException, InvalidUserException {
 	   //TODO: pitati Gerga kako find funkcionise
-	   if(userType != UserType.admin)
-	   {
-		   
-	   }
-	   if(userType == UserType.admin)
-	   {
-		   
-	   }
-	   return new ArrayList<Apartment>();
+	   List<Apartment> retVal = new ArrayList<Apartment>();
+	   ISpecification<Apartment> specification = ApartmentFilterConverter.getSpecification(filter, dateCollectionRepository);
+	   
+	   if(loggedInUser == null)
+		   retVal = getActiveApartments(UserType.undefined).stream().filter(apartment -> specification.isSatisfiedBy(apartment)).collect(Collectors.toList());
+	   else if(loggedInUser.getUserType() == UserType.admin)
+		   retVal = apartmentRepository.find(specification);
+	   else if(loggedInUser.getUserType() == UserType.host)
+		   retVal = getApartmentsByHost(loggedInUser, loggedInUser.getUserType()).stream().filter(apartment -> specification.isSatisfiedBy(apartment)).collect(Collectors.toList());
+	   else
+		   retVal = getActiveApartments(loggedInUser.getUserType()).stream().filter(apartment -> specification.isSatisfiedBy(apartment)).collect(Collectors.toList());
+	   
+	   return retVal;
    }
    
 }

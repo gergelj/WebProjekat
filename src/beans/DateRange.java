@@ -14,9 +14,14 @@ public class DateRange {
   
 //Constructors
 	public DateRange(Date start, Date end) {
-		super();
-		this.start = start;
-		this.end = end;
+		if(end.after(start)) {
+			this.start = start;			
+			this.end = end;
+		}
+		else {
+			this.start = end;
+			this.end = start;
+		}
 	}
 	public DateRange() {
 		super();
@@ -36,6 +41,25 @@ public class DateRange {
 	}
 	public void setEnd(Date end) {
 		this.end = end;
+	}
+	
+	public List<Date> toList() {
+	    List<Date> datesInRange = new ArrayList<>();
+	    Calendar calendar = new GregorianCalendar();
+	    calendar.setTime(this.start);
+	    
+	    Calendar endCalendar = new GregorianCalendar();
+	    endCalendar.setTime(this.end);
+	 
+	    while (calendar.before(endCalendar)) {
+	        Date result = calendar.getTime();
+	        datesInRange.add(result);
+	        calendar.add(Calendar.DATE, 1);
+	    }
+	    
+	    datesInRange.add(this.end);
+
+	    return datesInRange;
 	}
   
 }

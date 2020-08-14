@@ -12,12 +12,10 @@ import java.util.stream.Collectors;
 import beans.Amenity;
 import beans.Apartment;
 import beans.Comment;
-import beans.DateCollection;
 import beans.User;
 import exceptions.DatabaseException;
 import repository.abstractrepository.IAmenityRepository;
 import repository.abstractrepository.IApartmentRepository;
-import repository.abstractrepository.IDateCollectionRepository;
 import repository.abstractrepository.IUserRepository;
 import repository.csv.CSVRepository;
 import repository.csv.IEagerCsvRepository;
@@ -30,14 +28,11 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
 	private IUserRepository userRepository;
 	private IAmenityRepository amenityRepository;
 	private IEagerCsvRepository<Comment> commentRepository;
-	private IDateCollectionRepository dateCollectionRepository;
-	
-   public ApartmentRepository(ICsvStream<Apartment> stream, LongSequencer sequencer, IUserRepository userRepository, IAmenityRepository amenityRepository, IEagerCsvRepository<Comment> commentRepository, IDateCollectionRepository dateCollectionRepository) throws DatabaseException {
+	public ApartmentRepository(ICsvStream<Apartment> stream, LongSequencer sequencer, IUserRepository userRepository, IAmenityRepository amenityRepository, IEagerCsvRepository<Comment> commentRepository) throws DatabaseException {
 	   super("Apartment", stream, sequencer);
 	   this.userRepository = userRepository;
 	   this.amenityRepository = amenityRepository;
 	   this.commentRepository = commentRepository;
-	   this.dateCollectionRepository = dateCollectionRepository;
    }
    
    private void bind(List<Apartment> apartments) throws DatabaseException {
@@ -116,11 +111,5 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
    public List<Comment> getAllComments(Apartment apartment)
    {
 	   return apartment.getComments();
-   }
-   
-   public List<Date> getAvailableDatesForApartment(Apartment apartment) throws DatabaseException
-   {
-	   DateCollection dc = dateCollectionRepository.getByApartmentId(apartment.getId());
-	   return dc.getAvailableDates();
    }
 }

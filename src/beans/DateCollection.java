@@ -12,6 +12,8 @@ import java.util.*;
 import beans.enums.DateStatus;
 import beans.interfaces.IDeletable;
 import beans.interfaces.IIdentifiable;
+import exceptions.InvalidDateException;
+
 import java.util.stream.Collectors;
 
 public class DateCollection implements IIdentifiable, IDeletable {
@@ -57,7 +59,7 @@ public class DateCollection implements IIdentifiable, IDeletable {
 			addDate(key, newDates.get(key));
 	}
 	   
-	public void addDate(Date newDate, DateStatus newStatus) {
+	private void addDate(Date newDate, DateStatus newStatus) {
 		if (newDate == null)
 			return;
 		if (this.dates == null)
@@ -66,7 +68,7 @@ public class DateCollection implements IIdentifiable, IDeletable {
 			this.dates.put(newDate, newStatus);
 	   }
 	   
-	public void removeDate(Date oldDate) {
+	private void removeDate(Date oldDate) {
 		if (oldDate == null)
 			return;
 		if (this.dates != null)
@@ -74,15 +76,15 @@ public class DateCollection implements IIdentifiable, IDeletable {
 				this.dates.remove(oldDate);
 	}
 	   
-	public void removeAllDates() {
+	private void removeAllDates() {
 		if (dates != null)
 			dates.clear();
 	}
 	
-	public void addAvailableForBookingDate(Date date) throws IllegalArgumentException {
+	public void addAvailableForBookingDate(Date date) throws InvalidDateException {
 		if(dates.containsKey(date)) {
-			if(dates.get(date) == DateStatus.booked) {
-				throw new IllegalArgumentException("Date " + DateFormat.getInstance().format(date) + " can't be added, it is already booked.");
+			if(dates.get(date) != DateStatus.free && dates.get(date) != DateStatus.undefined) {
+				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be added, it is already booked.");
 			}
 		}
 		else {
@@ -90,55 +92,161 @@ public class DateCollection implements IIdentifiable, IDeletable {
 		}
 	}
 	
-	public void removeAvailableForBookingDate(Date date) throws NoSuchElementException, IllegalArgumentException {
+	public void removeAvailableForBookingDate(Date date) throws InvalidDateException {
 		if(dates.containsKey(date)) {
-			if(dates.get(date) == DateStatus.free) {
+			if(dates.get(date) == DateStatus.free)
 				dates.remove(date);
-			}
-			else {
-				throw new IllegalArgumentException("Date " + DateFormat.getInstance().format(date) + " can't be removed, it is already booked.");
-			}
+			else
+				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be removed, it is already booked.");
 		}
 		else {
-			throw new NoSuchElementException("Date " + DateFormat.getInstance().format(date) + " can't be removed, it was previously not added as available for booking.");
+			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be removed, it was previously not added as available for booking.");
 		}
 	}
 	
-	public void addBookedDate(Date date) throws IllegalArgumentException, NoSuchElementException {
+	private void addBookedDate(Date date) throws InvalidDateException {
 		if(dates.containsKey(date)) {
-			if(dates.get(date) == DateStatus.free) {
+			if(dates.get(date) == DateStatus.free)
 				dates.put(date, DateStatus.booked);
-			}
-			else {
-				throw new IllegalArgumentException("Date " + DateFormat.getInstance().format(date) + " is already booked.");
-			}
+			else
+				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is already booked.");
 		}
 		else {
-			throw new NoSuchElementException("Date " + DateFormat.getInstance().format(date) + " is not available for booking.");
+			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is not available for booking.");
 		}
 	}
 	
-	public void removeBookedDate(Date date) {
+	private void addCheckInDate(Date date) throws InvalidDateException {
 		if(dates.containsKey(date)) {
-			if(dates.get(date) == DateStatus.booked) {
-				dates.put(date, DateStatus.free);
-			}
-			else {
-				throw new IllegalArgumentException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was previously not booked.");
-			}
+			if(dates.get(date) == DateStatus.free) 
+				dates.put(date, DateStatus.checkIn);
+			else if(dates.get(date) == DateStatus.checkOut)
+				dates.put(date, DateStatus.checkInOut);
+			else
+				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is already booked.");
 		}
 		else {
-			throw new NoSuchElementException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was prevoiusly not found in the system.");			
+			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is not available for booking.");
 		}
 	}
 	
-	public List<Date> getAvailableDates(){
+	private void addCheckOutDate(Date date) throws InvalidDateException {
+		if(dates.containsKey(date)) {
+			if(dates.get(date) == DateStatus.free)
+				dates.put(date, DateStatus.checkOut);
+			else if(dates.get(date) == DateStatus.checkIn)
+				dates.put(date, DateStatus.checkInOut);
+			else {
+				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is already booked.");
+			}
+		}
+		else {
+			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is not available for booking.");
+		}
+	}
+	
+	private void removeBookedDate(Date date) throws InvalidDateException {
+		if(dates.containsKey(date)) {
+			if(dates.get(date) == DateStatus.booked)
+				dates.put(date, DateStatus.free);
+			else if(dates.get(date) == DateStatus.free)
+				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was previously not booked.");
+			else
+				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it is not part of the same booking.");
+		}
+		else {
+			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was prevoiusly not found in the system.");
+		}
+	}
+	
+	private void removeCheckInDate(Date date) throws InvalidDateException {
+		if(dates.containsKey(date)) {
+			if(dates.get(date) == DateStatus.checkIn)
+				dates.put(date, DateStatus.free);
+			else if(dates.get(date) == DateStatus.checkInOut)
+				dates.put(date, DateStatus.checkOut);
+			else if(dates.get(date) == DateStatus.booked || dates.get(date) == DateStatus.checkOut)
+				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it is not a check-in date.");
+			else
+				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was previously not booked.");
+		}
+		else {
+			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was prevoiusly not found in the system.");
+		}
+	}
+	
+	private void removeCheckOutDate(Date date) throws InvalidDateException {
+		if(dates.containsKey(date)) {
+			if(dates.get(date) == DateStatus.checkOut)
+				dates.put(date, DateStatus.free);
+			else if(dates.get(date) == DateStatus.checkInOut)
+				dates.put(date, DateStatus.checkIn);
+			else if(dates.get(date) == DateStatus.booked || dates.get(date) == DateStatus.checkIn)
+				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it is not a check-out date.");
+			else
+				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was previously not booked.");				
+		}
+		else {
+			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was prevoiusly not found in the system.");			
+		}
+	}
+	
+	public void addBooking(DateRange range) throws InvalidDateException {
+		List<Date> dates = range.toList();
+		
+		if(dates.isEmpty())
+			throw new InvalidDateException("Booking interval is empty");
+		
+		Date checkInDate = dates.get(0);
+		Date checkOutDate = dates.get(dates.size() - 1);
+		
+		addCheckInDate(checkInDate);
+		addCheckOutDate(checkOutDate);
+		
+		for(int i=1; i<dates.size()-1; i++)
+			addBookedDate(dates.get(i));
+	}
+	
+	public void removeBooking(DateRange range) throws InvalidDateException {
+		List<Date> dates = range.toList();
+		
+		if(dates.isEmpty())
+			throw new InvalidDateException("Booking interval is empty");
+		
+		Date checkInDate = dates.get(0);
+		Date checkOutDate = dates.get(dates.size() - 1);
+		
+		removeCheckInDate(checkInDate);
+		removeCheckOutDate(checkOutDate);
+		
+		for(int i=1; i<dates.size()-1; i++)
+			removeBookedDate(dates.get(i));
+	}
+	
+	public List<Date> getAvailableForBookingDatesHost(){
 		return dates.entrySet().stream().filter(e -> DateStatus.free.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
 	}
 	
-	public List<Date> getBookedDates(){
-		return dates.entrySet().stream().filter(e -> DateStatus.booked.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
+	public List<Date> getUnavailableForBookingDatesHost(){
+		return dates.entrySet().stream().filter(e -> !DateStatus.free.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
 	}
+	
+	public List<Date> getAvailableForBookingDates(){
+		return dates.entrySet().stream().filter(e -> DateStatus.free.equals(e.getValue()) || DateStatus.checkIn.equals(e.getValue()) || DateStatus.checkOut.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
+	}
+	
+	public List<Date> getBookedDates(){
+		return dates.entrySet().stream().filter(e -> DateStatus.booked.equals(e.getValue()) || DateStatus.checkInOut.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
+	}
+	
+	public List<Date> getCheckInDays(){		
+		return dates.entrySet().stream().filter(e -> DateStatus.checkIn.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
+	}
+	
+	public List<Date> getCheckOutDays(){		
+		return dates.entrySet().stream().filter(e -> DateStatus.checkOut.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
+	}
+	
 	
 	public boolean isDeleted() {
 		return deleted;
@@ -188,6 +296,45 @@ public class DateCollection implements IIdentifiable, IDeletable {
 		DateCollection other = (DateCollection) obj;
 		if (id != other.id)
 			return false;
+		return true;
+	}
+
+	public boolean isBookingAvailableFor(DateRange dateRange) {
+		List<Date> dates = dateRange.toList();
+		
+		if(dates.isEmpty())
+			return true;
+		
+		Date checkInDate = dates.get(0);
+		Date checkOutDate = dates.get(dates.size() - 1);
+		
+		if(this.dates.containsKey(checkInDate)) {
+			if(this.dates.get(checkInDate) != DateStatus.free && this.dates.get(checkInDate) != DateStatus.checkOut)
+				return false;
+		}
+		else {
+			return false;
+		}
+		
+		if(this.dates.containsKey(checkOutDate)) {
+			if(this.dates.get(checkOutDate) != DateStatus.free && this.dates.get(checkOutDate) != DateStatus.checkIn)
+				return false;
+		}
+		else {
+			return false;
+		}
+		
+		for(int i=1; i<dates.size()-1; i++) {
+			Date d = dates.get(i);
+			if(this.dates.containsKey(d)) {
+				if(this.dates.get(d) != DateStatus.free)
+					return false;
+			}
+			else {
+				return false;
+			}
+		}
+		
 		return true;
 	}
 

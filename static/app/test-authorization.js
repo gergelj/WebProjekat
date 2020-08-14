@@ -1,23 +1,3 @@
-/*function getType(){
-    let jwt = window.localStorage.getItem('jwt');
-    if(!jwt)
-        jwt='';
-
-    let userType = '';
-
-    axios
-        .get('rest/vazduhbnb/userType',{
-            headers:{
-                'Authorization': 'Bearer ' + jwt
-            }
-        })
-        .then(function(response){
-            userType = response.data;
-        });
-
-    return userType;
-}*/
-
 function testAuthorization1(type){
     let jwt = window.localStorage.getItem('jwt');
     if(!jwt)

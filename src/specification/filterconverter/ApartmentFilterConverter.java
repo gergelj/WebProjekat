@@ -7,6 +7,7 @@
 package specification.filterconverter;
 
 import dto.ApartmentFilterDTO;
+import repository.abstractrepository.IDateCollectionRepository;
 import specification.ISpecification;
 import specification.specificationimpl.ApartmentCitySpecification;
 import specification.specificationimpl.ApartmentDateSpecification;
@@ -18,7 +19,7 @@ import beans.Apartment;
 
 public class ApartmentFilterConverter {
 
-   public static ISpecification<Apartment> getSpecification(ApartmentFilterDTO filter) {
+   public static ISpecification<Apartment> getSpecification(ApartmentFilterDTO filter, IDateCollectionRepository dateCollectionRepository) {
 	   ISpecification<Apartment> specification = new BooleanSpecification<Apartment>(true);
 	   
 	   if(!filter.getCity().isEmpty())
@@ -31,7 +32,7 @@ public class ApartmentFilterConverter {
 		   specification = specification.and(new ApartmentRoomsSpecification(filter.getNumberOfRooms()));
 	   
 	   if(filter.getDateRange() != null)
-		   specification = specification.and(new ApartmentDateSpecification(filter.getDateRange()));
+		   specification = specification.and(new ApartmentDateSpecification(filter.getDateRange(), dateCollectionRepository));
 	   
 	   if(filter.getPriceRange() != null)
 		   specification = specification.and(new ApartmentPriceSpecification(filter.getPriceRange()));
