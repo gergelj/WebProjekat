@@ -58,6 +58,7 @@ import beans.enums.Gender;
 import beans.enums.ReservationStatus;
 import beans.enums.UserType;
 import dto.ApartmentDTO;
+import dto.ApartmentFilterDTO;
 import dto.ErrorMessageDTO;
 import dto.TokenDTO;
 import dto.UserDTO;
@@ -157,6 +158,9 @@ public class SparkAppMain {
 			}catch(BadRequestException ex) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}catch(EntityNotFoundException e) {
+				res.status(404);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			} catch(DatabaseException ex) {
 				res.status(500);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
@@ -191,6 +195,30 @@ public class SparkAppMain {
 				response.status(500); // server-side error
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}
+		});
+		
+		get("/rest/vazduhbnb/apartments", (req, res) -> {
+			res.type("application/json");
+			
+			System.out.println(req.body());
+			
+			String payload = req.queryParams("filter");
+			ApartmentFilterDTO filter = g.fromJson(payload, ApartmentFilterDTO.class);
+			User loggedInUser = getLoggedInUser(req);
+			
+			try {
+				List<Apartment> apartments = resources.apartmentService.find(filter, loggedInUser);
+				
+				res.status(200);
+				return g.toJson(apartments);
+			}catch(BadRequestException e) {
+				res.status(400);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}
+
 		});
 		
 		post("/rest/vazduhbnb/apartment", (request, response) -> {
