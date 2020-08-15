@@ -156,7 +156,7 @@ function checkPasswordLength(password)
 }
 
 var profile = new Vue({
-    el:'#container',
+    el:'#app',
     data:
     {
         user: {account: {}},
