@@ -272,5 +272,5 @@ Vue.component("add-form",{
 });
  
 var app = new Vue({
-    el: "#amenities"
+    el: "#app"
 })

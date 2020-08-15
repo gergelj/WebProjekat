@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="css/bootstrap-vue.min.css">
     <link rel="stylesheet" href="css/page.css">
     <link rel="stylesheet" href="css/navbar.css">
-    <link rel="stylesheet" href="css/toast.css">
     <link rel="stylesheet" href="css/mk-notifications.min.css">
     <link rel="stylesheet" href="css/webfonts.min.css">
     <link rel="stylesheet" href="css/amenity-table.css">
@@ -35,9 +34,10 @@
     </style>
 </head>
 <body>
-    <!--dodati navbar-->
 
-    <div id="amenities">
+    <div id="app">
+        <navigation-bar></navigation-bar>
+
         <name-form id="form1"></name-form>
         <add-form id="form2"></add-form>
         <tabela-js></tabela-js>
@@ -50,6 +50,7 @@
     <script src="js/moment.min.js"></script>
     <script src="js/mk-notifications.min.js"></script>
     <script src="js/notification.js"></script>
+    <script src="js/components/navigation-bar.js"></script>
     <script src="app/amenities.js"></script>
 
 </body>

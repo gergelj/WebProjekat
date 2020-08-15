@@ -1,4 +1,4 @@
-Vue.component("admin-view",{
+Vue.component("users-view",{
     data: function()
     {
         return{
@@ -265,5 +265,5 @@ Vue.component('name-form',{
 })
 
 var app = new Vue({
-    el: '#users'
+    el: '#app'
 });
