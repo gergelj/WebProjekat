@@ -25,7 +25,8 @@ $(document).ready(function()
                             window.localStorage.setItem('usertype', responseData.userType);
                             window.location.href = "index.html";
                         } break;
-                        case 400: alert(responseData.message); break;
+                        case 400: alert("Invalid username/password"); break;
+                        case 404: alert("Invalid username/password"); break;
                         case 500: alert("Server error. Try again later."); break;
                     }
                     //console.log(data);
