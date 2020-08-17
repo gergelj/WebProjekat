@@ -125,7 +125,7 @@ Vue.component('name-form',{
     },
     template:`
     <div id="selected-form">
-    <b-form v-if='this.loggedinUser.userType == "admin" || this.loggedinUser.userType == "host"'>
+    <b-form v-if='this.loggedinUser.userType == "admin"'>
         <b-form-group
             id="input-group-1"
             label="Selected user:"
@@ -261,6 +261,98 @@ Vue.component('name-form',{
                     }
                 })
         }
+    }
+})
+
+Vue.component('user-filter',{
+    data: function()
+    { return{
+        filter:{},
+        users: [],
+        selectedGender: null,
+        genderOption:[
+            {value: null, text: 'Please select an option'},
+            {value: 'male', text: 'Male'},
+            {value: 'female', text: 'Female'},
+            {value: 'other', text: 'Other'}
+        ],
+        selectedType: null,
+        typeOption:[
+            {value: null, text:'Please select an option'},
+            {value: 'admin', text:'Admin'},
+            {value: 'guest', text:'Guest'},
+            {value: 'host', text:'Host'}
+        ],
+        selectedUsername: ''
+        }
+    },
+    template:`
+    <div id="filter-form">
+        <b-form>
+            <b-form-group>
+                <label>Username:</label>
+                <b-form-input
+                    placeholder='Please enter a username'>
+                </b-form-input>
+
+                <label>Gender:</label>
+                <b-form-select 
+                    id='gender-input' 
+                    v-model='selectedGender' 
+                    :options='genderOption'>
+                </b-form-select>
+
+                <label>User type:</label>        
+                <b-form-select
+                    id='usertype-input'
+                    v-model='selectedType'
+                    :options='typeOption'>
+                </b-form-select>
+            </b-form-group>
+            <b-button
+                @click='filter'
+                class='mr-1'
+                pill
+                variant='success'>Search</b-button>
+        </b-form>
+    </div>
+    `,
+   watch:
+    {
+        filter: function()
+        {
+            let jwt = window.localStorage.getItem('jwt');
+            if(!jwt)
+                jwt='';
+
+            const vm = this;
+
+            axios
+                .get('rest/vazduhbnb/filteredUsers',{
+                    params:{
+                        filter: this.filter
+                    },
+                    headers:{
+                        'Authorization': 'Beared ' + jwt
+                    }
+                })
+                .then(function(response){
+                    vm.users = response.data;
+                })
+                .catch(function(error){
+                    let response = error.response;
+                    alert(response.data.message);
+                })
+        }
+    },
+    computed:
+    {
+       filteredUsers(){
+            let hasGender = this.selectedGender != null;
+            let hasUserType = this.selectedType != null;
+            let hasUsername = this.usernameInput != '';
+            return this.users.filter(user => (hasGender ? (user.gender == selectedGender) : true) && (hasUserType ? (user.userType == selectedType) : true) && (hasUsername ? (user.account.username.substring(usernameInput.trim()) > 0) : true));
+       } 
     }
 })
 

@@ -44,6 +44,14 @@ th,td
 
 #selected-form
 {
+    float: left;
+    width: 48%;
+    padding: 2%;
+}
+
+#filter-form
+{
+    float: right;
     width: 48%;
     padding: 2%;
 }

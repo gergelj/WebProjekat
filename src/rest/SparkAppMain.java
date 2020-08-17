@@ -61,6 +61,7 @@ import dto.ApartmentFilterDTO;
 import dto.ErrorMessageDTO;
 import dto.TokenDTO;
 import dto.UserDTO;
+import dto.UserFilterDTO;
 import exceptions.BadRequestException;
 import exceptions.DatabaseException;
 import exceptions.EntityNotFoundException;
@@ -92,6 +93,7 @@ import service.UserService;
 import spark.Request;
 import spark.Session;
 import spark.utils.IOUtils;
+import specification.filterconverter.UserFilterConverter;
 import utils.AppResources;
 import ws.WsHandler;
 
@@ -218,6 +220,31 @@ public class SparkAppMain {
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}
 
+		});
+		
+		get("/rest/vazduhbnb/filteredUsers", (request, response) -> {
+			response.type("application/json");
+			
+			String payload = request.queryParams("filter");
+			UserFilterDTO filter = g.fromJson(payload, UserFilterDTO.class);
+			User loggedinUser = getLoggedInUser(request);
+			
+			try
+			{
+				List<User> users = resources.userService.find(filter, loggedinUser);
+				
+				return g.toJson(users);
+			}
+			catch(DatabaseException ex)
+			{
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO("Internal Server Error"), ErrorMessageDTO.class);
+			}
+			catch(InvalidUserException ex)
+			{
+				response.status(403);
+				return g.toJson(new ErrorMessageDTO("User doesn't have permission."), ErrorMessageDTO.class);
+			}
 		});
 		
 		post("/rest/vazduhbnb/apartment", (request, response) -> {

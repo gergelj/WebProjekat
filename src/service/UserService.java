@@ -7,7 +7,10 @@
 package service;
 
 import repository.AccountRepository;
+import repository.DateCollectionRepository;
 import repository.UserRepository;
+import specification.ISpecification;
+import specification.filterconverter.UserFilterConverter;
 import dto.UserDTO;
 import beans.Account;
 import beans.Reservation;
@@ -169,9 +172,16 @@ public class UserService {
       return users;
    }
    
-   public List<User> find(UserFilterDTO filter, UserType userType) {
-      // TODO: implement
-      return null;
+   public List<User> find(UserFilterDTO filter, User thisUser) throws DatabaseException, InvalidUserException {
+	  List<User> retVal = new ArrayList<User>();
+	  ISpecification<User> specification = UserFilterConverter.getSpecification(filter);
+	    
+	  if(thisUser.getUserType() == UserType.admin)
+		  retVal = userRepository.find(specification);
+	  else if(thisUser.getUserType() == UserType.host);
+	  	  retVal = getGuestsByHost(thisUser, thisUser.getUserType()).stream().filter(user -> specification.isSatisfiedBy(user)).collect(Collectors.toList());
+	   
+      return retVal;
    }
    
    public User blockUser(User user) throws DatabaseException, InvalidUserException {
