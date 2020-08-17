@@ -19,15 +19,15 @@ import beans.enums.ReservationStatus;
 public class ReservationCsvConverter implements ICsvConverter<Reservation> {
    private String delimiter = "~";
    private String dateFormat = "dd.MM.yyyy. HH:mm";
-   private SimpleDateFormat formatter;
    private String newLine = "`";
    
    public ReservationCsvConverter() {
-	   this.formatter = new SimpleDateFormat(this.dateFormat);
    }
    
    public String toCsv(Reservation entity) {
       StringJoiner joiner = new StringJoiner(delimiter);
+      
+      SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
       
       joiner.add(String.valueOf(entity.getId()));
       joiner.add(String.valueOf(entity.getApartment() == null ? "" : entity.getApartment().getId()));
@@ -49,12 +49,13 @@ public class ReservationCsvConverter implements ICsvConverter<Reservation> {
       Apartment apartment = new Apartment(Long.valueOf(tokens[1]));
       User guest = new User(Long.valueOf(tokens[2]));
       Date checkIn = new Date();
-	try {
-		checkIn = formatter.parse(tokens[3]);
-	} catch (ParseException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+		try {
+			SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+			checkIn = formatter.parse(tokens[3]);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
       int nights = Integer.valueOf(tokens[4]);
       double totalPrice = Double.valueOf(tokens[5]);
       String message = tokens[6].replace(newLine, "\n");

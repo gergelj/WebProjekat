@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.security.Key;
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +59,7 @@ import beans.enums.Gender;
 import beans.enums.ReservationStatus;
 import beans.enums.UserType;
 import dto.ApartmentDTO;
+import dto.ApartmentEditDTO;
 import dto.ApartmentFilterDTO;
 import dto.ErrorMessageDTO;
 import dto.TokenDTO;
@@ -121,6 +123,7 @@ public class SparkAppMain {
 			System.out.println("Server resources failed to load");
 			return;
 		}
+
 		
 		port(8088);
 
@@ -248,10 +251,35 @@ public class SparkAppMain {
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}
 
-			
-			
 			return "Whatever";
 			
+		});
+		
+		put("/rest/vazduhbnb/apartment", (req, res) -> {
+			res.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			ApartmentEditDTO apartmentEdit = g.fromJson(req.body(), ApartmentEditDTO.class);
+			
+			try {				
+				resources.apartmentService.update(apartmentEdit.getApartment(), apartmentEdit.getDates(), loggedInUser);
+				res.status(200);
+				return "OK";
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("User doesn't have permission."), ErrorMessageDTO.class);
+			}catch(BadRequestException e) {
+				res.status(400);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}
 		});
 		
 		put("/rest/vazduhbnb/approve", (req, res) ->{
@@ -334,6 +362,54 @@ public class SparkAppMain {
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}
 			
+		});
+		
+		get("/rest/vazduhbnb/availabledates", (req, res) -> {
+			res.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			long apartmentId = Long.valueOf(req.queryParams("apartment"));
+			
+			try {
+				List<Date> dates = resources.reservationService.getAvailableDatesByApartment(apartmentId, loggedInUser);
+				res.status(200);
+				return g.toJson(dates);
+			}catch(InvalidUserException e) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		get("/rest/vazduhbnb/unavailabledates", (req, res) -> {
+			res.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			long apartmentId = Long.valueOf(req.queryParams("apartment"));
+			
+			try {
+				List<Date> dates = resources.reservationService.getUnavailableDatesByApartment(apartmentId, loggedInUser);
+				res.status(200);
+				return g.toJson(dates);
+			}catch(InvalidUserException e) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}
 		});
 		
 		get("/rest/vazduhbnb/profile", (request, response)->{
@@ -650,9 +726,10 @@ public class SparkAppMain {
 /*
 	private static void testRepositories() throws DatabaseException
 	{
+		//resources.dateCollectionRepository.getAll();
 		//amenityRepoTest();
 		//apartmentRepoTest();
-		//TODO: dateCollectionTest();
+		//dateCollectionTest();
 		//commentRepoTest();
 		//reservationRepoTest();
 		//userRepoTest();

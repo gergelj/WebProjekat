@@ -37,7 +37,7 @@ public class AppResources {
 	//Repositories
 	private AmenityRepository amenityRepository;
 	private ApartmentRepository apartmentRepository;
-	private DateCollectionRepository dateCollectionRepository;
+	public DateCollectionRepository dateCollectionRepository;
 	private CommentRepository commentRepository;
 	private ReservationRepository reservationRepository;
 	private UserRepository userRepository;

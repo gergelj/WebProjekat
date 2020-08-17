@@ -106,19 +106,37 @@ public class ApartmentService {
    /** 
     *  <b>Called by:</b> admin or host<br>
     * @throws DatabaseException 
-    * @throws InvalidUserException
+ * @throws BadRequestException 
     */
-   public void update(Apartment apartment, List<Date> bookingDates, UserType userType) throws DatabaseException, InvalidUserException {
-      if(userType == UserType.host || userType == UserType.admin)
-      {
+   public void update(Apartment apartment, List<Date> bookingDates, User user) throws DatabaseException, BadRequestException {
+      if(user.getUserType() == UserType.host || user.getUserType() == UserType.admin) {
+    	  if(user.getUserType() == UserType.host) {
+    		  if(!apartment.getHost().equals(user)) throw new InvalidUserException();
+    	  }
+    	  
+    	  DateCollection dateCollection = dateCollectionRepository.getByApartmentId(apartment.getId());
+    	  List<Date> oldBookingDates = dateCollection.getAvailableForBookingDatesHost();
+    	  
+    	  List<Date> addedDates = bookingDates.stream().filter(d -> !oldBookingDates.contains(d)).collect(Collectors.toList());
+    	  List<Date> removedDates = oldBookingDates.stream().filter(d -> !bookingDates.contains(d)).collect(Collectors.toList());
+    	    
+		  for (Date date : addedDates) {
+			  dateCollection.addAvailableForBookingDate(date);  
+		  }
+		  
+		  for (Date date : removedDates) {
+			  dateCollection.removeAvailableForBookingDate(date);
+		  }
+    	  
+		  dateCollectionRepository.update(dateCollection);
     	  apartmentRepository.update(apartment);
       }
       else {
     	  throw new InvalidUserException();    	  
       }
    }
-   
-   /**  
+
+/**  
     *  <b>Called by:</b> admin or host<br><br>
     * @throws DatabaseException 
  * @throws BadRequestException 
@@ -189,7 +207,7 @@ public class ApartmentService {
    public Apartment create(ApartmentDTO apartment, User host) throws DatabaseException, BadRequestException {
 	   if(host.getUserType() == UserType.host)
 	   {
-		   validateApartmentRegistration(apartment);
+		   validateApartment(apartment);
 		   
 		   List<Picture> pictures = savePictures(apartment.getPictures());
 		   Location apartmentLocation = new Location(apartment.getLatitude(), apartment.getLongitude(), new Address(apartment.getStreet(), apartment.getHouseNumber(), apartment.getCity(), apartment.getPostalCode()));
@@ -212,7 +230,7 @@ public class ApartmentService {
 	   }
    }
    
-   private void validateApartmentRegistration(ApartmentDTO apartment) throws BadRequestException {
+   private void validateApartment(ApartmentDTO apartment) throws BadRequestException {
 	   boolean hasPrice, hasLatitude, hasLongitude;
 	   
 	   hasPrice = apartment.getPricePerNight() > 0;

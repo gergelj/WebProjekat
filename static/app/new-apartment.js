@@ -46,7 +46,7 @@ var app = new Vue({
                 centered: true
             })
             .then(value => {
-                window.location.href = "apartments.html";
+                window.location.href = "index.html";
             })
             .catch(err => {
                 // An error occurred

@@ -13,6 +13,7 @@ import beans.enums.ReservationStatus;
 import beans.enums.UserType;
 import exceptions.DatabaseException;
 import exceptions.InvalidUserException;
+import beans.DateCollection;
 import beans.Reservation;
 import java.util.*;
 
@@ -217,6 +218,34 @@ public class ReservationService {
 		   return retVal;
 	   }
 	   throw new InvalidUserException();
+   }
+   
+   public List<Date> getAvailableDatesByApartment(long apartmentId, User user) throws InvalidUserException, DatabaseException{
+	   if(user.getUserType() != UserType.undefined) {
+		   DateCollection dc = dateCollectionRepository.getByApartmentId(apartmentId);
+		   if(user.getUserType() == UserType.guest)
+			   return dc.getAvailableForBookingDates();
+		   else
+			   return dc.getAvailableForBookingDatesHost();
+	   }
+	   else {
+		   throw new InvalidUserException();
+	   }
+
+   }
+   
+   public List<Date> getUnavailableDatesByApartment(long apartmentId, User user) throws InvalidUserException, DatabaseException{
+	   if(user.getUserType() != UserType.undefined) {
+		   DateCollection dc = dateCollectionRepository.getByApartmentId(apartmentId);
+		   if(user.getUserType() == UserType.guest)
+			   return dc.getBookedDates();
+		   else
+			   return dc.getUnavailableForBookingDatesHost();
+	   }
+	   else {
+		   throw new InvalidUserException();
+	   }
+
    }
 
 }

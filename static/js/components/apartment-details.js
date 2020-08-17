@@ -16,7 +16,7 @@ Vue.component("apartment-details", {
         <b-col md="6">
             <!-- map of the location -->
             <b-container>
-                <leaflet-map mode="display" v-model="latlng" height="300"></leaflet-map>
+                <leaflet-map mapid="mapid-details" mode="display" v-model="latlng" height="300"></leaflet-map>
             </b-container>
         </b-col>
         <b-col md="6">
@@ -32,7 +32,8 @@ Vue.component("apartment-details", {
             <!-- Apartment info -->
             <h3>{{apartment.location.address.street}} {{apartment.location.address.houseNumber}}</h3>
             <h4>{{apartment.location.address.postalCode}} {{apartment.location.address.city}}</h4>
-            <h4>Host: <span><b-badge variant="dark">{{apartment.host.name}} {{apartment.host.surname}}</b-badge></span></h4>
+            <em>Lat: {{apartment.location.latitude.toFixed(6)}}, Long: {{apartment.location.longitude.toFixed(6)}}</em>
+            <h4 class="mt-3">Host: <span><b-badge variant="dark">{{apartment.host.name}} {{apartment.host.surname}}</b-badge></span></h4>
       
             <div class="mt-3" style="font-size:20px">
                 <span>
@@ -42,13 +43,12 @@ Vue.component("apartment-details", {
                     <b-badge variant="primary">{{apartment.numberOfGuests}}</b-badge>
                 </span> {{ guestLabel }} <br>
                 <b-badge variant="primary">{{ apartmentTypeLabel }}</b-badge>
-                <b-badge variant="primary">€ {{ apartment.pricePerNight }} / night</b-badge>
+                <b-badge variant="primary">{{ apartment.pricePerNight }}€ / night</b-badge>
             </div>
         </b-col>
         
         <b-col md="6">
             <!-- amenity list -->
-            <h4>Amenities</h4>
             <div style="max-height: 300px;
                         overflow-y:auto;
                         -webkit-overflow-scrolling: touch;">
@@ -87,8 +87,8 @@ Vue.component("apartment-details", {
                                     </template>
                                     
                                     <template v-if="mode == 'host'">
-                                        <b-button v-if="comment.approved" variant="danger" @click="disapproveComment(comment)">Disapprove</b-button>
-                                        <b-button v-if="!comment.approved" variant="success" @click="approveComment(comment)">Approve</b-button>
+                                        <b-button v-if="comment.approved" variant="danger" @click="approveComment(comment, false)">Disapprove</b-button>
+                                        <b-button v-if="!comment.approved" variant="success" @click="approveComment(comment, true)">Approve</b-button>
                                     </template>
                                 </b-col>
                             </b-row>
@@ -105,11 +105,33 @@ Vue.component("apartment-details", {
 </div>
     `,
     methods:{
-        disapproveComment:function(comment){
-            this.$root.$emit('disapprove-comment-event', comment);
-        },
-        approveComment:function(comment){
-            this.$root.$emit('approve-comment-event', comment);
+        approveComment(comment, toApprove){
+            let jwt = window.localStorage.getItem('jwt');
+            if(!jwt)
+                jwt = '';
+
+            axios
+                .put("rest/vazduhbnb/approve", comment, {
+                    params: {
+                        approve: toApprove,
+                        apartment: this.apartment.id
+                    },
+                    headers:{
+                        'Authorization': 'Bearer ' + jwt
+                    }
+                })
+                .then(function(response){
+                    pushSuccessNotification("Success", comment.user.name + " " + comment.user.surname + "'s comment is " + (toApprove ? "approved" : "disapproved") + ".");
+                    comment.approved = toApprove;
+                })
+                .catch(function(error){
+                    let response = error.response;
+                    switch(response.status){
+                        case 401: alert("Error. Not logged in."); signOut(); break;
+                        case 403: alert("Access denied. Please login with privileges."); signOut(); break; 
+                        case 500: pushErrorNotification("Internal Server Error", "Please try again later."); break;
+                    }
+                });
         }
     },
     computed:{

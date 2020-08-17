@@ -12,6 +12,7 @@ import beans.Apartment;
 import beans.Reservation;
 import beans.User;
 import exceptions.DatabaseException;
+import exceptions.EntityNotFoundException;
 import repository.abstractrepository.IReservationRepository;
 import repository.csv.CSVRepository;
 import repository.csv.IEagerCsvRepository;
@@ -55,7 +56,19 @@ public class ReservationRepository extends CSVRepository<Reservation> implements
    }
    
    private Apartment getApartmentById(Apartment apartment) throws DatabaseException {
-	   return apartment == null ? null : apartmentRepository.getEager(apartment.getId());
+	   if(apartment == null)
+		   return null;
+	   
+	   try {
+		   return apartmentRepository.getEager(apartment.getId());
+	   }catch(EntityNotFoundException e) {
+		   apartment.getLocation().getAddress().setStreet("Deleted apartment");
+		   apartment.getLocation().getAddress().setHouseNumber("");
+		   apartment.getLocation().getAddress().setCity("");
+		   apartment.getLocation().getAddress().setPostalCode("");
+		   return apartment;
+	   }
+	   
    }
 
    private User getGuestById(User guest) throws DatabaseException {

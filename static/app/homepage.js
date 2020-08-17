@@ -4,6 +4,7 @@ var app = new Vue({
         filter: {},
         apartments: [],
         selectedApartment:{},
+        backup: [],
         userType: 'undefined',
         selectedType: null,
         apartmentTypes:[
@@ -13,12 +14,12 @@ var app = new Vue({
         ],
 
 
-        apartmentModalShow: false
+        apartmentModalShow: false,
+        editApartmentModalShow: false
     },
     mounted(){
         this.$root.$on("apartment-selected-event", (selectedApartment) => {this.onApartmentSelected(selectedApartment);});
-        this.$root.$on('disapprove-comment-event', (comment) => {this.onApproveComment(comment, false);});
-        this.$root.$on('approve-comment-event', (comment) => {this.onApproveComment(comment, true);});
+        this.$root.$on("apartment-updated-event", () => {this.onApartmentUpdated();});
 
         const vm = this;
 
@@ -41,6 +42,9 @@ var app = new Vue({
             this.selectedApartment = selectedApartment;
             this.apartmentModalShow = true;
         },
+        onApartmentUpdated(){
+            this.editApartmentModalShow = false;
+        },
         sortAscending : function(){
             this.apartments.sort(function(a, b){
                 if(a.pricePerNight < b.pricePerNight) return -1;
@@ -54,34 +58,6 @@ var app = new Vue({
                 if(a.pricePerNight < b.pricePerNight) return 1;
                 return 0;
             });
-        },
-        onApproveComment(comment, toApprove){
-            let jwt = window.localStorage.getItem('jwt');
-            if(!jwt)
-                jwt = '';
-
-            axios
-                .put("rest/vazduhbnb/approve", comment, {
-                    params: {
-                        approve: toApprove,
-                        apartment: this.selectedApartment.id
-                    },
-                    headers:{
-                        'Authorization': 'Bearer ' + jwt
-                    }
-                })
-                .then(function(response){
-                    pushSuccessNotification("Success", comment.user.name + " " + comment.user.surname + "'s comment is " + (toApprove ? "approved" : "disapproved") + ".");
-                    comment.approved = toApprove;
-                })
-                .catch(function(error){
-                    let response = error.response;
-                    switch(response.status){
-                        case 401: alert("Error. Not logged in."); signOut(); break;
-                        case 403: alert("Access denied. Please login with privileges."); signOut(); break; 
-                        case 500: pushErrorNotification("Internal Server Error", "Please try again later."); break;
-                    }
-                });
         },
         activateApartment(apartment, toActivate){
             let jwt = window.localStorage.getItem('jwt');
@@ -156,44 +132,46 @@ var app = new Vue({
                         });
                 }
 
-            })
+            });
+        },
+        onEditSelectedApartment(){
+            this.backup = [this.selectedApartment.numberOfRooms, // 0
+                            this.selectedApartment.numberOfGuests, //1,
+                            this.selectedApartment.pricePerNight, //2
+                            this.selectedApartment.checkInHour, //3
+                            this.selectedApartment.checkOutHour, //4
+                            this.selectedApartment.apartmentType, //5
+                            this.selectedApartment.location.latitude, //6
+                            this.selectedApartment.location.longitude, //7
+                            this.selectedApartment.location.address.street, //8
+                            this.selectedApartment.location.address.houseNumber, //9
+                            this.selectedApartment.location.address.city, //10
+                            this.selectedApartment.location.address.postalCode, //11
+                            [...this.selectedApartment.amenities] //12
+                        ];
 
-            return;
-
-            if(toDelete){
-                let jwt = window.localStorage.getItem('jwt');
-                if(!jwt)
-                    jwt = '';
-    
-                const vm = this;
-    
-                axios
-                    .delete("rest/vazduhbnb/apartment", {
-                        headers:{
-                            'Authorization': 'Bearer ' + jwt
-                        },
-                        data: apartment
-                    })
-                    .then(function(response){
-                        let index = vm.apartments.findIndex(a => a.id == apartment.id);
-                        vm.apartments.splice(index, 1);
-                        pushSuccessNotification("Success", "Apartment deleted");
-                    })
-                    .catch(function(error){
-                        let response = error.response;
-                        switch(response.status){
-                            case 400: pushErrorNotification("Error occured.", response.data.message);
-                            case 401: alert("Error. Not logged in."); signOut(); break;
-                            case 403: alert("Access denied. Please login with privileges."); signOut(); break; 
-                            case 500: pushErrorNotification("Internal Server Error", "Please try again later."); break;
-                        }
-                    });
-            }
+            this.editApartmentModalShow = true;
+        },
+        onCancelEdit(){
+            this.editApartmentModalShow = false;
+            
+            this.selectedApartment.numberOfRooms = this.backup[0];
+            this.selectedApartment.numberOfGuests = this.backup[1];
+            this.selectedApartment.pricePerNight = this.backup[2];
+            this.selectedApartment.checkInHour = this.backup[3];
+            this.selectedApartment.checkOutHour = this.backup[4];
+            this.selectedApartment.apartmentType = this.backup[5];
+            this.selectedApartment.location.latitude = this.backup[6];
+            this.selectedApartment.location.longitude = this.backup[7];
+            this.selectedApartment.location.address.street = this.backup[8];
+            this.selectedApartment.location.address.houseNumber = this.backup[9];
+            this.selectedApartment.location.address.city = this.backup[10];
+            this.selectedApartment.location.address.postalCode = this.backup[11];
+            this.selectedApartment.amenities = this.backup[12];
         }
     },
     watch:{
         filter:function(){
-            //TODO: search
             if(this.filter.dateRange){
                 this.filter.dateRange.start = this.filter.dateRange.start.getTime();
                 this.filter.dateRange.end = this.filter.dateRange.end.getTime();

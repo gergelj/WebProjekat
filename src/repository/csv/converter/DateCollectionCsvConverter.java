@@ -23,10 +23,9 @@ public class DateCollectionCsvConverter implements ICsvConverter<DateCollection>
    private String listDelimiter2 = "_";
    private String dateFormat = "dd.MM.yyyy.";
    private String emptyChar = "♥";
-   private SimpleDateFormat formatter;
    
    public DateCollectionCsvConverter() {
-	   this.formatter = new SimpleDateFormat(this.dateFormat);
+	   
    }
    
    public String toCsv(DateCollection entity) {
@@ -48,6 +47,8 @@ public class DateCollectionCsvConverter implements ICsvConverter<DateCollection>
 		   return emptyChar;
 	   
 	   StringJoiner joiner = new StringJoiner(listDelimiter);
+	   
+	   SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
 	   
 	   for(Date date : dates.keySet()){
 		   joiner.add(formatter.format(date) + listDelimiter2 + dates.get(date));
@@ -74,6 +75,8 @@ public class DateCollectionCsvConverter implements ICsvConverter<DateCollection>
 			return retVal;
 		
 		String[] tokens = list.split(listDelimiter);
+		
+		SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
 		
 		for(String token : tokens) {
 			
