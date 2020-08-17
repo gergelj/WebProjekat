@@ -48,9 +48,9 @@ Vue.component("navigation-bar", {
             <!-- Host user -->
             <template v-if="usertype == 'host'">
 
-                <b-nav-item href="apartments.html">
+                <b-nav-item href="new-apartment.html">
                     <i class="fas fa-home"></i>
-                    My Apartments
+                    New Apartment
                 </b-nav-item>
 
                 <b-nav-item href="users.html">
@@ -66,11 +66,6 @@ Vue.component("navigation-bar", {
 
             <!-- Admin user -->
             <template v-if="usertype == 'admin'">
-
-                <b-nav-item href="apartments.html">
-                    <i class="fas fa-home"></i>
-                    Apartments
-                </b-nav-item>
 
                 <b-nav-item href="amenities.html">
                     <i class="fas fa-couch"></i>

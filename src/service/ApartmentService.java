@@ -121,13 +121,21 @@ public class ApartmentService {
    /**  
     *  <b>Called by:</b> admin or host<br><br>
     * @throws DatabaseException 
-    * @throws InvalidUserException
+ * @throws BadRequestException 
     */
-   public void delete(Apartment apartment, UserType userType) throws DatabaseException, InvalidUserException {
-      if(userType == UserType.admin || userType == UserType.host)
-      {
+   public void delete(Apartment apartment, User user) throws DatabaseException, BadRequestException {
+      if(user.getUserType() == UserType.admin){
     	  apartmentRepository.delete(apartment.getId());
     	  dateCollectionRepository.deleteByApartment(apartment.getId());
+      }
+      else if(user.getUserType() == UserType.host) {
+    	  if(apartment.getHost().equals(user)) {
+    		  apartmentRepository.delete(apartment.getId());
+        	  dateCollectionRepository.deleteByApartment(apartment.getId());
+    	  }
+    	  else {    		  
+    		  throw new BadRequestException("Hosts can only delete their own apartment.");    	  
+    	  }
       }
       else {
     	  throw new InvalidUserException();    	  
@@ -281,6 +289,16 @@ public class ApartmentService {
 		   retVal = getActiveApartments(loggedInUser.getUserType()).stream().filter(apartment -> specification.isSatisfiedBy(apartment)).collect(Collectors.toList());
 	   
 	   return retVal;
+   }
+   
+   public void activateApartment(Apartment apartment, User loggedInUser, boolean toActivate) throws InvalidUserException, DatabaseException {
+	   if(loggedInUser.getUserType() == UserType.admin) {
+		   apartment.setActive(toActivate);
+		   apartmentRepository.update(apartment);
+	   }
+	   else {
+		   throw new InvalidUserException();
+	   }
    }
    
 }

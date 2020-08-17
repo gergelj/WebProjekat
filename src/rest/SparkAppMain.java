@@ -4,6 +4,7 @@ import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
 import static spark.Spark.put;
+import static spark.Spark.delete;
 import static spark.Spark.staticFiles;
 import static spark.Spark.webSocket;
 
@@ -106,7 +107,7 @@ public class SparkAppMain {
 	static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	static AppResources resources;
 	static UserCsvConverter userConverter = new UserCsvConverter();
-	private static int minutesUntilTokenExpires = 30;
+	private static int minutesUntilTokenExpires = 60;
 
 	public static void main(String[] args) throws IOException, DatabaseException {
 		
@@ -146,6 +147,7 @@ public class SparkAppMain {
 				
 				String jws = getJwtToken(loggedInUser);
 				
+				System.out.println("User " + loggedInUser.getName() + " " + loggedInUser.getSurname() + " (" + loggedInUser.getUserType() + ") logged in.");
 				System.out.println("Returned JWT: " + jws);
 				
 				return g.toJson(new TokenDTO(jws, loggedInUser.getAccount().getUsername(), loggedInUser.getUserType()), TokenDTO.class);
@@ -249,6 +251,88 @@ public class SparkAppMain {
 			
 			
 			return "Whatever";
+			
+		});
+		
+		put("/rest/vazduhbnb/approve", (req, res) ->{
+			res.type("application/json");
+			
+			Comment comment = g.fromJson(req.body(), Comment.class);
+			boolean toApprove = Boolean.valueOf(req.queryParams("approve"));
+			long apartmentId = Long.valueOf(req.queryParams("apartment"));
+			
+			User loggedInUser = getLoggedInUser(req);
+			
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			try {
+				
+				resources.commentService.approveComment(comment, toApprove, loggedInUser, apartmentId);
+				res.status(200);
+				return toApprove ? "approved" : "disapproved";
+				
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		put("/rest/vazduhbnb/activate", (req, res) ->{
+			res.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			boolean toActivate = Boolean.valueOf(req.queryParams("activate"));		
+			Apartment apartment = g.fromJson(req.body(), Apartment.class);
+			
+			try {				
+				resources.apartmentService.activateApartment(apartment, loggedInUser, toActivate);
+				res.status(200);
+				return "Apartment " + (toActivate ? "activated" : "deactivated") + ".";
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		delete("rest/vazduhbnb/apartment", (req, res) ->{
+			
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			String payload = req.body();
+			Apartment apartment = g.fromJson(payload, Apartment.class);
+			
+			try {				
+				resources.apartmentService.delete(apartment, loggedInUser);
+				res.status(200);
+				return "Apartment deleted";
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+			}catch(BadRequestException e) {
+				res.status(400);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}
 			
 		});
 		
@@ -541,10 +625,10 @@ public class SparkAppMain {
 			try {
 			    Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
 			    // ako nije bacio izuzetak, onda je OK
-				System.out.println("User " + claims.getBody().getSubject() + " logged in.");
+				//System.out.println("User " + claims.getBody().getSubject() + " logged in.");
 				return userConverter.fromCsv(claims.getBody().getSubject());
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				//System.out.println(e.getMessage());
 			}
 		}
 		return null;

@@ -9,7 +9,7 @@ Vue.component("picture-viewer", {
         }
     },
     template: `
-<div>
+<div v-if="value">
     <b-carousel
         id="carousel123"
         v-model="slide"

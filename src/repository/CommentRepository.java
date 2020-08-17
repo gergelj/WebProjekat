@@ -11,6 +11,7 @@ import java.util.*;
 import beans.Comment;
 import beans.User;
 import exceptions.DatabaseException;
+import exceptions.EntityNotFoundException;
 import repository.abstractrepository.ICommentRepository;
 import repository.abstractrepository.IUserRepository;
 import repository.csv.CSVRepository;
@@ -52,6 +53,15 @@ public class CommentRepository extends CSVRepository<Comment> implements ICommen
 
    
    private User getUserById(User user) throws DatabaseException {
-	   return user == null ? null : userRepository.getById(user.getId());
+	   if(user == null)
+		   return null;
+	   
+	   try {
+		   return userRepository.getById(user.getId());		   
+	   }catch(EntityNotFoundException e) {
+		   user.setName("Deleted user");
+		   user.setDeleted(true);
+		   return user;
+	   }
    }
 }

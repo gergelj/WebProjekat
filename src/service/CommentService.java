@@ -56,12 +56,16 @@ public class CommentService {
     * @throws DatabaseException 
     * @throws InvalidUserException
     */
-   public void approveComment(Comment comment, UserType userType) throws DatabaseException, InvalidUserException {
-	   if(userType == UserType.host)
-	   {
+   public Comment approveComment(Comment comment, boolean toApprove, User host, long apartmentId) throws DatabaseException, InvalidUserException {
+	   if(host.getUserType() == UserType.host) {
+		   Apartment a = apartmentRepository.getById(apartmentId);
+		   if(!a.getHost().equals(host))
+			   throw new InvalidUserException();
+		   
 		   comment = commentRepository.getById(comment.getId());
-		   comment.setApproved(true);
+		   comment.setApproved(toApprove);
 		   commentRepository.update(comment);
+		   return comment;
 	   }
 	   throw new InvalidUserException();
 	   

@@ -1,5 +1,5 @@
 Vue.component('apartment-list',{
-    props:['value', 'mode', 'items'],    //value - selected apartment, mode - user type, items - list of apartments
+    props:[/*'value', */'mode', 'items'],    //value - selected apartment, mode - user type, items - list of apartments
     data: function(){
         return {
 
@@ -29,10 +29,10 @@ Vue.component('apartment-list',{
                                         <div class="mt-3" style="font-size:20px">
                                             <span>
                                                 <b-badge variant="primary">{{apartment.numberOfRooms}}</b-badge>
-                                            </span> room(s) <br>
+                                            </span> {{getRoomLabel(apartment)}} <br>
                                             <span>
                                                 <b-badge variant="primary">{{apartment.numberOfGuests}}</b-badge>
-                                            </span> guest(s)<br>
+                                            </span> {{getGuestLabel(apartment)}}<br>
                                             <b-badge variant="primary">
                                                 {{getApartmentType(apartment)}}
                                             </b-badge>
@@ -64,13 +64,11 @@ Vue.component('apartment-list',{
 </div>
     `,
     mounted(){
-        console.log(this.items);
+        //console.log(this.items);
     },
     methods:{
         selectApartment(apartment){
-            this.value = apartment;
-            this.$emit('input', this.value);
-            this.$root.$emit('apartment-selected', this.value);
+            this.$root.$emit('apartment-selected-event', apartment);
         },
         getApartmentType(apartment){
             if(apartment.apartmentType == 'room')
@@ -79,11 +77,21 @@ Vue.component('apartment-list',{
                 return "Full Apartment";
             else
                 return '';
+        },
+        getRoomLabel(apartment){
+            if(apartment.numberOfRooms > 1) return "rooms";
+            else if(apartment.numberOfRooms == 1) return "room";
+            else return '';
+        },
+        getGuestLabel(apartment){
+            if(apartment.numberOfGuests > 1) return "guests";
+            else if(apartment.numberOfGuests == 1) return "guest";
+            else return '';
         }
     },
     watch:{
         items:function(){
-            console.log(this.items);
+            //console.log(this.items);
         }
     }
 })

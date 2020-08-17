@@ -1,7 +1,7 @@
 // dependency: MKNotification, notification.js
 
 Vue.component("leaflet-map", {
-    props: ['mode', 'value'],    // mode: [input, display], value: Object{lat, lng}
+    props: ['mode', 'value', 'height'],    // mode: [input, display], value: Object{lat, lng}, height - map height in px
     data: function(){
         return {
             //latitude : 0,
@@ -13,7 +13,7 @@ Vue.component("leaflet-map", {
     },
     template: `
 <div>
-    <div id="mapid">
+    <div id="mapid" v-bind:style="mapStyle">
 
     </div>
     <b-button v-if="mode=='input'" variant="outline-primary" class="mt-2" @click="locateMe">
@@ -52,13 +52,9 @@ Vue.component("leaflet-map", {
 
         if(this.mode == "input"){
             this.map = L.map('mapid').setView([45.2009537, 20.5291344], 8);
-            /*this.popup
-                .setLatLng(this.value)
-                .setContent("Selected location: " + this.value.lat + ", " + this.value.lng)
-                .openOn(this.map);*/
         }
-        else{
-            this.map = L.map('mapid', {closePopupOnClick : false}).setView([this.value.lat, this.value.lng], 14);
+        else{ // mode == display
+            this.map = L.map('mapid', {closePopupOnClick : false, center:[this.value.lat, this.value.lng], zoom:16}).setView([this.value.lat, this.value.lng], 18);
             this.popup
             .setLatLng(this.value)
             .setContent(this.popupMessage)
@@ -88,6 +84,11 @@ Vue.component("leaflet-map", {
                 .setLatLng(newValue)
                 .setContent(this.popupMessage)
                 .openOn(this.map);
+        }
+    },
+    computed:{
+        mapStyle:function(){
+            return {"height" : this.height + "px"};
         }
     }
 });
