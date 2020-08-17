@@ -3,6 +3,11 @@ Vue.component("users-view",{
     {
         return{
             items:[],
+            filter: {
+                username: '',
+                gender: null,
+                userType: null
+            },
             fields:[
                 {key: 'account.username', label: 'Username', sortable: true },
                 {key: 'name', sortable: true},
@@ -29,7 +34,7 @@ Vue.component("users-view",{
     <b-table bordered 
         v-if='this.loggedinUser.userType == "admin" || this.loggedinUser.userType == "host"'
         striped hover
-        :items="items"
+        :items="filteredUsers"
         :fields="fields"
         @row-clicked="rowClicked"
         select-mode="single"
@@ -85,6 +90,10 @@ Vue.component("users-view",{
             app.$forceUpdate();
         });
 
+        this.$root.$on('filterChanged', (wholeFilter)=>{
+            this.filter = wholeFilter;
+        });
+
         this.$root.$on('blockUser',(blockedUser)=>{
             let index = this.items.findIndex(i => i.id == blockedUser.id);
             if(index > -1)
@@ -112,6 +121,20 @@ Vue.component("users-view",{
             this.selectedUser = record;
             this.$root.$emit('selectedUser', this.selectedUser);
           }
+    },
+    computed:
+    {
+       filteredUsers(){
+            let selectedGender = this.filter.gender;
+            let selectedType = this.filter.userType;
+            let selectedUsername = this.filter.username;
+
+            let hasGender = this.filter.gender != null;
+            let hasUserType = this.filter.userType != null;
+            let hasUsername = this.filter.username != '';
+            
+            return this.items.filter(user => (hasGender ? (user.gender == selectedGender) : true) && (hasUserType ? (user.userType == selectedType) : true) && (hasUsername ? (user.account.username.toUpperCase().indexOf(selectedUsername.trim().toUpperCase()) != -1) : true));
+       } 
     }
 });
 
@@ -283,7 +306,8 @@ Vue.component('user-filter',{
             {value: 'guest', text:'Guest'},
             {value: 'host', text:'Host'}
         ],
-        selectedUsername: ''
+        usernameInput: '',
+        userType: ''
         }
     },
     template:`
@@ -292,7 +316,8 @@ Vue.component('user-filter',{
             <b-form-group>
                 <label>Username:</label>
                 <b-form-input
-                    placeholder='Please enter a username'>
+                    placeholder='Please enter a username'
+                    v-model='usernameInput'>
                 </b-form-input>
 
                 <label>Gender:</label>
@@ -302,59 +327,62 @@ Vue.component('user-filter',{
                     :options='genderOption'>
                 </b-form-select>
 
-                <label>User type:</label>        
+                <label v-if="userType == 'admin'">User type:</label>        
                 <b-form-select
+                    v-if="userType == 'admin'"
                     id='usertype-input'
                     v-model='selectedType'
                     :options='typeOption'>
                 </b-form-select>
             </b-form-group>
             <b-button
-                @click='filter'
+                @click='filterChanged'
                 class='mr-1'
                 pill
                 variant='success'>Search</b-button>
         </b-form>
     </div>
     `,
-   watch:
+    mounted()
     {
-        filter: function()
-        {
-            let jwt = window.localStorage.getItem('jwt');
-            if(!jwt)
-                jwt='';
+        let jwt = window.localStorage.getItem('jwt');
+        if(!jwt)
+            jwt = '';
 
-            const vm = this;
-
-            axios
-                .get('rest/vazduhbnb/filteredUsers',{
-                    params:{
-                        filter: this.filter
-                    },
-                    headers:{
-                        'Authorization': 'Beared ' + jwt
-                    }
-                })
-                .then(function(response){
-                    vm.users = response.data;
-                })
-                .catch(function(error){
-                    let response = error.response;
-                    alert(response.data.message);
-                })
-        }
+        const vm = this;
+        axios
+            .get("rest/vazduhbnb/userType",{
+                headers:{
+                    'Authorization': 'Bearer ' + jwt
+                }
+            })
+            .then(function(response){
+                vm.userType = response.data;
+            });  
     },
-    computed:
-    {
-       filteredUsers(){
-            let hasGender = this.selectedGender != null;
-            let hasUserType = this.selectedType != null;
-            let hasUsername = this.usernameInput != '';
-            return this.users.filter(user => (hasGender ? (user.gender == selectedGender) : true) && (hasUserType ? (user.userType == selectedType) : true) && (hasUsername ? (user.account.username.substring(usernameInput.trim()) > 0) : true));
-       } 
-    }
+   methods:
+   {
+       filterChanged: function()
+       {
+            let wholeFilter={
+                username: this.usernameInput,
+                userType: this.selectedType,
+                gender: this.selectedGender
+            };
+
+            this.$root.$emit('filterChanged', wholeFilter);
+       }
+   }
 })
+
+function filterUsers(gender, userType, username)
+{
+    let hasGender = this.selectedGender != null;
+    let hasUserType = this.selectedType != null;
+    let hasUsername = this.usernameInput != '';
+
+    return this.users.filter(user => (hasGender ? (user.gender == selectedGender) : true) && (hasUserType ? (user.userType == selectedType) : true) && (hasUsername ? (user.account.username.substring(usernameInput.trim()) > 0) : true));
+}
 
 var app = new Vue({
     el: '#app'
