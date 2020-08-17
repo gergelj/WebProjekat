@@ -3,6 +3,11 @@ Vue.component("users-view",{
     {
         return{
             items:[],
+            filter: {
+                username: '',
+                gender: null,
+                userType: null
+            },
             fields:[
                 {key: 'account.username', label: 'Username', sortable: true },
                 {key: 'name', sortable: true},
@@ -29,7 +34,7 @@ Vue.component("users-view",{
     <b-table bordered 
         v-if='this.loggedinUser.userType == "admin" || this.loggedinUser.userType == "host"'
         striped hover
-        :items="items"
+        :items="filteredUsers"
         :fields="fields"
         @row-clicked="rowClicked"
         select-mode="single"
@@ -85,6 +90,10 @@ Vue.component("users-view",{
             app.$forceUpdate();
         });
 
+        this.$root.$on('filterChanged', (wholeFilter)=>{
+            this.filter = wholeFilter;
+        });
+
         this.$root.$on('blockUser',(blockedUser)=>{
             let index = this.items.findIndex(i => i.id == blockedUser.id);
             if(index > -1)
@@ -112,6 +121,20 @@ Vue.component("users-view",{
             this.selectedUser = record;
             this.$root.$emit('selectedUser', this.selectedUser);
           }
+    },
+    computed:
+    {
+       filteredUsers(){
+            let selectedGender = this.filter.gender;
+            let selectedType = this.filter.userType;
+            let selectedUsername = this.filter.username;
+
+            let hasGender = this.filter.gender != null;
+            let hasUserType = this.filter.userType != null;
+            let hasUsername = this.filter.username != '';
+            
+            return this.items.filter(user => (hasGender ? (user.gender == selectedGender) : true) && (hasUserType ? (user.userType == selectedType) : true) && (hasUsername ? (user.account.username.toUpperCase().indexOf(selectedUsername.trim().toUpperCase()) != -1) : true));
+       } 
     }
 });
 
@@ -125,7 +148,7 @@ Vue.component('name-form',{
     },
     template:`
     <div id="selected-form">
-    <b-form v-if='this.loggedinUser.userType == "admin" || this.loggedinUser.userType == "host"'>
+    <b-form v-if='this.loggedinUser.userType == "admin"'>
         <b-form-group
             id="input-group-1"
             label="Selected user:"
@@ -263,6 +286,103 @@ Vue.component('name-form',{
         }
     }
 })
+
+Vue.component('user-filter',{
+    data: function()
+    { return{
+        filter:{},
+        users: [],
+        selectedGender: null,
+        genderOption:[
+            {value: null, text: 'Please select an option'},
+            {value: 'male', text: 'Male'},
+            {value: 'female', text: 'Female'},
+            {value: 'other', text: 'Other'}
+        ],
+        selectedType: null,
+        typeOption:[
+            {value: null, text:'Please select an option'},
+            {value: 'admin', text:'Admin'},
+            {value: 'guest', text:'Guest'},
+            {value: 'host', text:'Host'}
+        ],
+        usernameInput: '',
+        userType: ''
+        }
+    },
+    template:`
+    <div id="filter-form">
+        <b-form>
+            <b-form-group>
+                <label>Username:</label>
+                <b-form-input
+                    placeholder='Please enter a username'
+                    v-model='usernameInput'>
+                </b-form-input>
+
+                <label>Gender:</label>
+                <b-form-select 
+                    id='gender-input' 
+                    v-model='selectedGender' 
+                    :options='genderOption'>
+                </b-form-select>
+
+                <label v-if="userType == 'admin'">User type:</label>        
+                <b-form-select
+                    v-if="userType == 'admin'"
+                    id='usertype-input'
+                    v-model='selectedType'
+                    :options='typeOption'>
+                </b-form-select>
+            </b-form-group>
+            <b-button
+                @click='filterChanged'
+                class='mr-1'
+                pill
+                variant='success'>Search</b-button>
+        </b-form>
+    </div>
+    `,
+    mounted()
+    {
+        let jwt = window.localStorage.getItem('jwt');
+        if(!jwt)
+            jwt = '';
+
+        const vm = this;
+        axios
+            .get("rest/vazduhbnb/userType",{
+                headers:{
+                    'Authorization': 'Bearer ' + jwt
+                }
+            })
+            .then(function(response){
+                vm.userType = response.data;
+            });  
+    },
+   methods:
+   {
+       filterChanged: function()
+       {
+            let wholeFilter={
+                username: this.usernameInput,
+                userType: this.selectedType,
+                gender: this.selectedGender
+            };
+
+            this.$root.$emit('filterChanged', wholeFilter);
+       }
+   }
+})
+
+function filterUsers(gender, userType, username)
+{
+    let hasGender = this.selectedGender != null;
+    let hasUserType = this.selectedType != null;
+    let hasUsername = this.usernameInput != '';
+
+    return this.users.filter(user => (hasGender ? (user.gender == selectedGender) : true) && (hasUserType ? (user.userType == selectedType) : true) && (hasUsername ? (user.account.username.substring(usernameInput.trim()) > 0) : true));
+}
 
 var app = new Vue({
     el: '#app'
