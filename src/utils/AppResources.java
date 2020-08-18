@@ -5,6 +5,7 @@ import beans.Amenity;
 import beans.Apartment;
 import beans.Comment;
 import beans.DateCollection;
+import beans.PricingCalendar;
 import beans.Reservation;
 import beans.User;
 import exceptions.DatabaseException;
@@ -13,6 +14,7 @@ import repository.AmenityRepository;
 import repository.ApartmentRepository;
 import repository.CommentRepository;
 import repository.DateCollectionRepository;
+import repository.PricingCalendarRepository;
 import repository.ReservationRepository;
 import repository.UserRepository;
 import repository.csv.converter.AccountCsvConverter;
@@ -20,6 +22,7 @@ import repository.csv.converter.AmenityCsvConverter;
 import repository.csv.converter.ApartmentCsvConverter;
 import repository.csv.converter.CommentCsvConverter;
 import repository.csv.converter.DateCollectionCsvConverter;
+import repository.csv.converter.PricingCalendarCsvConverter;
 import repository.csv.converter.ReservationCsvConverter;
 import repository.csv.converter.UserCsvConverter;
 import repository.csv.stream.CsvStream;
@@ -37,11 +40,12 @@ public class AppResources {
 	//Repositories
 	private AmenityRepository amenityRepository;
 	private ApartmentRepository apartmentRepository;
-	public DateCollectionRepository dateCollectionRepository;
+	private DateCollectionRepository dateCollectionRepository;
 	private CommentRepository commentRepository;
 	private ReservationRepository reservationRepository;
 	private UserRepository userRepository;
 	private AccountRepository accountRepository;
+	private PricingCalendarRepository pricingCalendarRepository;
 	
 	//Services
 	public AmenityService amenityService;
@@ -72,6 +76,7 @@ public class AppResources {
 		
 		reservationRepository = new ReservationRepository(new CsvStream<Reservation>("storage/reservations.dsv", new ReservationCsvConverter()), new LongSequencer(), apartmentRepository, userRepository);
 		
+		pricingCalendarRepository = new PricingCalendarRepository(new CsvStream<PricingCalendar>("storage/pricing.dsv", new PricingCalendarCsvConverter()), new LongSequencer());
 	}
 	
 	private void loadServices()
@@ -82,7 +87,7 @@ public class AppResources {
 		
 		commentService = new CommentService(commentRepository, apartmentRepository);
 		
-		reservationService = new ReservationService(reservationRepository, dateCollectionRepository);
+		reservationService = new ReservationService(reservationRepository, dateCollectionRepository, pricingCalendarRepository);
 		
 		userService = new UserService(userRepository, accountRepository, reservationService);
 	}

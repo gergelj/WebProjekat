@@ -19,6 +19,7 @@ import java.security.Key;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import beans.Apartment;
 import beans.Comment;
 import beans.Location;
 import beans.Picture;
+import beans.PricingCalendar;
 
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -55,6 +57,7 @@ import beans.Reservation;
 import beans.User;
 import beans.enums.ApartmentType;
 import beans.enums.DateStatus;
+import beans.enums.DayOfWeek;
 import beans.enums.Gender;
 import beans.enums.ReservationStatus;
 import beans.enums.UserType;
@@ -88,6 +91,7 @@ import repository.csv.converter.AmenityCsvConverter;
 import repository.csv.converter.ApartmentCsvConverter;
 import repository.csv.converter.CommentCsvConverter;
 import repository.csv.converter.DateCollectionCsvConverter;
+import repository.csv.converter.PricingCalendarCsvConverter;
 import repository.csv.converter.ReservationCsvConverter;
 import repository.csv.converter.UserCsvConverter;
 import repository.csv.stream.ICsvStream;
@@ -117,7 +121,22 @@ public class SparkAppMain {
 		
 		g = getGson();
 		
-
+		/*
+		Map<DayOfWeek, Double> map = new HashMap<DayOfWeek, Double>();
+		map.put(DayOfWeek.monday, 0.97);
+		map.put(DayOfWeek.saturday, 1.05);
+		map.put(DayOfWeek.sunday, 1.05);
+		PricingCalendar cal = new PricingCalendar(3, false, map, new ArrayList<Date>(), 1.09);
+		
+		PricingCalendarCsvConverter conv = new PricingCalendarCsvConverter();
+		String str1 = conv.toCsv(cal);
+		String str2 = conv.toCsv(conv.fromCsv(str1));
+		System.out.println(str1);
+		System.out.println(str2);
+		System.out.println(str2.equals(str1));
+		*/
+		
+		
 		try {
 			resources = new AppResources();
 		} catch (DatabaseException e1) {
@@ -266,7 +285,8 @@ public class SparkAppMain {
 			
 			try{
 				resources.apartmentService.create(apartment, loggedInUser);
-				
+				response.status(200);
+				return "OK";
 			}catch(DatabaseException e){
 				response.status(500);
 				return g.toJson(new ErrorMessageDTO("Internal Server Error"), ErrorMessageDTO.class);
@@ -277,9 +297,6 @@ public class SparkAppMain {
 				response.status(400);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}
-
-			return "Whatever";
-			
 		});
 		
 		put("/rest/vazduhbnb/apartment", (req, res) -> {
@@ -662,6 +679,53 @@ public class SparkAppMain {
 			{
 				response.status(500);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		get("/rest/vazduhbnb/pricingCalendar", (req, res) -> {
+			res.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			try {				
+				PricingCalendar cal = resources.reservationService.getPricingCalendar(loggedInUser);
+				res.status(200);
+				return g.toJson(cal, PricingCalendar.class);
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {				
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}
+		});
+		
+		put("/rest/vazduhbnb/pricingCalendar", (req, res) -> {
+			res.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			PricingCalendar pricingCalendar = g.fromJson(req.body(), PricingCalendar.class);
+			
+			try {
+				
+				resources.reservationService.updatePricingCalendar(pricingCalendar, loggedInUser);
+				res.status(200);
+				return "OK";
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {				
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}
 		});
 		

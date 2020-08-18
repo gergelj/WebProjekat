@@ -8,24 +8,29 @@ package service;
 
 import repository.ReservationRepository;
 import repository.abstractrepository.IDateCollectionRepository;
+import repository.abstractrepository.IPricingCalendarRepository;
 import beans.User;
+import beans.enums.DayOfWeek;
 import beans.enums.ReservationStatus;
 import beans.enums.UserType;
 import exceptions.DatabaseException;
 import exceptions.InvalidUserException;
 import beans.DateCollection;
+import beans.PricingCalendar;
 import beans.Reservation;
 import java.util.*;
 
 public class ReservationService {
    private ReservationRepository reservationRepository;
    private IDateCollectionRepository dateCollectionRepository;
+   private IPricingCalendarRepository pricingCalendarRepository;
    
    //Constructors 
-   public ReservationService(ReservationRepository reservationRepository, IDateCollectionRepository dateCollectionRepository) {
+   public ReservationService(ReservationRepository reservationRepository, IDateCollectionRepository dateCollectionRepository, IPricingCalendarRepository pricingCalendarRepository) {
 	   super();
 	   this.reservationRepository = reservationRepository;
 	   this.dateCollectionRepository = dateCollectionRepository;
+	   this.pricingCalendarRepository = pricingCalendarRepository;
    }
 
 //Methods
@@ -246,6 +251,41 @@ public class ReservationService {
 		   throw new InvalidUserException();
 	   }
 
+   }
+
+   public PricingCalendar getPricingCalendar(User user) throws InvalidUserException, DatabaseException {
+	   if(user.getUserType() == UserType.admin) {
+		   
+		   List<PricingCalendar> list = pricingCalendarRepository.getAll();
+		   if(list.isEmpty()) {
+			   Map<DayOfWeek, Double> map = new HashMap<DayOfWeek, Double>();
+			   map.put(DayOfWeek.monday, 1.0);
+			   map.put(DayOfWeek.tuesday, 1.0);
+			   map.put(DayOfWeek.wednesday, 1.0);
+			   map.put(DayOfWeek.thursday, 1.0);
+			   map.put(DayOfWeek.friday, 1.0);
+			   map.put(DayOfWeek.saturday, 1.0);
+			   map.put(DayOfWeek.sunday, 1.0);
+			   PricingCalendar pc = new PricingCalendar(false, map, null, 1);
+			   pc = pricingCalendarRepository.create(pc);
+			   return pc;
+		   }
+		   else {
+			   return list.get(0);
+		   }
+		   
+	   }
+	   else {
+		   throw new InvalidUserException();
+	   }
+   }
+
+   public void updatePricingCalendar(PricingCalendar pricingCalendar, User user) throws InvalidUserException, DatabaseException {
+	   if(user.getUserType() == UserType.admin) {
+		   pricingCalendarRepository.update(pricingCalendar);
+	   }
+	   else
+		   throw new InvalidUserException();
    }
 
 }

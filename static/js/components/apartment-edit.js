@@ -193,7 +193,7 @@ Vue.component('apartment-edit',{
 
     <b-row align-h="center">
         <b-col cols="auto">
-            <b-button @click="onEditApartment" variant="warning" :disabled="!isDataValid" align="center" class="mt-3">Edit Apartment</b-button>
+            <b-button @click="onEditApartment" variant="warning" :disabled="!isDataValid" align="center" class="mt-3">Save Apartment</b-button>
         </b-col>
     </b-row>
 
