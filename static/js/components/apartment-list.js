@@ -1,5 +1,5 @@
 Vue.component('apartment-list',{
-    props:[/*'value', */'mode', 'items'],    //value - selected apartment, mode - user type, items - list of apartments
+    props:['mode', 'items'],    //value - selected apartment, mode - user type, items - list of apartments
     data: function(){
         return {
 
@@ -14,7 +14,7 @@ Vue.component('apartment-list',{
     </template>
     <b-list-group>
         <b-list-group-item href="#" v-for="apartment in items" v-bind:key="apartment.id" @click="selectApartment(apartment)">
-            <b-card bg-variant="transparent" border-variant="primary" no-body class="overflow-hidden" style="max-height: 280px;">
+            <b-card bg-variant="transparent" border-variant="primary" no-body class="overflow-hidden" style="max-height: 300px;">
                 <b-row no-gutters>
                     <b-col sm="5">
                         <b-card-img :src="apartment.pictures[0].name" alt="Image" class="rounded-0"></b-card-img>
@@ -24,7 +24,8 @@ Vue.component('apartment-list',{
                             <b-container>
                                 <b-row align-h="between">
                                     <b-col cols="auto">
-                                        <h4>{{apartment.location.address.street}} {{apartment.location.address.houseNumber}}</h4>
+                                        <h4>{{apartment.name}}</h4>
+                                        <h5>{{apartment.location.address.street}} {{apartment.location.address.houseNumber}}</h5>
                                         <h6>{{apartment.location.address.postalCode}} {{apartment.location.address.city}}</h6>
                                         <div class="mt-3" style="font-size:20px">
                                             <span>
@@ -87,11 +88,6 @@ Vue.component('apartment-list',{
             if(apartment.numberOfGuests > 1) return "guests";
             else if(apartment.numberOfGuests == 1) return "guest";
             else return '';
-        }
-    },
-    watch:{
-        items:function(){
-            //console.log(this.items);
         }
     }
 })

@@ -67,6 +67,11 @@ Vue.component("navigation-bar", {
             <!-- Admin user -->
             <template v-if="usertype == 'admin'">
 
+                <b-nav-item href="calendar.html">
+                    <i class="fas fa-tags"></i>
+                    Calendar
+                </b-nav-item>
+
                 <b-nav-item href="amenities.html">
                     <i class="fas fa-couch"></i>
                     Amenities

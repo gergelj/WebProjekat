@@ -7,25 +7,42 @@
 package service;
 
 import repository.ReservationRepository;
+import repository.abstractrepository.IApartmentRepository;
 import repository.abstractrepository.IDateCollectionRepository;
+import repository.abstractrepository.IPricingCalendarRepository;
+import repository.abstractrepository.IUserRepository;
 import beans.User;
+import beans.enums.DayOfWeek;
 import beans.enums.ReservationStatus;
 import beans.enums.UserType;
+import dto.BookingDatesDTO;
+import dto.ReservationDTO;
+import exceptions.BadRequestException;
 import exceptions.DatabaseException;
+import exceptions.InvalidDateException;
 import exceptions.InvalidUserException;
+import beans.Apartment;
 import beans.DateCollection;
+import beans.DateRange;
+import beans.PricingCalendar;
 import beans.Reservation;
 import java.util.*;
 
 public class ReservationService {
    private ReservationRepository reservationRepository;
    private IDateCollectionRepository dateCollectionRepository;
+   private IPricingCalendarRepository pricingCalendarRepository;
+   private IApartmentRepository apartmentRepository;
+   private IUserRepository userRepository;
    
    //Constructors 
-   public ReservationService(ReservationRepository reservationRepository, IDateCollectionRepository dateCollectionRepository) {
+   public ReservationService(ReservationRepository reservationRepository, IDateCollectionRepository dateCollectionRepository, IPricingCalendarRepository pricingCalendarRepository, IApartmentRepository apartmentRepository, IUserRepository userRepository) {
 	   super();
 	   this.reservationRepository = reservationRepository;
 	   this.dateCollectionRepository = dateCollectionRepository;
+	   this.pricingCalendarRepository = pricingCalendarRepository;
+	   this.apartmentRepository = apartmentRepository;
+	   this.userRepository = userRepository;
    }
 
 //Methods
@@ -186,13 +203,27 @@ public class ReservationService {
     *  
     * @throws DatabaseException 
     * @throws InvalidUserException
+    * @throws BadRequestException 
     */
-   public void create(Reservation reservation, UserType userType) throws InvalidUserException, DatabaseException {
-      if(userType == UserType.guest)
-      {
-    	 reservationRepository.create(reservation);
+   public void create(ReservationDTO reservation, User user) throws InvalidUserException, DatabaseException, BadRequestException {
+      if(user.getUserType() == UserType.guest) {
+    	  DateCollection dc = dateCollectionRepository.getByApartmentId(reservation.getApartmentId());
+    	  dc.addBooking(reservation.getDateRange());
+    	  dateCollectionRepository.update(dc);
+    	  
+    	  Apartment apartment = apartmentRepository.getById(reservation.getApartmentId());
+    	  
+    	  PricingCalendar calendar = pricingCalendarRepository.getAll().get(0);
+    	  double totalPrice = calendar.getTotalPrice(reservation.getDateRange(), apartment.getPricePerNight());
+    	  
+    	  User guest = userRepository.getById(user.getId());
+    	  
+    	  Reservation res = new Reservation(apartment, guest, reservation.getDateRange().getStart(), reservation.getNights(), totalPrice, reservation.getMessage(), false, ReservationStatus.created);
+    	  reservationRepository.create(res);
       }
-      throw new InvalidUserException();
+      else {    	  
+    	  throw new InvalidUserException();
+      }
    }
    
    
@@ -224,9 +255,9 @@ public class ReservationService {
 	   if(user.getUserType() != UserType.undefined) {
 		   DateCollection dc = dateCollectionRepository.getByApartmentId(apartmentId);
 		   if(user.getUserType() == UserType.guest)
-			   return dc.getAvailableForBookingDates();
+			   return dc.getAvailableBookingDates();
 		   else
-			   return dc.getAvailableForBookingDatesHost();
+			   return dc.getAvailableDates();
 	   }
 	   else {
 		   throw new InvalidUserException();
@@ -238,14 +269,49 @@ public class ReservationService {
 	   if(user.getUserType() != UserType.undefined) {
 		   DateCollection dc = dateCollectionRepository.getByApartmentId(apartmentId);
 		   if(user.getUserType() == UserType.guest)
-			   return dc.getBookedDates();
+			   return dc.getUnavailableBookingDates();
 		   else
-			   return dc.getUnavailableForBookingDatesHost();
+			   return dc.getUnavailableDates();
 	   }
 	   else {
 		   throw new InvalidUserException();
 	   }
 
+   }
+
+   public PricingCalendar getPricingCalendar(User user) throws InvalidUserException, DatabaseException {
+	   if(user.getUserType() == UserType.admin) {
+		   
+		   List<PricingCalendar> list = pricingCalendarRepository.getAll();
+		   if(list.isEmpty()) {
+			   Map<DayOfWeek, Double> map = new HashMap<DayOfWeek, Double>();
+			   map.put(DayOfWeek.monday, 1.0);
+			   map.put(DayOfWeek.tuesday, 1.0);
+			   map.put(DayOfWeek.wednesday, 1.0);
+			   map.put(DayOfWeek.thursday, 1.0);
+			   map.put(DayOfWeek.friday, 1.0);
+			   map.put(DayOfWeek.saturday, 1.0);
+			   map.put(DayOfWeek.sunday, 1.0);
+			   PricingCalendar pc = new PricingCalendar(false, map, null, 1);
+			   pc = pricingCalendarRepository.create(pc);
+			   return pc;
+		   }
+		   else {
+			   return list.get(0);
+		   }
+		   
+	   }
+	   else {
+		   throw new InvalidUserException();
+	   }
+   }
+
+   public void updatePricingCalendar(PricingCalendar pricingCalendar, User user) throws InvalidUserException, DatabaseException {
+	   if(user.getUserType() == UserType.admin) {
+		   pricingCalendarRepository.update(pricingCalendar);
+	   }
+	   else
+		   throw new InvalidUserException();
    }
    
    public List<Reservation> getReservationsByApartment(long apartmentId, User user) throws InvalidUserException, DatabaseException
@@ -276,5 +342,30 @@ public class ReservationService {
 	   else
 		   throw new InvalidUserException();
    }
+
+   public BookingDatesDTO getBookingDatesInfo(long apartmentId, User user) throws InvalidUserException, DatabaseException {
+	   if(user.getUserType() != UserType.undefined) {
+		   DateCollection dc = dateCollectionRepository.getByApartmentId(apartmentId);
+		   return new BookingDatesDTO(dc.getCheckInDays(), dc.getCheckOutDays(), dc.getCheckInOutDays());
+	   }
+	   else {
+		   throw new InvalidUserException();
+	   }
+   }
+
+	public double getTotalPrice(User user, long apartmentId, DateRange dateRange) throws BadRequestException, DatabaseException {
+		if(user.getUserType() == UserType.guest) {
+			DateCollection dc = dateCollectionRepository.getByApartmentId(apartmentId);
+			
+			dc.addBooking(dateRange);
+			
+			PricingCalendar cal = pricingCalendarRepository.getAll().get(0);
+			Apartment a = apartmentRepository.getById(apartmentId);
+			return cal.getTotalPrice(dateRange, a.getPricePerNight());
+		}
+		else {
+			throw new InvalidUserException();
+		}
+	}
 
 }
