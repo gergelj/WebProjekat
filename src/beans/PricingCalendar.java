@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import beans.enums.DayOfWeek;
 import beans.interfaces.IDeletable;
@@ -69,8 +70,9 @@ public class PricingCalendar implements IIdentifiable, IDeletable {
 	}
 	
 	private DayOfWeek getDayOfWeek(Date date) {
-		Calendar.getInstance().setTime(date);
-		int intDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		int intDay = c.get(Calendar.DAY_OF_WEEK);
 		return DayOfWeek.fromInteger(intDay);
 	}
 

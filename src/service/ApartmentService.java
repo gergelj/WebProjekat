@@ -115,7 +115,7 @@ public class ApartmentService {
     	  }
     	  
     	  DateCollection dateCollection = dateCollectionRepository.getByApartmentId(apartment.getId());
-    	  List<Date> oldBookingDates = dateCollection.getAvailableForBookingDatesHost();
+    	  List<Date> oldBookingDates = dateCollection.getAvailableDates();
     	  
     	  List<Date> addedDates = bookingDates.stream().filter(d -> !oldBookingDates.contains(d)).collect(Collectors.toList());
     	  List<Date> removedDates = oldBookingDates.stream().filter(d -> !bookingDates.contains(d)).collect(Collectors.toList());

@@ -15,11 +15,13 @@ var app = new Vue({
 
 
         apartmentModalShow: false,
-        editApartmentModalShow: false
+        editApartmentModalShow: false,
+        bookApartmentShow : false
     },
     mounted(){
         this.$root.$on("apartment-selected-event", (selectedApartment) => {this.onApartmentSelected(selectedApartment);});
         this.$root.$on("apartment-updated-event", () => {this.onApartmentUpdated();});
+        this.$root.$on("close-booking-event", () => {this.bookApartmentShow = false;});
 
         const vm = this;
 

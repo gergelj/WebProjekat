@@ -59,7 +59,7 @@ Vue.component("apartment-details", {
         </b-col>
     </b-row>
 
-    <b-row class="mt-2">
+    <b-row class="mt-3">
 
         <b-col md="12">
             <h4>Comments ({{comments.length}})</h4>

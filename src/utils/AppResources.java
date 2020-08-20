@@ -45,7 +45,7 @@ public class AppResources {
 	private ReservationRepository reservationRepository;
 	private UserRepository userRepository;
 	private AccountRepository accountRepository;
-	private PricingCalendarRepository pricingCalendarRepository;
+	public PricingCalendarRepository pricingCalendarRepository;
 	
 	//Services
 	public AmenityService amenityService;
@@ -87,7 +87,7 @@ public class AppResources {
 		
 		commentService = new CommentService(commentRepository, apartmentRepository);
 		
-		reservationService = new ReservationService(reservationRepository, dateCollectionRepository, pricingCalendarRepository);
+		reservationService = new ReservationService(reservationRepository, dateCollectionRepository, pricingCalendarRepository, apartmentRepository, userRepository);
 		
 		userService = new UserService(userRepository, accountRepository, reservationService);
 	}
