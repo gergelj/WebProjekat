@@ -1,6 +1,7 @@
 var app = new Vue({
     el: "#app",
     data: {
+        name: '',
         numberOfRooms: 1,
         numberOfGuests: 1,
         pricePerNightString: '',
@@ -28,9 +29,11 @@ var app = new Vue({
         picturesErrorMessage: '',
         priceErrorMessage: '',
         positionErrorMessage: '',
+        nameErrorMessage:'',
         positionValid: false,
         priceValid : false,
-        picturesValid: false
+        picturesValid: false,
+        nameValid:false
     },
     mounted() {
     },
@@ -55,6 +58,7 @@ var app = new Vue({
         create : function(){
             if(this.isDataValid){
                 let data = {
+                    name: this.name,
                     numberOfRooms : this.numberOfRooms,
                     numberOfGuests : this.numberOfGuests,
                     pricePerNight : this.pricePerNight,
@@ -158,8 +162,19 @@ var app = new Vue({
                 return false;
             }
         },
+        nameValidation(){
+            if(this.name.trim() == ''){
+                this.nameErrorMessage = 'Please enter apartment name';
+                this.nameValid = false;
+                return false;
+            }
+            else{
+                this.nameValid = true;
+                return true;
+            }
+        },
         isDataValid : function(){
-            return this.positionValid && this.priceValid && this.picturesValid;
+            return this.positionValid && this.priceValid && this.picturesValid && this.nameValid;
         }
     }
 });

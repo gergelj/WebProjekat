@@ -131,6 +131,7 @@ public class SparkAppMain {
 			return;
 		}
 		
+		
 		port(8088);
 
 		webSocket("/ws", WsHandler.class);
@@ -821,6 +822,7 @@ public class SparkAppMain {
 			}
 			return "No user logged in.";
 		});
+
 	}
 
 	private static Gson getGson() {

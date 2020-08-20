@@ -27,25 +27,26 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
    public String toCsv(Apartment entity) {
       StringJoiner joiner = new StringJoiner(delimiter);
       
-      joiner.add(String.valueOf(entity.getNumberOfRooms()));
-      joiner.add(String.valueOf(entity.getNumberOfGuests()));
-      joiner.add(String.valueOf(entity.getId()));
-      joiner.add(String.valueOf(entity.getPricePerNight()));
-      joiner.add(String.valueOf(entity.isDeleted()));
-      joiner.add(String.valueOf(entity.isActive()));
-      joiner.add(String.valueOf(entity.getCheckInHour()));
-      joiner.add(String.valueOf(entity.getCheckOutHour()));
-      joiner.add(String.valueOf(entity.getApartmentType()));
+      joiner.add(String.valueOf(entity.getId())); //0
+      joiner.add(entity.getName()); //1
+      joiner.add(String.valueOf(entity.getNumberOfRooms())); //2
+      joiner.add(String.valueOf(entity.getNumberOfGuests())); //3
+      joiner.add(String.valueOf(entity.getPricePerNight())); //4
+      joiner.add(String.valueOf(entity.isDeleted())); //5
+      joiner.add(String.valueOf(entity.isActive())); //6
+      joiner.add(String.valueOf(entity.getCheckInHour())); //7
+      joiner.add(String.valueOf(entity.getCheckOutHour())); //8
+      joiner.add(String.valueOf(entity.getApartmentType())); //9
       
-      joiner.add(String.valueOf(entity.getLocation().getLatitude()));   //Lokacija
-      joiner.add(String.valueOf(entity.getLocation().getLongitude()));
-      joiner.add(String.valueOf(getAddressString(entity.getLocation().getAddress())));	//Adresa
+      joiner.add(String.valueOf(entity.getLocation().getLatitude()));   //Lokacija //10
+      joiner.add(String.valueOf(entity.getLocation().getLongitude())); //11
+      joiner.add(String.valueOf(getAddressString(entity.getLocation().getAddress())));	//Adresa //12
       
-      joiner.add(String.valueOf(entity.getHost() == null? "" : entity.getHost().getId()));
+      joiner.add(String.valueOf(entity.getHost() == null? "" : entity.getHost().getId())); //13
       
-      joiner.add(getPictureListString(entity.getPictures()));
-      joiner.add(getAmenityListString(entity.getAmenities()));
-      joiner.add(getCommentListString(entity.getComments()));
+      joiner.add(getPictureListString(entity.getPictures())); //14
+      joiner.add(getAmenityListString(entity.getAmenities())); //15
+      joiner.add(getCommentListString(entity.getComments())); //16
       
       
       return joiner.toString();
@@ -54,24 +55,25 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
    public Apartment fromCsv(String entityCsv) {
       String[] tokens = entityCsv.split(delimiter);
       
-      int numberOfRooms = Integer.valueOf(tokens[0]);
-      int numberOfGuests = Integer.valueOf(tokens[1]);
-      long id = Long.valueOf(tokens[2]);
-      double pricePerNight = Double.valueOf(tokens[3]);
-      boolean deleted = Boolean.valueOf(tokens[4]);
-      boolean active = Boolean.valueOf(tokens[5]);
-      int checkInHour = Integer.valueOf(tokens[6]);
-      int checkOutHour = Integer.valueOf(tokens[7]);
-      ApartmentType apartmentType = ApartmentType.valueOf(tokens[8]);
+      long id = Long.valueOf(tokens[0]);
+      String name = tokens[1];
+      int numberOfRooms = Integer.valueOf(tokens[2]);
+      int numberOfGuests = Integer.valueOf(tokens[3]);
+      double pricePerNight = Double.valueOf(tokens[4]);
+      boolean deleted = Boolean.valueOf(tokens[5]);
+      boolean active = Boolean.valueOf(tokens[6]);
+      int checkInHour = Integer.valueOf(tokens[7]);
+      int checkOutHour = Integer.valueOf(tokens[8]);
+      ApartmentType apartmentType = ApartmentType.valueOf(tokens[9]);
       
-	  Location location = new Location(Double.valueOf(tokens[9]), Double.valueOf(tokens[10]), getAddressFromString(tokens[11]));
-	  User host = new User(Long.valueOf(tokens[12]));
+	  Location location = new Location(Double.valueOf(tokens[10]), Double.valueOf(tokens[11]), getAddressFromString(tokens[12]));
+	  User host = new User(Long.valueOf(tokens[13]));
 	  
-	  List<Picture> pictures = getPictureList(tokens[13]);
-	  List<Amenity> amenities = getAmenityList(tokens[14]);
-	  List<Comment> comments = getCommentList(tokens[15]);
+	  List<Picture> pictures = getPictureList(tokens[14]);
+	  List<Amenity> amenities = getAmenityList(tokens[15]);
+	  List<Comment> comments = getCommentList(tokens[16]);
 	  
-	  Apartment retVal = new Apartment(id, numberOfRooms, numberOfGuests, pricePerNight, deleted, active, checkInHour, checkOutHour, apartmentType, location, host, pictures, amenities, comments);
+	  Apartment retVal = new Apartment(id, name, numberOfRooms, numberOfGuests, pricePerNight, deleted, active, checkInHour, checkOutHour, apartmentType, location, host, pictures, amenities, comments);
 	  
       return retVal;
    }

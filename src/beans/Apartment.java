@@ -16,6 +16,7 @@ public class Apartment implements IIdentifiable, IDeletable {
    private int numberOfRooms;
    private int numberOfGuests;
    private long id;
+   private String name;
    private double pricePerNight;
    private boolean deleted;
    private boolean active;
@@ -37,12 +38,13 @@ public class Apartment implements IIdentifiable, IDeletable {
 	   this.comments = new ArrayList<Comment>();
    }
    
-   public Apartment(long id, int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
+   public Apartment(long id, String name, int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
 		int checkInHour, int checkOutHour, ApartmentType apartmentType, Location location, User host,
 		List<Picture> pictures, List<Amenity> amenities, List<Comment> comments) {
 		this.numberOfRooms = numberOfRooms;
 		this.numberOfGuests = numberOfGuests;
 		this.id = id;
+		this.name = name;
 		this.pricePerNight = pricePerNight;
 		this.deleted = deleted;
 		this.active = active;
@@ -56,9 +58,10 @@ public class Apartment implements IIdentifiable, IDeletable {
 		this.comments = comments;
    }
    
-   public Apartment(int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
+   public Apartment(String name, int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
 		int checkInHour, int checkOutHour, ApartmentType apartmentType, Location location, User host,
 		List<Picture> pictures, List<Amenity> amenities, List<Comment> comments) {
+	    this.name = name;
 		this.numberOfRooms = numberOfRooms;
 		this.numberOfGuests = numberOfGuests;
 		this.pricePerNight = pricePerNight;
@@ -74,9 +77,10 @@ public class Apartment implements IIdentifiable, IDeletable {
 		this.comments = comments;
    }
    
-   public Apartment(int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
+   public Apartment(String name, int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
 		ApartmentType apartmentType, Location location, User host,
 		List<Picture> pictures, List<Amenity> amenities, List<Comment> comments) {
+	    this.name = name;
 		this.numberOfRooms = numberOfRooms;
 		this.numberOfGuests = numberOfGuests;
 		this.pricePerNight = pricePerNight;
@@ -281,6 +285,14 @@ public List<Picture> getPictures() {
 		this.host = host;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public void setId(long id) {
 		this.id = id;
 	}

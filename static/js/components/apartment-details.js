@@ -30,8 +30,9 @@ Vue.component("apartment-details", {
     <b-row class="mt-2">
         <b-col md="6">
             <!-- Apartment info -->
-            <h3>{{apartment.location.address.street}} {{apartment.location.address.houseNumber}}</h3>
-            <h4>{{apartment.location.address.postalCode}} {{apartment.location.address.city}}</h4>
+            <h3>{{apartment.name}}</h3>
+            <h4>{{apartment.location.address.street}} {{apartment.location.address.houseNumber}}</h4>
+            <h5>{{apartment.location.address.postalCode}} {{apartment.location.address.city}}</h5>
             <em>Lat: {{apartment.location.latitude.toFixed(6)}}, Long: {{apartment.location.longitude.toFixed(6)}}</em>
             <h4 class="mt-3">Host: <span><b-badge variant="dark">{{apartment.host.name}} {{apartment.host.surname}}</b-badge></span></h4>
       

@@ -8,6 +8,7 @@ import beans.enums.ApartmentType;
 
 public class ApartmentDTO {
 	
+	private String name;
 	private int numberOfRooms;
 	private int numberOfGuests;
 	private double pricePerNight;
@@ -27,8 +28,18 @@ public class ApartmentDTO {
 	private List<Amenity> amenities;
 	private List<Date> bookingDates;
 
+	public ApartmentDTO() {
+		
+	}
 	
-	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public int getCheckInHour() {
 		return checkInHour;
 	}
@@ -59,10 +70,6 @@ public class ApartmentDTO {
 
 	public void setBookingDates(List<Date> bookingDates) {
 		this.bookingDates = bookingDates;
-	}
-
-	public ApartmentDTO() {
-	
 	}
 
 	public int getNumberOfGuests() {

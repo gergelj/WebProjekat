@@ -45,7 +45,7 @@ public class AppResources {
 	private ReservationRepository reservationRepository;
 	private UserRepository userRepository;
 	private AccountRepository accountRepository;
-	public PricingCalendarRepository pricingCalendarRepository;
+	private PricingCalendarRepository pricingCalendarRepository;
 	
 	//Services
 	public AmenityService amenityService;

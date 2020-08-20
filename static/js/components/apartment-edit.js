@@ -16,7 +16,9 @@ Vue.component('apartment-edit',{
             priceErrorMessage: '',
             priceValid : false,
             positionErrorMessage: '',
-            positionValid: false
+            positionValid: false,
+            nameErrorMessage:'',
+            nameValid:false
         }
     },
     template:`
@@ -100,6 +102,18 @@ Vue.component('apartment-edit',{
                 <b-row>
                     <b-col>
                         <b-container fluid>
+
+                            <b-form-group
+                                label-cols-sm="5"
+                                label="Name *"
+                                label-align-sm="right"
+                                label-for="nested-name">
+
+                                <b-form-input id="nested-name" v-model="value.name" :state="nameValidation"></b-form-input>
+                                    <b-form-invalid-feedback :state="nameValidation">
+                                        {{nameErrorMessage}}
+                                    </b-form-invalid-feedback>
+                            </b-form-group>
 
                             <b-form-group
                                 label-cols-sm="5"
@@ -352,8 +366,19 @@ Vue.component('apartment-edit',{
                 return false;
             }
         },
+        nameValidation:function(){
+            if(this.value.name.trim() == ''){
+                this.nameErrorMessage = "Please enter apartment name";
+                this.nameValid = false;
+                return false;
+            }
+            else{
+                this.nameValid = true;
+                return true;
+            }
+        },
         isDataValid:function(){
-            return this.positionValid && this.priceValid;
+            return this.positionValid && this.priceValid && this.nameValid;
         },
         unavailableDates: function(){
             return [{

@@ -105,6 +105,19 @@
 
                                     <b-form-group
                                         label-cols-sm="5"
+                                        label="Name"
+                                        label-align-sm="right"
+                                        label-for="nested-name">
+                                        
+                                            <b-form-input id="nested-name" v-model="name" :state="nameValidation"></b-form-input>
+                                                
+                                            <b-form-invalid-feedback id="name-invalid-feedback" :state="nameValidation">
+                                                {{nameErrorMessage}}
+                                            </b-form-invalid-feedback>       
+                                    </b-form-group>
+
+                                    <b-form-group
+                                        label-cols-sm="5"
                                         label="Type"
                                         label-align-sm="right"
                                         label-for="nested-apartment-type">
@@ -113,13 +126,13 @@
 
                                     <b-form-group
                                         label-cols-sm="5"
-                                        label="Price per night *"
+                                        label="Price per night"
                                         label-align-sm="right"
                                         label-for="nested-price">
                                         <b-input-group prepend="€">
                                             <b-form-input id="nested-price" v-model="pricePerNightString" :state="priceValidation"></b-form-input>
                                         </b-input-group>
-                                                <b-form-invalid-feedback :state="priceValidation">
+                                                <b-form-invalid-feedback id="price-invalid-feedback" :state="priceValidation">
                                                     {{priceErrorMessage}}
                                                 </b-form-invalid-feedback>
                                     </b-form-group>
@@ -162,7 +175,7 @@
                                     <b-form-group
                                         label="Booking Dates"
                                         description="Selected dates will be available for your clients' booking.">
-                                        <v-date-picker v-model="bookingDates" :min-date='new Date()' is-inline :columns="$screens({ default: 1, lg: 2 })" mode="multiple"/>
+                                        <v-date-picker v-model="bookingDates" :min-date='new Date()' is-inline :step="1" :columns="$screens({ default: 1, lg: 2 })" mode="multiple"/>
                                     </b-form-group>
                                 </b-container>
                             </b-col>
