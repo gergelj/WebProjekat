@@ -19,12 +19,13 @@ public class CommentCsvConverter implements ICsvConverter<Comment> {
    public String toCsv(Comment entity){
 	   StringJoiner joiner = new StringJoiner(delimiter);
 	   
-	   joiner.add(String.valueOf(entity.getId()));
-	   joiner.add(entity.getText().replace("\n", newLine));
-	   joiner.add(String.valueOf(entity.getRating()));
-	   joiner.add(String.valueOf(entity.isDeleted()));
-	   joiner.add(String.valueOf(entity.isApproved()));
-	   joiner.add(String.valueOf(entity.getUser() == null ? "" : entity.getUser().getId()));
+	   joiner.add(String.valueOf(entity.getId())); //0
+	   joiner.add(entity.getText().replace("\n", newLine)); //1
+	   joiner.add(String.valueOf(entity.getRating())); //2
+	   joiner.add(String.valueOf(entity.isDeleted())); //3
+	   joiner.add(String.valueOf(entity.isApproved())); //4
+	   joiner.add(String.valueOf(entity.getUser() == null ? "" : entity.getUser().getId())); //5
+	   joiner.add(String.valueOf(entity.getApartmentId())); //6
 	   
       return joiner.toString();
    }
@@ -37,9 +38,10 @@ public class CommentCsvConverter implements ICsvConverter<Comment> {
 	  int rating = Integer.valueOf(tokens[2]);
 	  boolean deleted = Boolean.valueOf(tokens[3]);
 	  boolean approved = Boolean.valueOf(tokens[4]);
-	  User user = new User(Long.valueOf(tokens[5])); 
+	  User user = new User(Long.valueOf(tokens[5]));
+	  long apartmentId = Long.valueOf(tokens[6]);
 	  
-	  Comment retVal = new Comment(id, text, rating, deleted, approved, user);
+	  Comment retVal = new Comment(id, text, rating, deleted, approved, user, apartmentId);
 	  
       return retVal;
    }

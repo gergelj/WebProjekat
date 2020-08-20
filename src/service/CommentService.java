@@ -8,24 +8,33 @@ package service;
 
 import repository.ApartmentRepository;
 import repository.CommentRepository;
+import repository.ReservationRepository;
+import repository.UserRepository;
 import beans.Apartment;
 import beans.Comment;
+import beans.Reservation;
 import beans.User;
 import beans.enums.UserType;
+import exceptions.BadRequestException;
 import exceptions.DatabaseException;
 import exceptions.InvalidUserException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CommentService {
    private CommentRepository commentRepository;
    private ApartmentRepository apartmentRepository;
+   private UserRepository userRepository;
+   private ReservationRepository reservationRepository;
 
 //Constructors
-   public CommentService(CommentRepository commentRepository, ApartmentRepository apartmentRepository) {
+   public CommentService(CommentRepository commentRepository, ApartmentRepository apartmentRepository, UserRepository userRepository, ReservationRepository reservationRepository) {
 	   super();
 	   this.commentRepository = commentRepository;
 	   this.apartmentRepository = apartmentRepository;
+	   this.userRepository = userRepository;
+	   this.reservationRepository = reservationRepository;
    }
 
  //Methods
@@ -36,16 +45,22 @@ public class CommentService {
     * @throws InvalidUserException
     * @throws DatabaseException 
     */
-   public void create(Comment comment, UserType userType) throws InvalidUserException, DatabaseException {
+   public void create(Comment comment, long reservationId, User user) throws InvalidUserException, DatabaseException {
 	   //TODO: proveriti da li treba da se proverava i status rezervacije
 	   //      strana 8 - ostavaljanej komentara
 	   //      return type je bio Comment?
-	   //	   komentar treba da ude neodobren kad se kreira?
-	   if(userType == UserType.guest)
-	   {
-		   commentRepository.create(comment);
+	   //	   komentar treba da ude neodobren kad se kreira? - Da [approved = false]
+	   if(user.getUserType() == UserType.guest) {
+		   user = userRepository.getById(user.getId());
+		   comment.setUser(user);
+		   comment = commentRepository.create(comment);
+		   Reservation res = reservationRepository.getById(reservationId);
+		   res.setComment(comment);
+		   reservationRepository.update(res);
 	   }
-	   throw new InvalidUserException();
+	   else {		   
+		   throw new InvalidUserException();
+	   }
    }
    
    
@@ -67,8 +82,10 @@ public class CommentService {
 		   commentRepository.update(comment);
 		   return comment;
 	   }
-	   throw new InvalidUserException();
-	   
+	   else {
+		   throw new InvalidUserException();		   
+	   }
+
    }
 
    //seldece metode su dodate
@@ -80,21 +97,24 @@ public class CommentService {
     * @throws DatabaseException 
     * @throws InvalidUserException
     */
-   public List<Comment> getAllCommentsByApartment(Apartment apartment, User user) throws DatabaseException, InvalidUserException
-   {
-	   List<Comment> retVal = new ArrayList<Comment>();
-	   if(user.getUserType() == UserType.host && apartment.getHost().getId() == user.getId())
-	   {
-		   retVal =  apartment.getComments();
-		   return retVal;
+   public List<Comment> getCommentsByApartment(long apartmentId, User user) throws DatabaseException, InvalidUserException {
+	   
+	   switch(user.getUserType()) {
+	   case host:{
+		   Apartment apartment = apartmentRepository.getById(apartmentId);
+		   if(user.getUserType() == UserType.host && !apartment.getHost().equals(user)) {
+			   throw new InvalidUserException();
+		   }
 	   }
-	   else if(user.getUserType() == UserType.admin)
-	   {
-		   retVal = apartment.getComments();
-		   return retVal;
+	   case admin:{		   
+		   return commentRepository.getCommentsByApartment(apartmentId);
+	   } 
+	   default: {
+		   return commentRepository.getCommentsByApartment(apartmentId).stream().filter(c -> c.isApproved()).collect(Collectors.toList());		   
+	   }
+			   
 	   }
 	   
-	   throw new InvalidUserException();
    }
    
    
@@ -107,6 +127,7 @@ public class CommentService {
     */
    public List<Comment> getAllApprovedCommentsByApartment(Apartment apartment, User user)
    {
+	   /*
 	   List<Comment> retVal = new ArrayList<Comment>();
 	
 	   List<Comment> allComments = apartmentRepository.getAllComments(apartment);
@@ -118,5 +139,7 @@ public class CommentService {
 	   }
 	   
 	   return retVal;
+	   */
+	   return null;
    }
 }

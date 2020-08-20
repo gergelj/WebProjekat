@@ -17,9 +17,10 @@ public class Comment implements IDeletable, IIdentifiable {
    private boolean approved;
    
    private User user;
+   private long apartmentId;
    
 //Constructors
-	public Comment(long id, String text, int rating, boolean deleted, boolean approved, User user) {
+	public Comment(long id, String text, int rating, boolean deleted, boolean approved, User user, long apartmentId) {
 		super();
 		this.id = id;
 		this.text = text;
@@ -27,19 +28,21 @@ public class Comment implements IDeletable, IIdentifiable {
 		this.deleted = deleted;
 		this.approved = approved;
 		this.user = user;
+		this.apartmentId = apartmentId;
 	}
 	
 	public Comment() {
 		super();
 	}
 	
-	public Comment(String text, int rating, boolean deleted, boolean approved, User user) {
+	public Comment(String text, int rating, boolean deleted, boolean approved, User user, long apartmentId) {
 		super();
 		this.text = text;
 		this.rating = rating;
 		this.deleted = deleted;
 		this.approved = approved;
 		this.user = user;
+		this.apartmentId = apartmentId;
 	}
 	
 	public Comment(long id)
@@ -88,6 +91,14 @@ public class Comment implements IDeletable, IIdentifiable {
 		this.user = user;
 	}
 	
+	public long getApartmentId() {
+		return apartmentId;
+	}
+
+	public void setApartmentId(long apartmentId) {
+		this.apartmentId = apartmentId;
+	}
+
 	public long getId() {
 	    return this.id;
 	 }

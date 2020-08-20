@@ -174,7 +174,7 @@ Vue.component('apartment-edit',{
                             <b-form-group
                                 label="Booking Dates"
                                 description="Selected dates will be available for your clients' booking.">
-                                <v-date-picker v-model="availableDates" :disabled-dates="unavailableDates" :attributes='datePickerAttributes' is-inline :columns="$screens({ default: 1, lg: 2 })" mode="multiple"/>
+                                <v-date-picker v-model="availableDates" :step="1" :disabled-dates="unavailableDates" :attributes='datePickerAttributes' is-inline :columns="$screens({ default: 1, lg: 2 })" mode="multiple"/>
                             </b-form-group>
                         </b-container>
                     </b-col>
@@ -389,12 +389,11 @@ Vue.component('apartment-edit',{
         datePickerAttributes:function(){
             return [{
                 key: "bookedDates",
-                dot: true,
                 content: 'red',
                 dates: this.bookedDates,
                 popover: {
                     label: "Booked date",
-                    visibility: 'click',
+                    visibility: 'hover',
                     hideIndicator: true,
                   }
             }];

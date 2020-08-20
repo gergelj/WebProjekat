@@ -22,6 +22,7 @@ import exceptions.DatabaseException;
 import exceptions.InvalidDateException;
 import exceptions.InvalidUserException;
 import beans.Apartment;
+import beans.Comment;
 import beans.DateCollection;
 import beans.DateRange;
 import beans.PricingCalendar;
@@ -218,7 +219,7 @@ public class ReservationService {
     	  
     	  User guest = userRepository.getById(user.getId());
     	  
-    	  Reservation res = new Reservation(apartment, guest, reservation.getDateRange().getStart(), reservation.getNights(), totalPrice, reservation.getMessage(), false, ReservationStatus.created);
+    	  Reservation res = new Reservation(apartment, guest, reservation.getDateRange().getStart(), reservation.getNights(), totalPrice, reservation.getMessage(), false, ReservationStatus.created, new Comment(0));
     	  reservationRepository.create(res);
       }
       else {    	  

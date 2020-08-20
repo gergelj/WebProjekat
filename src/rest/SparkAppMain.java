@@ -131,7 +131,6 @@ public class SparkAppMain {
 			return;
 		}
 		
-		
 		port(8088);
 
 		webSocket("/ws", WsHandler.class);
@@ -415,6 +414,31 @@ public class SparkAppMain {
 			}catch(DatabaseException e) {
 				res.status(500);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}
+			
+		});
+		
+		get("/rest/vazduhbnb/apartmentComments",(req, res) -> {
+			res.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				loggedInUser = new User();
+				loggedInUser.setUserType(UserType.undefined);
+			}
+			
+			long apartmentId = Long.valueOf(req.queryParams("apartment"));
+			
+			try {
+				List<Comment> comments = resources.commentService.getCommentsByApartment(apartmentId, loggedInUser);
+				res.status(200);
+				return g.toJson(comments);
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO("Internal Server Error"), ErrorMessageDTO.class);				
 			}
 			
 		});

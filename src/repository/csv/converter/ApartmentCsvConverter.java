@@ -46,7 +46,6 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
       
       joiner.add(getPictureListString(entity.getPictures())); //14
       joiner.add(getAmenityListString(entity.getAmenities())); //15
-      joiner.add(getCommentListString(entity.getComments())); //16
       
       
       return joiner.toString();
@@ -71,9 +70,8 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
 	  
 	  List<Picture> pictures = getPictureList(tokens[14]);
 	  List<Amenity> amenities = getAmenityList(tokens[15]);
-	  List<Comment> comments = getCommentList(tokens[16]);
 	  
-	  Apartment retVal = new Apartment(id, name, numberOfRooms, numberOfGuests, pricePerNight, deleted, active, checkInHour, checkOutHour, apartmentType, location, host, pictures, amenities, comments);
+	  Apartment retVal = new Apartment(id, name, numberOfRooms, numberOfGuests, pricePerNight, deleted, active, checkInHour, checkOutHour, apartmentType, location, host, pictures, amenities);
 	  
       return retVal;
    }

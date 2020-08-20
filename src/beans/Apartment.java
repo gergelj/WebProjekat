@@ -28,19 +28,17 @@ public class Apartment implements IIdentifiable, IDeletable {
    private User host;
    private List<Picture> pictures;
    private List<Amenity> amenities;
-   private List<Comment> comments;
    
    public Apartment() {
 	   this.location = new Location();
 	   this.host = new User();
 	   this.pictures = new ArrayList<Picture>();
 	   this.amenities = new ArrayList<Amenity>();
-	   this.comments = new ArrayList<Comment>();
    }
    
    public Apartment(long id, String name, int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
 		int checkInHour, int checkOutHour, ApartmentType apartmentType, Location location, User host,
-		List<Picture> pictures, List<Amenity> amenities, List<Comment> comments) {
+		List<Picture> pictures, List<Amenity> amenities) {
 		this.numberOfRooms = numberOfRooms;
 		this.numberOfGuests = numberOfGuests;
 		this.id = id;
@@ -55,12 +53,11 @@ public class Apartment implements IIdentifiable, IDeletable {
 		this.host = host;
 		this.pictures = pictures;
 		this.amenities = amenities;
-		this.comments = comments;
    }
    
    public Apartment(String name, int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
 		int checkInHour, int checkOutHour, ApartmentType apartmentType, Location location, User host,
-		List<Picture> pictures, List<Amenity> amenities, List<Comment> comments) {
+		List<Picture> pictures, List<Amenity> amenities) {
 	    this.name = name;
 		this.numberOfRooms = numberOfRooms;
 		this.numberOfGuests = numberOfGuests;
@@ -74,12 +71,11 @@ public class Apartment implements IIdentifiable, IDeletable {
 		this.host = host;
 		this.pictures = pictures;
 		this.amenities = amenities;
-		this.comments = comments;
    }
    
    public Apartment(String name, int numberOfRooms, int numberOfGuests, double pricePerNight, boolean deleted, boolean active,
 		ApartmentType apartmentType, Location location, User host,
-		List<Picture> pictures, List<Amenity> amenities, List<Comment> comments) {
+		List<Picture> pictures, List<Amenity> amenities) {
 	    this.name = name;
 		this.numberOfRooms = numberOfRooms;
 		this.numberOfGuests = numberOfGuests;
@@ -91,7 +87,6 @@ public class Apartment implements IIdentifiable, IDeletable {
 		this.host = host;
 		this.pictures = pictures;
 		this.amenities = amenities;
-		this.comments = comments;
    }
 
    public Apartment(long id) {
@@ -166,7 +161,7 @@ public List<Picture> getPictures() {
          amenities.clear();
    }
 
-   
+   /*
    public List<Comment> getComments() {
       if (comments == null)
          comments = new ArrayList<Comment>();
@@ -200,7 +195,7 @@ public List<Picture> getPictures() {
       if (comments != null)
          comments.clear();
    }
-   
+   */
    public long getId() {
       return id;
    }

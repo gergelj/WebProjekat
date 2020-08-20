@@ -7,8 +7,36 @@ Vue.component("apartment-details", {
     props:['apartment', 'mode'],    //apartment - selected Apartment, mode - userType [undefined, guest, host, admin]
     data: function(){
         return {
-            noCommentsMessage: "No comments to show."
+            noCommentsMessage: "No comments to show.",
+            comments: []
         }
+    },
+    mounted(){
+        let jwt = window.localStorage.getItem('jwt');
+        if(!jwt)
+            jwt = '';
+
+        const vm = this;
+
+        axios
+            .get("rest/vazduhbnb/apartmentComments", {
+                params:{
+                    apartment: this.apartment.id
+                },
+                headers:{
+                    "Authorization" : "Bearer " + jwt
+                }
+            })
+            .then(function(response){
+                vm.comments = response.data;
+            })
+            .catch(function(error){
+                let response = error.response;
+                switch(response.status){
+                    case 403: alert("Access denied. Login with priviliges."); signOut(); break;
+                    case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                }
+            })
     },
     template:`
 <div>
@@ -145,13 +173,13 @@ Vue.component("apartment-details", {
                 return [];
             }
         },
-        comments:function(){
+        /*comments:function(){
             if(this.mode == 'admin' || this.mode == 'host')
                 return this.apartment.comments;
             else{
                 return this.apartment.comments.filter(c => c.approved);
             }
-        },
+        },*/
         guestLabel:function(){
             if(this.apartment.numberOfGuests > 1) return "guests";
             else if(this.apartment.numberOfGuests == 1) return "guest";

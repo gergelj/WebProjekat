@@ -211,7 +211,7 @@ public class ApartmentService {
 		   
 		   List<Picture> pictures = savePictures(apartment.getPictures());
 		   Location apartmentLocation = new Location(apartment.getLatitude(), apartment.getLongitude(), new Address(apartment.getStreet(), apartment.getHouseNumber(), apartment.getCity(), apartment.getPostalCode()));
-		   Apartment a = new Apartment(apartment.getName(), apartment.getNumberOfRooms(), apartment.getNumberOfGuests(), apartment.getPricePerNight(), false, false, apartment.getCheckInHour(), apartment.getCheckOutHour(), apartment.getApartmentType(), apartmentLocation, host, pictures, apartment.getAmenities(), null);
+		   Apartment a = new Apartment(apartment.getName(), apartment.getNumberOfRooms(), apartment.getNumberOfGuests(), apartment.getPricePerNight(), false, false, apartment.getCheckInHour(), apartment.getCheckOutHour(), apartment.getApartmentType(), apartmentLocation, host, pictures, apartment.getAmenities());
 		   Apartment createdApartment = apartmentRepository.create(a);
 		   
 		   List<Date> bookingDates = apartment.getBookingDates();
