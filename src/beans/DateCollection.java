@@ -84,7 +84,7 @@ public class DateCollection implements IIdentifiable, IDeletable {
 	public void addAvailableForBookingDate(Date date) throws InvalidDateException {
 		if(dates.containsKey(date)) {
 			if(dates.get(date) != DateStatus.free && dates.get(date) != DateStatus.undefined) {
-				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be added, it is already booked.");
+				throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be added, it is already booked.");
 			}
 		}
 		else {
@@ -97,10 +97,10 @@ public class DateCollection implements IIdentifiable, IDeletable {
 			if(dates.get(date) == DateStatus.free)
 				dates.remove(date);
 			else
-				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be removed, it is already booked.");
+				throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be removed, it is already booked.");
 		}
 		else {
-			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be removed, it was previously not added as available for booking.");
+			throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be removed, it was previously not added as available for booking.");
 		}
 	}
 	
@@ -109,10 +109,10 @@ public class DateCollection implements IIdentifiable, IDeletable {
 			if(dates.get(date) == DateStatus.free)
 				dates.put(date, DateStatus.booked);
 			else
-				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is already booked.");
+				throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " is already booked.");
 		}
 		else {
-			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is not available for booking.");
+			throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " is not available for booking.");
 		}
 	}
 	
@@ -123,10 +123,10 @@ public class DateCollection implements IIdentifiable, IDeletable {
 			else if(dates.get(date) == DateStatus.checkOut)
 				dates.put(date, DateStatus.checkInOut);
 			else
-				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is already booked.");
+				throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " is already booked.");
 		}
 		else {
-			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is not available for booking.");
+			throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " is not available for booking.");
 		}
 	}
 	
@@ -137,11 +137,11 @@ public class DateCollection implements IIdentifiable, IDeletable {
 			else if(dates.get(date) == DateStatus.checkIn)
 				dates.put(date, DateStatus.checkInOut);
 			else {
-				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is already booked.");
+				throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " is already booked.");
 			}
 		}
 		else {
-			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " is not available for booking.");
+			throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " is not available for booking.");
 		}
 	}
 	
@@ -150,12 +150,12 @@ public class DateCollection implements IIdentifiable, IDeletable {
 			if(dates.get(date) == DateStatus.booked)
 				dates.put(date, DateStatus.free);
 			else if(dates.get(date) == DateStatus.free)
-				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was previously not booked.");
+				throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be unbooked, it was previously not booked.");
 			else
-				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it is not part of the same booking.");
+				throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be unbooked, it is not part of the same booking.");
 		}
 		else {
-			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was prevoiusly not found in the system.");
+			throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be unbooked, it was prevoiusly not found in the system.");
 		}
 	}
 	
@@ -166,12 +166,12 @@ public class DateCollection implements IIdentifiable, IDeletable {
 			else if(dates.get(date) == DateStatus.checkInOut)
 				dates.put(date, DateStatus.checkOut);
 			else if(dates.get(date) == DateStatus.booked || dates.get(date) == DateStatus.checkOut)
-				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it is not a check-in date.");
+				throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be unbooked, it is not a check-in date.");
 			else
-				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was previously not booked.");
+				throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be unbooked, it was previously not booked.");
 		}
 		else {
-			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was prevoiusly not found in the system.");
+			throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be unbooked, it was prevoiusly not found in the system.");
 		}
 	}
 	
@@ -182,12 +182,12 @@ public class DateCollection implements IIdentifiable, IDeletable {
 			else if(dates.get(date) == DateStatus.checkInOut)
 				dates.put(date, DateStatus.checkIn);
 			else if(dates.get(date) == DateStatus.booked || dates.get(date) == DateStatus.checkIn)
-				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it is not a check-out date.");
+				throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be unbooked, it is not a check-out date.");
 			else
-				throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was previously not booked.");				
+				throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be unbooked, it was previously not booked.");				
 		}
 		else {
-			throw new InvalidDateException("Date " + DateFormat.getInstance().format(date) + " can't be unbooked, it was prevoiusly not found in the system.");			
+			throw new InvalidDateException("Date " + DateFormat.getDateInstance(DateFormat.LONG).format(date) + " can't be unbooked, it was prevoiusly not found in the system.");			
 		}
 	}
 	
@@ -223,19 +223,23 @@ public class DateCollection implements IIdentifiable, IDeletable {
 			removeBookedDate(dates.get(i));
 	}
 	
-	public List<Date> getAvailableForBookingDatesHost(){
+	// Note: List of dates which the HOST marked as available for booking
+	public List<Date> getAvailableDates(){
 		return dates.entrySet().stream().filter(e -> DateStatus.free.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
 	}
 	
-	public List<Date> getUnavailableForBookingDatesHost(){
+	// Note: List of dates that the HOST cannot unmark as available for booking
+	public List<Date> getUnavailableDates(){
 		return dates.entrySet().stream().filter(e -> !DateStatus.free.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
 	}
 	
-	public List<Date> getAvailableForBookingDates(){
+	// Note: List of dates that the GUEST can book
+	public List<Date> getAvailableBookingDates(){
 		return dates.entrySet().stream().filter(e -> DateStatus.free.equals(e.getValue()) || DateStatus.checkIn.equals(e.getValue()) || DateStatus.checkOut.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
 	}
 	
-	public List<Date> getBookedDates(){
+	// Note: List of dates that the GUEST cannot book
+	public List<Date> getUnavailableBookingDates(){
 		return dates.entrySet().stream().filter(e -> DateStatus.booked.equals(e.getValue()) || DateStatus.checkInOut.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
 	}
 	
@@ -247,6 +251,9 @@ public class DateCollection implements IIdentifiable, IDeletable {
 		return dates.entrySet().stream().filter(e -> DateStatus.checkOut.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
 	}
 	
+	public List<Date> getCheckInOutDays(){		
+		return dates.entrySet().stream().filter(e -> DateStatus.checkInOut.equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
+	}
 	
 	public boolean isDeleted() {
 		return deleted;

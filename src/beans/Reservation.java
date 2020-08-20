@@ -139,6 +139,14 @@ public class Reservation implements IDeletable, IIdentifiable {
 	    this.id = id;
     }
 	
+	public DateRange getDateRange() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(checkIn);
+		cal.add(Calendar.DAY_OF_MONTH, nights);
+		Date checkOut = cal.getTime();
+		return new DateRange(checkIn, checkOut);
+	}
+	
 	
 //Methods
 	public void delete() {

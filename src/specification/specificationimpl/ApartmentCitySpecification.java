@@ -22,7 +22,7 @@ public class ApartmentCitySpecification extends AbstractSpecification<Apartment>
 	public boolean isSatisfiedBy(Apartment candidate) {
 		if(candidate.getLocation() != null) 
 			if(candidate.getLocation().getAddress() != null)
-				return city.toLowerCase().contains(candidate.getLocation().getAddress().getCity().toLowerCase());
+				return candidate.getLocation().getAddress().getCity().toLowerCase().contains(city.toLowerCase());
 		
 		return false;
 	}

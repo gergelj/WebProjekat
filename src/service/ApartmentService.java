@@ -115,7 +115,7 @@ public class ApartmentService {
     	  }
     	  
     	  DateCollection dateCollection = dateCollectionRepository.getByApartmentId(apartment.getId());
-    	  List<Date> oldBookingDates = dateCollection.getAvailableForBookingDatesHost();
+    	  List<Date> oldBookingDates = dateCollection.getAvailableDates();
     	  
     	  List<Date> addedDates = bookingDates.stream().filter(d -> !oldBookingDates.contains(d)).collect(Collectors.toList());
     	  List<Date> removedDates = oldBookingDates.stream().filter(d -> !bookingDates.contains(d)).collect(Collectors.toList());
@@ -211,7 +211,7 @@ public class ApartmentService {
 		   
 		   List<Picture> pictures = savePictures(apartment.getPictures());
 		   Location apartmentLocation = new Location(apartment.getLatitude(), apartment.getLongitude(), new Address(apartment.getStreet(), apartment.getHouseNumber(), apartment.getCity(), apartment.getPostalCode()));
-		   Apartment a = new Apartment(apartment.getNumberOfRooms(), apartment.getNumberOfGuests(), apartment.getPricePerNight(), false, false, apartment.getCheckInHour(), apartment.getCheckOutHour(), apartment.getApartmentType(), apartmentLocation, host, pictures, apartment.getAmenities(), null);
+		   Apartment a = new Apartment(apartment.getName(), apartment.getNumberOfRooms(), apartment.getNumberOfGuests(), apartment.getPricePerNight(), false, false, apartment.getCheckInHour(), apartment.getCheckOutHour(), apartment.getApartmentType(), apartmentLocation, host, pictures, apartment.getAmenities(), null);
 		   Apartment createdApartment = apartmentRepository.create(a);
 		   
 		   List<Date> bookingDates = apartment.getBookingDates();
@@ -231,14 +231,15 @@ public class ApartmentService {
    }
    
    private void validateApartment(ApartmentDTO apartment) throws BadRequestException {
-	   boolean hasPrice, hasLatitude, hasLongitude;
+	   boolean hasName, hasPrice, hasLatitude, hasLongitude;
 	   
+	   hasName = apartment.getName() == null ? false : (apartment.getName().isEmpty() ? false : true);
 	   hasPrice = apartment.getPricePerNight() > 0;
 	   hasLatitude = apartment.getLatitude() != 0;
 	   hasLongitude = apartment.getLongitude() != 0;
 	   
-	   if(!hasPrice || !hasLatitude || !hasLongitude) {
-		   String emptyFields = (!hasPrice ? "price " : "") + (!hasLatitude ? "latitude " : "") + (!hasLongitude ? "longitude" : "");
+	   if(!hasPrice || !hasLatitude || !hasLongitude || !hasName) {
+		   String emptyFields = (!hasName ? "name " : "") + (!hasPrice ? "price " : "") + (!hasLatitude ? "latitude " : "") + (!hasLongitude ? "longitude" : "");
 		   throw new BadRequestException(String.format(fieldError, emptyFields));
 	   }
    }

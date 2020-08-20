@@ -89,22 +89,12 @@ Vue.component("picture-uploader", {
             } else {
                 return `${f.length} files selected`
             }
-        }/*,
-        upload() {
-            d = {pictures : this.value,
-                numberOfRooms : "13"};
-            data = JSON.stringify(d);
-
-            axios.post("/rest/vazduhbnb/apartment", data)
-                .then(res => {
-                    console.log(res);
-                });
-        }*/
+        }
     },
     computed: {
         validation() {
             if(this.files.length == 0){
-                this.errorMessage = "No file selected";
+                this.errorMessage = "No file selected.";
                 return false;
             }
             else if(this.files.length > 5){

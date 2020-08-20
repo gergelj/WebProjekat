@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Calendar</title>
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="css/bootstrap-vue.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/webfonts.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/mk-notifications.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/navbar.css"/>
+    <script src="js/axios.min.js"></script>
+    <script src="app/test-authorization.js"></script>
+    <script>
+        testAuthorization1('admin');
+    </script>
+</head>
+<body>
+    <div id="app">
+        <navigation-bar></navigation-bar>
+
+        <b-container>
+            <b-card>
+                <template v-slot:header>
+                    <h4 class="mb-0" align="center">Holidays</h4>
+                </template>
+
+                <b-row class="mt-2 mb-2" align-h="end">
+                    <b-col cols="auto">
+                        <b-form inline>
+                            <b-form-group
+                                label-cols-sm="4"
+                                label-cols-lg="3"
+                                label="Holiday increase / discount of price"
+                                label-for="input-holiday"
+                            >
+                                <b-input-group append="%">
+                                    <b-form-input v-model="holidayPercentage" :state="holidayState" id="input-holiday"></b-form-input>
+                                </b-input-group>
+                            </b-form-group>
+                        </b-form>
+                    </b-col>
+                </b-row>
+
+                <v-date-picker v-model="pricingCalendar.holidays" is-inline mode="multiple"
+                :columns="$screens({ default: 1, lg: 4 })"
+                :rows="$screens({ default: 1, lg: 3 })"
+                :is-expanded="$screens({ default: true, lg: true })"></v-date-picker>
+
+                
+            </b-card>
+
+            <b-card>
+                <template v-slot:header>
+                    <h4 class="mb-0" align="center">Days of the week</h4>
+                </template>
+                
+                <b-form>
+                    <b-form-group
+                    label-cols-sm="4"
+                    label-cols-lg="3"
+                    label="Monday"
+                    label-for="input-monday"
+                    >
+                        <b-input-group append="%">
+                            <b-form-input v-model="mondayPercentage" :state="mondayState" id="input-monday"></b-form-input>
+                        </b-input-group>
+                    </b-form-group>
+                
+
+                    <b-form-group
+                                label-cols-sm="4"
+                                label-cols-lg="3"
+                                label="Tuesday"
+                                label-for="input-tuesday"
+                            >
+                            <b-input-group append="%">
+                                <b-form-input v-model="tuesdayPercentage" :state="tuesdayState" id="input-tuesday"></b-form-input>
+                            </b-input-group>
+                    </b-form-group>
+
+                    <b-form-group
+                                label-cols-sm="4"
+                                label-cols-lg="3"
+                                label="Wednesday"
+                                label-for="input-wednesday"
+                            >
+                            <b-input-group append="%">
+                                <b-form-input v-model="wednesdayPercentage" :state="wednesdayState" id="input-wednesday"></b-form-input>
+                            </b-input-group>
+                    </b-form-group>
+
+                    <b-form-group
+                                label-cols-sm="4"
+                                label-cols-lg="3"
+                                label="Thursday"
+                                label-for="input-thursday"
+                            >
+                            <b-input-group append="%">
+                                <b-form-input v-model="thursdayPercentage" :state="thursdayState" id="input-thursday"></b-form-input>
+                            </b-input-group>
+                    </b-form-group>
+
+                    <b-form-group
+                                label-cols-sm="4"
+                                label-cols-lg="3"
+                                label="Friday"
+                                label-for="input-friday"
+                            >
+                            <b-input-group append="%">
+                                <b-form-input v-model="fridayPercentage" :state="fridayState" id="input-friday"></b-form-input>
+                            </b-input-group>
+                    </b-form-group>
+
+                    <b-form-group
+                                label-cols-sm="4"
+                                label-cols-lg="3"
+                                label="Saturday"
+                                label-for="input-saturday"
+                            >
+                            <b-input-group append="%">
+                                <b-form-input v-model="saturdayPercentage" :state="saturdayState" id="input-saturday"></b-form-input>
+                            </b-input-group>
+                    </b-form-group>
+
+                    <b-form-group
+                                label-cols-sm="4"
+                                label-cols-lg="3"
+                                label="Sunday"
+                                label-for="input-sunday"
+                            >
+                            <b-input-group append="%">
+                                <b-form-input v-model="sundayPercentage" :state="sundayState" id="input-sunday"></b-form-input>
+                            </b-input-group>
+                    </b-form-group>
+       
+                </b-form>
+            </b-card>
+
+            <b-row align-h="center">
+                <b-col cols="auto">
+                    <b-button @click="onSave" :disabled="!isDataValid" variant="primary">Save</b-button>
+                </b-col>
+            </b-row>
+        </b-container>
+
+    </div>
+    
+
+    <script src="js/vue.min.js"></script>
+    <script src="js/bootstrap-vue.min.js"></script>
+    <script src="js/jquery-3.5.1.min.js"></script>
+    <script src="js/mk-notifications.min.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/components/navigation-bar.js"></script>
+    <script src="js/v-calendar.umd.min.js"></script>
+    <script src="app/calendar.js"></script>
+</body>
+</html>
