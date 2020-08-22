@@ -168,9 +168,6 @@ public class SparkAppMain {
 			}catch(BadRequestException ex) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
-			}catch(EntityNotFoundException e) {
-				res.status(404);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			} catch(DatabaseException ex) {
 				res.status(500);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
