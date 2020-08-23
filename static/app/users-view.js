@@ -41,7 +41,6 @@ Vue.component("users-view",{
         :fields="fields"
         @row-clicked="rowClicked"
         select-mode="single"
-        :tbody-transition-props="transProps"
     >  
     </b-table>
     </div>

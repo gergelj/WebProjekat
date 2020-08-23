@@ -70,7 +70,7 @@ public class AppResources {
 		
 		commentRepository = new CommentRepository(new CsvStream<Comment>("storage/comments.dsv", new CommentCsvConverter()), new LongSequencer(), userRepository);
 		
-		apartmentRepository = new ApartmentRepository(new CsvStream<Apartment>("storage/apartments.dsv", new ApartmentCsvConverter()), new LongSequencer(), userRepository, amenityRepository);
+		apartmentRepository = new ApartmentRepository(new CsvStream<Apartment>("storage/apartments.dsv", new ApartmentCsvConverter()), new LongSequencer(), userRepository, amenityRepository, commentRepository);
 		
 		dateCollectionRepository = new DateCollectionRepository(new CsvStream<DateCollection>("storage/datecollection.dsv", new DateCollectionCsvConverter()), new LongSequencer(), apartmentRepository);
 		

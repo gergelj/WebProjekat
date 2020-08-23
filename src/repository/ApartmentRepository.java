@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import beans.Amenity;
 import beans.Apartment;
+import beans.Comment;
 import beans.User;
 import exceptions.DatabaseException;
 import repository.abstractrepository.IAmenityRepository;
