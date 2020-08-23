@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import beans.Amenity;
 import beans.Apartment;
-import beans.Comment;
 import beans.User;
 import exceptions.DatabaseException;
 import repository.abstractrepository.IAmenityRepository;
@@ -32,30 +31,17 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
 	   super("Apartment", stream, sequencer);
 	   this.userRepository = userRepository;
 	   this.amenityRepository = amenityRepository;
-	   this.commentRepository = commentRepository;
    }
    
    private void bind(List<Apartment> apartments) throws DatabaseException {
 	   
 	   List<Amenity> amenities = amenityRepository.getAll();
-	   List<Comment> comments = commentRepository.getAllEager();
 	   
 	   for(Apartment apartment : apartments) {
 		   apartment.setHost(getHostById(apartment.getHost()));
 		   bindApartmentWithAmenities(apartment, amenities);
-		   bindApartmentWithComments(apartment, comments);
 	   }
 
-   }
-
-   private void bindApartmentWithComments(Apartment apartment, List<Comment> comments) {
-	   List<Comment> commentIds = apartment.getComments();
-	      
-	   for(int i=0; i<commentIds.size(); i++) {
-		   long commentId = commentIds.get(i).getId();
-		   commentIds.set(i, comments.stream().filter(comment -> comment.getId() == commentId).findFirst().get());
-	   }
-	
    }
 
    private void bindApartmentWithAmenities(Apartment apartment, List<Amenity> amenities) {
@@ -103,9 +89,6 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
       List<Amenity> amenities = amenityRepository.getAll();
       bindApartmentWithAmenities(apartment, amenities);
       
-      List<Comment> comments = commentRepository.getAllEager();
-      bindApartmentWithComments(apartment, comments);
-      
       return apartment;
    }
    
@@ -116,9 +99,5 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
       
       return apartments;
    }
-   
-   public List<Comment> getAllComments(Apartment apartment)
-   {
-	   return apartment.getComments();
-   }
+
 }
