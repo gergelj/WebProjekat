@@ -91,8 +91,14 @@ Vue.component("reservation-list-item", {
                         <b-col cols="auto"><h5>Comment</h5></b-col>
                         <b-col sm="auto">
                             <b-form-rating variant="warning" readonly inline v-model="reservation.comment.rating"></b-form-rating>
-                            <b-badge v-if="reservation.comment.approved" variant="success">Approved</b-badge>
-                            <b-badge v-if="!reservation.comment.approved" variant="danger">Not approved</b-badge>
+                            <template v-if="userType == 'admin'">
+                                <b-badge v-if="reservation.comment.approved" variant="success">Approved</b-badge>
+                                <b-badge v-if="!reservation.comment.approved" variant="danger">Not approved</b-badge>
+                            </template>
+                            <template v-if="userType == 'host'">
+                                <b-button v-if="reservation.comment.approved" variant="danger" @click="approveComment(reservation.comment, false)">Disapprove</b-button>
+                                <b-button v-if="!reservation.comment.approved" variant="success" @click="approveComment(reservation.comment, true)">Approve</b-button>
+                            </template>
                         </b-col>
                     </b-row>
                     <b-row>
@@ -215,6 +221,34 @@ Vue.component("reservation-list-item", {
                         case 403: alert("Please login with privileges"); signOut(); break;
                         case 400: pushErrorNotification("Error occured", response.data.message); break;
                         case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                    }
+                });
+        },
+        approveComment(comment, toApprove){
+            let jwt = window.localStorage.getItem('jwt');
+            if(!jwt)
+                jwt = '';
+
+            axios
+                .put("rest/vazduhbnb/approve", comment, {
+                    params: {
+                        approve: toApprove,
+                        apartment: this.reservation.apartment.id
+                    },
+                    headers:{
+                        'Authorization': 'Bearer ' + jwt
+                    }
+                })
+                .then(function(response){
+                    pushSuccessNotification("Success", comment.user.name + " " + comment.user.surname + "'s comment is " + (toApprove ? "approved" : "disapproved") + ".");
+                    comment.approved = toApprove;
+                })
+                .catch(function(error){
+                    let response = error.response;
+                    switch(response.status){
+                        case 401: alert("Error. Not logged in."); signOut(); break;
+                        case 403: alert("Access denied. Please login with privileges."); signOut(); break; 
+                        case 500: pushErrorNotification("Internal Server Error", "Please try again later."); break;
                     }
                 });
         }

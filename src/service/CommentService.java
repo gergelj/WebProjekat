@@ -14,7 +14,9 @@ import beans.Apartment;
 import beans.Comment;
 import beans.Reservation;
 import beans.User;
+import beans.enums.ReservationStatus;
 import beans.enums.UserType;
+import dto.CommentDTO;
 import exceptions.BadRequestException;
 import exceptions.DatabaseException;
 import exceptions.InvalidUserException;
@@ -42,23 +44,27 @@ public class CommentService {
     *  
     *  <b>Called by:</b> guest<br>
     *  
-    * @throws InvalidUserException
     * @throws DatabaseException 
+ * @throws BadRequestException 
     */
-   public void create(Comment comment, long reservationId, User user) throws InvalidUserException, DatabaseException {
-	   //TODO: proveriti da li treba da se proverava i status rezervacije
-	   //      strana 8 - ostavaljanej komentara
-	   //      return type je bio Comment?
-	   //	   komentar treba da ude neodobren kad se kreira? - Da [approved = false]
+   public Comment create(CommentDTO comment, User user) throws DatabaseException, BadRequestException {
+
 	   if(user.getUserType() == UserType.guest) {
 		   user = userRepository.getById(user.getId());
-		   comment.setUser(user);
-		   comment = commentRepository.create(comment);
-		   Reservation res = reservationRepository.getById(reservationId);
-		   res.setComment(comment);
-		   reservationRepository.update(res);
+		   Reservation res = reservationRepository.getById(comment.getReservationId());
+		   
+		   if(res.getReservationStatus() == ReservationStatus.rejected || res.getReservationStatus() == ReservationStatus.finished) {			   
+			   Comment newComment = new Comment(comment.getText(), comment.getRating(), false, false, user, res.getApartment().getId());
+			   newComment = commentRepository.create(newComment);
+			   res.setComment(newComment);
+			   reservationRepository.update(res);
+			   return newComment;
+		   }
+		   else {
+			   throw new BadRequestException("Reservation status is not 'rejected' or 'finished'");
+		   }
 	   }
-	   else {		   
+	   else {
 		   throw new InvalidUserException();
 	   }
    }

@@ -65,6 +65,7 @@ import dto.ApartmentDTO;
 import dto.ApartmentEditDTO;
 import dto.ApartmentFilterDTO;
 import dto.BookingDatesDTO;
+import dto.CommentDTO;
 import dto.ErrorMessageDTO;
 import dto.ReservationDTO;
 import dto.TokenDTO;
@@ -286,6 +287,33 @@ public class SparkAppMain {
 				resources.reservationService.finishReservation(reservationId, loggedInUser);
 				res.status(200);
 				return "OK";
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);				
+			}catch(BadRequestException e) {
+				res.status(400);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);				
+			}
+		});
+		
+		post("/rest/vazduhbnb/comment", (req, res) -> {
+			res.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			CommentDTO comment = g.fromJson(req.body(), CommentDTO.class);
+			
+			try {
+				Comment newComment = resources.commentService.create(comment, loggedInUser);
+				res.status(200);
+				return g.toJson(newComment, Comment.class);
 			}catch(InvalidUserException e) {
 				res.status(403);
 				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);				

@@ -12,8 +12,31 @@ Vue.component('comment-input', {
     methods:{
         onSend(){
             if(this.dataValid){
-                //this.$root.$emit('send-comment', {text: this.text, rating: this.rating});
-                //TODO: axios request send comment
+                let jwt = window.localStorage.getItem('jwt');
+                if(!jwt)
+                    jwt = '';
+
+                const vm = this;
+
+                axios
+                    .post('rest/vazduhbnb/comment', {reservationId: this.value.id, rating: this.rating, text: this.text}, {
+                        headers:{
+                            "Authorization" : "Bearer " + jwt
+                        }
+                    })
+                    .then(function(response){
+                        pushSuccessNotification("Success", "Comment posted successfully");
+                        vm.value.comment = response.data;
+                    })
+                    .catch(function(error){
+                        let response = error.response;
+                        switch(response.status){
+                            case 401: alert("User not logged in"); signOut(); break;
+                            case 403: alert("Please login with privileges"); signOut(); break;
+                            case 400: pushErrorNotification("Error occured", response.data.message); break;
+                            case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                        }
+                    })
             }
         },
         getTextAreaId(){
