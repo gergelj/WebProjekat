@@ -216,6 +216,7 @@ Vue.component('apartment-details',{
             else if(this.userType == 'host')
             {
                 return [
+                    {key: 'guest.account.username'},
                     {key:'checkIn', sortable: true, sortByFormatted: true,
                      formatter: value=>{
                         let format='DD.MM.YYYY.'

@@ -128,6 +128,7 @@ public class ReservationService {
 	   throw new InvalidUserException();
    }
    
+   
    /** Changes status <b>reservation status</b> to <b>accepted</b> <br><br>
     *  
     *  <b>Called by:</b> host<br>
