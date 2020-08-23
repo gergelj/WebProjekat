@@ -20,6 +20,7 @@ import beans.enums.UserType;
 import dto.UserFilterDTO;
 import exceptions.BadRequestException;
 import exceptions.DatabaseException;
+import exceptions.EntityNotFoundException;
 import exceptions.InvalidPasswordException;
 import exceptions.InvalidUserException;
 import exceptions.NotUniqueException;
@@ -104,7 +105,13 @@ public class UserService {
 	   if(user.getUsername().isEmpty() || user.getPassword().isEmpty())
 		   throw new BadRequestException();
 	   
-	   User logInUser = userRepository.getByUsername(user.getUsername());
+	   User logInUser = null;
+	   
+	   try{
+		   logInUser = userRepository.getByUsername(user.getUsername());
+	   }catch(EntityNotFoundException e) {
+		   throw new BadRequestException();
+	   }
 	   
 	   if(!logInUser.getAccount().getPassword().equals(user.getPassword()))
 		   throw new BadRequestException(passwordFieldError);

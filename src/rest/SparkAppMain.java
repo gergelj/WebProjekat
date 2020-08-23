@@ -122,6 +122,7 @@ public class SparkAppMain {
 	public static void main(String[] args) throws IOException, DatabaseException {
 		
 		g = getGson();
+
 		
 		try {
 			resources = new AppResources();
@@ -175,7 +176,127 @@ public class SparkAppMain {
 			
 		});
 				
+		get("/rest/vazduhbnb/reservations", (req, res) -> {
+			res.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			try {
+				List<Reservation> reservations = resources.reservationService.getReservations(loggedInUser);
+				res.status(200);
+				return g.toJson(reservations);
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO("Internal Server Error"), ErrorMessageDTO.class);
+			}
+		});
 		
+		put("/rest/vazduhbnb/cancelReservation", (req, res) -> {
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			long reservationId = g.fromJson(req.body(), Long.class);
+			
+			try {				
+				resources.reservationService.cancelReservation(reservationId, loggedInUser);
+				res.status(200);
+				return "OK";
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);				
+			}catch(BadRequestException e) {
+				res.status(400);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);				
+			}
+		});
+		
+		put("/rest/vazduhbnb/rejectReservation", (req, res) -> {
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			long reservationId = g.fromJson(req.body(), Long.class);
+			
+			try {				
+				resources.reservationService.rejectReservation(reservationId, loggedInUser);
+				res.status(200);
+				return "OK";
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);				
+			}catch(BadRequestException e) {
+				res.status(400);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);				
+			}
+		});
+		
+		put("/rest/vazduhbnb/acceptReservation", (req, res) -> {
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			long reservationId = g.fromJson(req.body(), Long.class);
+			
+			try {				
+				resources.reservationService.acceptReservation(reservationId, loggedInUser);
+				res.status(200);
+				return "OK";
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);				
+			}catch(BadRequestException e) {
+				res.status(400);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);				
+			}
+		});
+		
+		put("/rest/vazduhbnb/finishReservation", (req, res) -> {
+			User loggedInUser = getLoggedInUser(req);
+			if(loggedInUser == null) {
+				res.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			long reservationId = g.fromJson(req.body(), Long.class);
+			
+			try {				
+				resources.reservationService.finishReservation(reservationId, loggedInUser);
+				res.status(200);
+				return "OK";
+			}catch(InvalidUserException e) {
+				res.status(403);
+				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);				
+			}catch(BadRequestException e) {
+				res.status(400);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+			}catch(DatabaseException e) {
+				res.status(500);
+				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);				
+			}
+		});
 		
 		post("/rest/vazduhbnb/register", (request, response) -> {
 			
@@ -865,6 +986,13 @@ public class SparkAppMain {
 			}
 			
 		});
+		
+		/*builder.registerTypeAdapter(String.class, new JsonDeserializer<String>() {
+			@Override
+			public String deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+				return json.getAsString().replaceAll("<script", "script").replaceAll("</", " ");
+			}
+		});*/
 
 		return builder.create();
 	}
