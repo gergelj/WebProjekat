@@ -1,180 +1,39 @@
-$(document).ready(function(){
-    let forma = $("#update-form");
-    
-    forma.submit(function(){
-        let userData = getFormData(forma);
-
-        let validData = checkData(userData);
-
-        event.preventDefault();
-    });
-});
-
-function getFormData(forma)
-{
-    var unindexed_array = forma.serializeArray();
-    var indexed_array = {};
-
-    $.map(unindexed_array, function(n, i){
-        indexed_array[n['name']] = n['value'];
-    });
-
-    return indexed_array;
-}
-
-function checkData(data)
-{
-    let passwordOK = checkPassword(data.password, data.controlPassword, data.oldPassword);
-    let nameOK = checkBasicData(data.name, $("#name-input"), "name");
-    let surnameOK = checkBasicData(data.surname, $("#surname-input"), "surname");
-
-    return passwordOK && nameOK && surnameOK;
-}
-
-function checkPassword(password, controlPassowrd, oldPassword)
-{
-    let passwordInput = $("#password-input");
-    let controlPasswordInput = $("#control-password-input");
-    let oldPasswordInput = $("#old-password-input");
-
-    removeValidationClass(passwordInput);
-    removeValidationClass(controlPasswordInput);
-    removeValidationClass(oldPasswordInput);
-
-    if(oldPassword.isEmpty())
-    {
-        if(password.isEmpty() && controlPassowrd.isEmpty())
-        {
-            addAllValidClasses(oldPasswordInput, passwordInput, controlPasswordInput);
-
-            return true;
-        }
-        addAllInvalidClasses(oldPasswordInput, passwordInput, controlPasswordInput);
-        addErrorMessage(oldPasswordInput, "Please enter both, old and new passowords.");
-        
-        return false;
-    }
-    else
-    {
-            if(!checkPasswordLength(password))
-            {
-                addInvalidClass(passwordInput);
-                addErrorMessage(passwordInput, "Your password must be 8-20 characters.");
-
-                return false;
-            }
-            if(controlPassowrd.isEmpty())
-            {
-                addInvalidClass(controlPasswordInput);
-                addErrorMessage(controlPasswordInput, "Please enter your password again.")
-            
-                return false;
-            }
-            else if(controlPassowrd == password && password == oldPassword)
-            {
-                addInvalidClass(oldPasswordInput);
-                addErrorMessage(controlPasswordInput, "New password must be diffrent from the old one.");
-
-                return false;
-            }
-            else if(controlPassowrd == password)
-            {
-                addAllValidClasses(oldPasswordInput, passwordInput, controlPasswordInput);
-
-                return true;
-            }
-            else
-            {
-                addInvalidClass(passwordInput);
-                addInvalidClass(controlPasswordInput);
-
-                addErrorMessage(passwordInput, "Passwords need to match.");
-                addErrorMessage(controlPasswordInput, "Passwords need to match.");
-
-                return false;
-            }
-    }
-}
-
-function checkBasicData(name, element, dataName)
-{
-    removeValidationClass(element)
-
-    if(name.isEmpty())
-    {
-        addInvalidClass(element);
-
-        return false;
-    }
-    addValidClass(element);
-
-    return true;
-}
-
-function addAllInvalidClasses(oldPasswordInput, passwordInput, controlPasswordInput)
-{
-    addInvalidClass(passwordInput);
-    addInvalidClass(controlPasswordInput);
-}
-
-function addAllValidClasses(oldPasswordInput, passwordInput, controlPasswordInput)
-{
-    addValidClass(oldPasswordInput);
-    addValidClass(passwordInput);
-    addValidClass(controlPasswordInput);
-}
-
-function removeValidationClass(element)
-{
-    element.removeClass("is-valid");
-    element.removeClass("is-invalid");
-}
-
-function addValidClass(element)
-{
-    //element.addClass("is-valid");
-}
-
-function addInvalidClass(element)
-{
-    element.addClass("is-invalid");
-}
-
-String.prototype.isEmpty = function()
-{
+String.prototype.isEmpty = function() {
     return (this.length === 0 || !this.trim());
-}
-
-function addErrorMessage(element, message)
-{
-    element.siblings(".invalid-feedback").html(message);
-}
-
-function checkPasswordLength(password)
-{
-    return password.length >= 8 && password.length<=20;
 }
 
 var profile = new Vue({
     el:'#app',
-    data:
-    {
-        user: {account: {}},
-        selected: null,
-        options: [
+    data: {
+        user: {account: {}, name:'', surname:''},
+        gender: null,
+        genderOptions: [
            { value: 'male', text: 'Male' },
            { value: 'female', text: 'Female' },
            { value: 'other', text: 'Other' }
         ],
+
         oldPassword: '',
         password: '',
-        controlPassword: ''
+        controlPassword: '',
+
+        nameValid: false,
+        surnameValid: false,
+        passwordValid: false,
+        controlPasswordValid: false,
+
+        nameErrorMessage: '',
+        surnameErrorMessage: '',
+        passwordErrorMessage:'',
+        controlPasswordErrorMessage:''
     },
-    mounted()
-    {
+    mounted() {
         let jwt = window.localStorage.getItem('jwt');
         if (!jwt)
             jwt = '';
+
+
+        const vm = this;
 
         axios
             .get('rest/vazduhbnb/profile', {
@@ -183,55 +42,138 @@ var profile = new Vue({
                 }
             })
             .then(response => {
-                this.user = response.data;
-                this.selected = this.user.gender;
+                vm.user = response.data;
+                vm.gender = this.user.gender;
             })
             .catch(function(error){
                 console.log(error.response)
-                    switch(error.response.status)
-                    {
+                    switch(error.response.status) {
                         case 400:
                             pushErrorNotification("Bad request",'Bad request sent');
                             break;    
                         case 500:
-                            pushErrorNotification('Internal server error','Please try again later.');
+                            pushErrorNotification('Internal Server Error','Please try again later.');
                             break;
                     }
             })
     },
-    methods:
-    {
-        updateUser: function()
-        {
-            let userDto={
-                username: this.user.account.username,
-                name: this.user.name,
-                surname: this.user.surname,
-                gender: this.selected,
-                oldPassword: this.oldPassword,
-                password: this.password,
-                controlPassword: this.controlPassword
+    methods: {
+        update: function() {
+            if(this.isDataValid){
+
+                let userDto={
+                    username: this.user.account.username,
+                    name: this.user.name,
+                    surname: this.user.surname,
+                    gender: this.gender,
+                    oldPassword: this.oldPassword,
+                    password: this.password,
+                    controlPassword: this.controlPassword
+                }
+
+                const vm = this;
+    
+                axios
+                    .put("rest/vazduhbnb/updateUser", userDto)
+                    .then(response => {
+                        pushSuccessNotification('Success!','User updated successfully!');
+                        vm.oldPassword = '';
+                        vm.password = '';
+                        vm.controlPassword = '';
+                    })
+                    .catch(function(error){
+                        console.log(error.response)
+                        switch(error.response.status)
+                        {
+                            case 400:
+                                pushErrorNotification("An error occured",error.response.data.message);
+                                break;    
+                            case 409:
+                                pushErrorNotification("Invalid Password",'You entered wrong old password!');
+                                break;    
+                            case 500:
+                                pushErrorNotification('Internal server error','Please try again later.');
+                                break;
+                        }
+                    });
             }
-
-            axios
-                .put("rest/vazduhbnb/updateUser", userDto)
-                .then(response => {
-                    console.log("uspesno updejtovan");
-                    pushSuccessNotification('Success!','User updated successfully!');
-                })
-                .catch(function(error){
-                    console.log(error.response)
-                    switch(error.response.status)
-                    {
-                        case 409:
-                            pushErrorNotification("Invalid Password",'You entered wrong old password!');
-                            break;    
-                        case 500:
-                            pushErrorNotification('Internal server error','Please try again later.');
-                            break;
-                    }
-                })
+        },
+        checkPasswordLength: function(){
+            return this.password.length >= 8 && this.password.length <= 20;
         }
-
+    },
+    computed:{
+        nameValidation(){
+            if(this.user.name.isEmpty()){
+                this.nameValid = false;
+                this.nameErrorMessage = 'Please enter your first name';
+                return false;
+            }
+            else{
+                this.nameValid = true;
+                return true;
+            }
+        },
+        surnameValidation(){
+            if(this.user.surname.isEmpty()){
+                this.surnameValid = false;
+                this.surnameErrorMessage = 'Please enter your last name';
+                return false;
+            }
+            else{
+                this.surnameValid = true;
+                return true;
+            }
+        },
+        passwordValidation(){
+            if(this.oldPassword.isEmpty()){
+                this.passwordValid = true;
+                return null;
+            }
+            else{
+                if(this.password.isEmpty()){
+                    this.passwordValid = false;
+                    this.passwordErrorMessage = 'Please enter a new password';
+                    return false;
+                }
+                else if(this.checkPasswordLength()){
+                    this.passwordValid = true;
+                    return true;
+                }
+                else{
+                    this.passwordValid = false;
+                    this.passwordErrorMessage = 'Password must contain 8-20 characters';
+                    return false;
+                }
+            }
+        },
+        controlPasswordValidation(){
+            if(this.oldPassword.isEmpty()){
+                this.controlPasswordValid = true;
+                return null;
+            }
+            else{
+                if(this.controlPassword.isEmpty()){
+                    this.controlPasswordValid = false;
+                    this.controlPasswordErrorMessage = 'Please confirm your new password';
+                    return false;
+                }
+                else if(this.password == this.controlPassword){
+                    this.controlPasswordValid = true;
+                    return true;
+                }
+                else{
+                    this.controlPasswordValid = false;
+                    this.controlPasswordErrorMessage = 'Passwords must match';
+                    return false;
+                }
+            }
+        },
+        isDataValid(){
+            return this.nameValid && this.surnameValid && this.passwordValid && this.controlPasswordValid;
+        },
+        oldPasswordEmpty(){
+            return this.oldPassword == 0;
+        }
     }
 });
