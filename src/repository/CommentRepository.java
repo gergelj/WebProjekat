@@ -7,6 +7,7 @@
 package repository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import beans.Comment;
 import beans.User;
@@ -64,4 +65,9 @@ public class CommentRepository extends CSVRepository<Comment> implements ICommen
 		   return user;
 	   }
    }
+
+	@Override
+	public List<Comment> getCommentsByApartment(long apartmentId) throws DatabaseException {
+		return getAllEager().stream().filter(comment -> comment.getApartmentId() == apartmentId).collect(Collectors.toList());
+	}
 }

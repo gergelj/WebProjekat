@@ -41,8 +41,8 @@ public class AppResources {
 	private AmenityRepository amenityRepository;
 	private ApartmentRepository apartmentRepository;
 	private DateCollectionRepository dateCollectionRepository;
-	private CommentRepository commentRepository;
-	private ReservationRepository reservationRepository;
+	public CommentRepository commentRepository;
+	public ReservationRepository reservationRepository;
 	private UserRepository userRepository;
 	private AccountRepository accountRepository;
 	private PricingCalendarRepository pricingCalendarRepository;
@@ -70,11 +70,11 @@ public class AppResources {
 		
 		commentRepository = new CommentRepository(new CsvStream<Comment>("storage/comments.dsv", new CommentCsvConverter()), new LongSequencer(), userRepository);
 		
-		apartmentRepository = new ApartmentRepository(new CsvStream<Apartment>("storage/apartments.dsv", new ApartmentCsvConverter()), new LongSequencer(), userRepository, amenityRepository, commentRepository);
+		apartmentRepository = new ApartmentRepository(new CsvStream<Apartment>("storage/apartments.dsv", new ApartmentCsvConverter()), new LongSequencer(), userRepository, amenityRepository);
 		
 		dateCollectionRepository = new DateCollectionRepository(new CsvStream<DateCollection>("storage/datecollection.dsv", new DateCollectionCsvConverter()), new LongSequencer(), apartmentRepository);
 		
-		reservationRepository = new ReservationRepository(new CsvStream<Reservation>("storage/reservations.dsv", new ReservationCsvConverter()), new LongSequencer(), apartmentRepository, userRepository);
+		reservationRepository = new ReservationRepository(new CsvStream<Reservation>("storage/reservations.dsv", new ReservationCsvConverter()), new LongSequencer(), apartmentRepository, userRepository, commentRepository);
 		
 		pricingCalendarRepository = new PricingCalendarRepository(new CsvStream<PricingCalendar>("storage/pricing.dsv", new PricingCalendarCsvConverter()), new LongSequencer());
 	}
@@ -85,7 +85,7 @@ public class AppResources {
 		
 		apartmentService = new ApartmentService(apartmentRepository, dateCollectionRepository);
 		
-		commentService = new CommentService(commentRepository, apartmentRepository);
+		commentService = new CommentService(commentRepository, apartmentRepository, userRepository, reservationRepository);
 		
 		reservationService = new ReservationService(reservationRepository, dateCollectionRepository, pricingCalendarRepository, apartmentRepository, userRepository);
 		

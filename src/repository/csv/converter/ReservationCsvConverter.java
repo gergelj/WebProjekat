@@ -12,14 +12,16 @@ import java.util.Date;
 import java.util.StringJoiner;
 
 import beans.Apartment;
+import beans.Comment;
 import beans.Reservation;
 import beans.User;
 import beans.enums.ReservationStatus;
 
 public class ReservationCsvConverter implements ICsvConverter<Reservation> {
    private String delimiter = "~";
-   private String dateFormat = "dd.MM.yyyy. HH:mm";
+   private String dateFormat = "dd.MM.yyyy.";
    private String newLine = "`";
+   private String emptyChar = "♥";
    
    public ReservationCsvConverter() {
    }
@@ -38,6 +40,7 @@ public class ReservationCsvConverter implements ICsvConverter<Reservation> {
       joiner.add(String.valueOf(entity.getMessage().replace("\n", newLine)));
       joiner.add(String.valueOf(entity.isDeleted()));
       joiner.add(String.valueOf(entity.getReservationStatus()));
+      joiner.add(String.valueOf(entity.getComment() == null ? emptyChar : (entity.getComment().getId() == 0 ? emptyChar : entity.getComment().getId())));
       
       return joiner.toString();
    }
@@ -61,8 +64,9 @@ public class ReservationCsvConverter implements ICsvConverter<Reservation> {
       String message = tokens[6].replace(newLine, "\n");
       boolean deleted = Boolean.valueOf(tokens[7]);
       ReservationStatus reservationStatus = ReservationStatus.valueOf(tokens[8]);
+      Comment comment = new Comment(Long.valueOf(tokens[9].equals(emptyChar) ? "0" : tokens[9]));
       
-      return new Reservation(id, apartment, guest, checkIn, nights, totalPrice, message, deleted, reservationStatus);
+      return new Reservation(id, apartment, guest, checkIn, nights, totalPrice, message, deleted, reservationStatus, comment);
    }
 
 }

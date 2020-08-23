@@ -23,10 +23,11 @@ public class Reservation implements IDeletable, IIdentifiable {
    private ReservationStatus reservationStatus;
    private Apartment apartment;
    private User guest;
+   private Comment comment;
    
 //Constructors
 	public Reservation(long id, Apartment apartment, User guest, Date checkIn, int nights, double totalPrice, String message, boolean deleted,
-			ReservationStatus reservationStatus) {
+			ReservationStatus reservationStatus, Comment comment) {
 		super();
 		this.checkIn = checkIn;
 		this.nights = nights;
@@ -37,6 +38,7 @@ public class Reservation implements IDeletable, IIdentifiable {
 		this.reservationStatus = reservationStatus;
 		this.apartment = apartment;
 		this.guest = guest;
+		this.comment = comment;
 	}
 	
 	public Reservation() {
@@ -44,6 +46,7 @@ public class Reservation implements IDeletable, IIdentifiable {
 		
 		this.apartment = new Apartment();
 		this.guest = new User();
+		this.comment = new Comment();
 	}
 	
 	public Reservation(long id) {
@@ -54,7 +57,7 @@ public class Reservation implements IDeletable, IIdentifiable {
 	}
 	
 	public Reservation(Apartment apartment, User guest, Date checkIn, int nights, double totalPrice, String message, boolean deleted,
-			ReservationStatus reservationStatus) {
+			ReservationStatus reservationStatus, Comment comment) {
 		super();
 		this.checkIn = checkIn;
 		this.nights = nights;
@@ -64,6 +67,7 @@ public class Reservation implements IDeletable, IIdentifiable {
 		this.reservationStatus = reservationStatus;
 		this.apartment = apartment;
 		this.guest = guest;
+		this.comment = comment;
 	}
 	
 //Getters and Setters
@@ -115,6 +119,14 @@ public class Reservation implements IDeletable, IIdentifiable {
 		this.reservationStatus = reservationStatus;
 	}
 	
+	public Comment getComment() {
+		return comment;
+	}
+
+	public void setComment(Comment comment) {
+		this.comment = comment;
+	}
+
 	public Apartment getApartment() {
 		return apartment;
 	}
