@@ -676,9 +676,7 @@ public class SparkAppMain {
 					if(!apartments.contains(res.getApartment()))
 						apartments.add(res.getApartment());
 				}
-				
-				apartments = resources.apartmentService.getAll(UserType.admin);
-				
+								
 				return g.toJson(apartments);
 			}
 			catch(DatabaseException ex)

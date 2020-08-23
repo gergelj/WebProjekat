@@ -337,6 +337,11 @@ public class ReservationService {
 			   }
 		   }
 		   
+		   for(Reservation res: retVal)
+		   {
+			   res.getGuest().getAccount().setPassword("");
+		   }
+		   
 		   return retVal;
 	   }
 	   else

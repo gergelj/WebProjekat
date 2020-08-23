@@ -25,10 +25,10 @@ import specification.ISpecification;
 
 public class ApartmentRepository extends CSVRepository<Apartment> implements IApartmentRepository, IEagerCsvRepository<Apartment> {
    
-	private IUserRepository userRepository;
+	private IEagerCsvRepository<User> userRepository;
 	private IAmenityRepository amenityRepository;
 	private IEagerCsvRepository<Comment> commentRepository;
-	public ApartmentRepository(ICsvStream<Apartment> stream, LongSequencer sequencer, IUserRepository userRepository, IAmenityRepository amenityRepository, IEagerCsvRepository<Comment> commentRepository) throws DatabaseException {
+	public ApartmentRepository(ICsvStream<Apartment> stream, LongSequencer sequencer, IEagerCsvRepository<User> userRepository, IAmenityRepository amenityRepository, IEagerCsvRepository<Comment> commentRepository) throws DatabaseException {
 	   super("Apartment", stream, sequencer);
 	   this.userRepository = userRepository;
 	   this.amenityRepository = amenityRepository;
@@ -79,8 +79,17 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
    }
 
    private User getHostById(User host) throws DatabaseException {
-	   return host == null ? null : userRepository.getById(host.getId());
-   }
+	   User retVal;
+	   if(host == null)
+		   return null;
+	   else 
+	   {
+			  retVal = userRepository.getEager(host.getId());
+			  retVal.getAccount().setPassword("");
+			  return retVal;
+	   }
+	   
+	}
    
 	public List<Apartment> find(ISpecification<Apartment> specification) throws DatabaseException {
       return getAllEager().stream().filter(apartment -> specification.isSatisfiedBy(apartment)).collect(Collectors.toList());

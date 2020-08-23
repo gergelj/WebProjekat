@@ -52,7 +52,6 @@ Vue.component('apartment-list-reservation',{
                                         <b-col cols='auto'>
                                             <div class='mt-3' style='font-size: 20px'>
                                                 <b-badge variant='dark'>{{apartment.host.name+' '+apartment.host.surname}}</b-badge>
-
                                             </div>
                                         </b-col>
                                     </b-row>
@@ -105,8 +104,11 @@ Vue.component('apartment-details',{
     props:['apartment'],
     data: function(){
         return{
-            reservations: []
-
+            reservations: [],
+            userType: '',
+            transProps:{
+                name: 'flip-list'
+            }
         }
     },
     template:`
@@ -162,7 +164,11 @@ Vue.component('apartment-details',{
                 </b-row>
             </template>    
 
-            <b-table hover :items='this.reservations'></b-table>
+            <b-table hover striped :fields='fields' :items='this.reservations'>    
+                <template v-slot:cell(actions)="data">
+                    <label>dsadas</label>
+                </template>
+            </b-table>
         </b-row>
     </div>
     `,
@@ -177,13 +183,31 @@ Vue.component('apartment-details',{
         axios
             .put('rest/vazduhbnb/reservationsByApartment', apartment,{
                 headers:{
-                    'Authorization': 'Bearer '+jwt
+                    'Authorization': 'Bearer ' + jwt
                 }
             })
             .then(function(response){
                 vm.reservations = response.data;
-                console.log('dsadasads');
+                vm.fixDate(vm.reservations);
             })
+
+        axios
+            .get('rest/vazduhbnb/getLoggedinUser',{
+                headers:{
+                    'Authorization': 'Bearer ' + jwt
+                }
+            })
+            .then(function(response){
+                vm.userType = response.data.userType;
+            })
+    },
+    methods:{
+        fixDate: function(reservations){
+            for(let reservation of reservations)
+            {
+                reservation.checkIn = new Date(parseInt(reservation.checkIn));
+            }
+        }
     },
     computed:{
         pictures: function(){
@@ -210,6 +234,68 @@ Vue.component('apartment-details',{
         apartmentTypeLabel:function(){
             if(this.apartment.apartmentType == 'fullApartment') return "Full Apartment";
             else return "Room";
+        },
+        fields: function()
+        {
+            fields = [];
+            const vm=this;
+            if(this.userType == 'admin')
+            {
+                fields=[
+                    {key:'apartment.host.account.username', label:'Host', sortable: true},
+                    {key:'guest.account.username', label:'Guest', sortable: true},
+                    {key:'checkIn', sortable: true, sortByFormatted: true,
+                     formatter: value=>{
+                        let format='DD.MM.YYYY.'
+                        var parsed = moment(value);
+                        return parsed.format(format);
+                     }},
+                    {key: 'nights', label:'Nights', sortable: true},
+                    {key: 'totalPrice', label:'Total price', sortable: true},
+                    {key: 'reservationStatus', sortable: true, sortByFormatted: true,
+                     formatter: value=>{
+                         return value.charAt(0).toUpperCase()+value.slice(1);
+                     }}
+                ]
+            }
+            else if(this.userType == 'host')
+            {
+                fields=[
+                    {key:'checkIn', sortable: true, sortByFormatted: true,
+                     formatter: value=>{
+                        let format='DD.MM.YYYY.'
+                        var parsed = moment(value);
+                        return parsed.format(format);
+                     }},
+                    {key: 'nights', label:'Nights', sortable: true},
+                    {key: 'totalPrice', label:'Total price', sortable: true},
+                    {key: 'reservationStatus', sortable: true, sortByFormatted: true,
+                     formatter: value=>{
+                         return value.charAt(0).toUpperCase()+value.slice(1);
+                     }},
+                     {key: 'actions', label: 'Actions'}
+                ]
+            }
+            else if(this.userType == 'guest')
+            {
+                fields=[
+                    {key:'apartment.host.account.username', label:'Host', sortable: true},
+                    {key:'checkIn', sortable: true, sortByFormatted: true,
+                     formatter: value=>{
+                        let format='DD.MM.YYYY.'
+                        var parsed = moment(value);
+                        return parsed.format(format);
+                     }},
+                    {key: 'nights', label:'Nights', sortable: true},
+                    {key: 'totalPrice', label:'Total price', sortable: true},
+                    {key: 'reservationStatus', sortable: true, sortByFormatted: true,
+                     formatter: value=>{
+                         return value.charAt(0).toUpperCase()+value.slice(1);
+                     }},
+                    {key: 'actions', label: 'Actions'}
+                    ]
+            }
+            return fields;
         }
     }
 
