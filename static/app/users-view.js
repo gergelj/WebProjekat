@@ -26,7 +26,10 @@ Vue.component("users-view",{
                 }}
             ],
             selectedUser: {},
-            loggedinUser: {}
+            loggedinUser: {},
+            transProps:{
+                name: 'flip-list'
+            }
         }
     },
     template:`

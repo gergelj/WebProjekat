@@ -787,6 +787,52 @@ public class SparkAppMain {
 			return g.toJson(UserType.undefined);
 		});
 		
+		get("/rest/vazduhbnb/apartmentsByUsertype", (request, response) -> {
+			response.type("application/json");
+			
+			User loggedinUser = getLoggedInUser(request);
+			if(loggedinUser == null)
+			{
+				response.status(403);
+				return g.toJson("Forbidden");
+			}
+			
+			List<Reservation> reservations = new ArrayList<Reservation>();
+			List<Apartment> apartments = new ArrayList<Apartment>();
+			try {
+				if(loggedinUser.getUserType() == UserType.admin)
+				{
+					reservations = 	resources.reservationService.getAll();
+				}
+				else if(loggedinUser.getUserType() == UserType.guest)
+				{
+					reservations = resources.reservationService.getReservationByGuest(loggedinUser);
+				}
+				else if(loggedinUser.getUserType() == UserType.host)
+				{
+					reservations = resources.reservationService.getReservationByHost(loggedinUser, loggedinUser.getUserType());
+				}
+				
+				for(Reservation res: reservations)
+				{
+					if(!apartments.contains(res.getApartment()))
+						apartments.add(res.getApartment());
+				}
+								
+				return g.toJson(apartments);
+			}
+			catch(DatabaseException ex)
+			{
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}
+			catch(InvalidUserException ex)
+			{
+				response.status(403);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}			
+		});
+		
 		get("/rest/vazduhbnb/getAllUsers", (request, response) ->{
 			response.type("application/json");
 			
@@ -810,6 +856,27 @@ public class SparkAppMain {
 				response.status(500);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}
+		});
+		
+		put("/rest/vazduhbnb/reservationsByApartment", (request, response) ->
+		{
+			response.type("application/json");
+			
+			String payload = request.body();
+			
+			Apartment apartment = g.fromJson(payload, Apartment.class);
+			User loggedinUser = getLoggedInUser(request);
+			
+			try
+			{
+				List<Reservation> reservations = resources.reservationService.getReservationsByApartment(apartment.getId(), loggedinUser);
+				return g.toJson(reservations);
+			}
+			catch(InvalidUserException ex)
+			{
+				response.status(403);
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}			
 		});
 		
 		put("/rest/vazduhbnb/deleteUser", (request, response) ->{

@@ -340,6 +340,40 @@ public class ReservationService {
 	   else
 		   throw new InvalidUserException();
    }
+   
+   public List<Reservation> getReservationsByApartment(long apartmentId, User user) throws InvalidUserException, DatabaseException
+   {
+	   if(user.getUserType() != UserType.undefined || user != null)
+	   {
+		   List<Reservation> allReservations = reservationRepository.getAllEager();
+		   List<Reservation> retVal = new ArrayList<Reservation>();
+		   if(user.getUserType() == UserType.admin || user.getUserType() == UserType.host)
+		   {
+			   for(Reservation res: allReservations)
+			   {
+				   if(res.getApartment().getId() == apartmentId)
+					   retVal.add(res);
+			   }
+		   }
+		   else if(user.getUserType() == UserType.guest)
+		   {
+			   for(Reservation res: allReservations)
+			   {
+				   if(res.getApartment().getId() == apartmentId && res.getGuest().getId() == user.getId())
+					   retVal.add(res);
+			   }
+		   }
+		   
+		   for(Reservation res: retVal)
+		   {
+			   res.getGuest().getAccount().setPassword("");
+		   }
+		   
+		   return retVal;
+	   }
+	   else
+		   throw new InvalidUserException();
+   }
 
    public BookingDatesDTO getBookingDatesInfo(long apartmentId, User user) throws InvalidUserException, DatabaseException {
 	   if(user.getUserType() != UserType.undefined) {
