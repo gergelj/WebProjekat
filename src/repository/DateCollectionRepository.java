@@ -29,12 +29,6 @@ public class DateCollectionRepository extends CSVRepository<DateCollection> impl
 		this.apartmentRepository = apartmentRepository;
 	}
 	
-	/*
-	public void setApartmentRepository(IApartmentRepository apartmentRepository)
-	{
-		this.apartmentRepository = apartmentRepository;
-	}*/
-	
 	private void bind(List<DateCollection> dateCollections) throws DatabaseException
 	{
 		for(DateCollection dateCollection: dateCollections)

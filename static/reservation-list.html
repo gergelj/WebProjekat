@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservations</title>
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="css/bootstrap-vue.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/webfonts.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/mk-notifications.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/navbar.css"/>
+    <script src="js/axios.min.js"></script>
+    <script src="app/test-authorization.js"></script>
+    <script>
+        testAuthorization3('admin', 'host', 'guest');
+    </script>
+</head>
+<body>
+    <div id="app">
+        <navigation-bar></navigation-bar>
+        
+        <b-container class="mt-5">
+            <b-row class="mb-3">
+                <b-col lg v-if="userType == 'host' || userType == 'admin'">
+                    <b-form-group
+                        label="Search username"
+                        label-for="input-username-search">
+                        <b-form-input id="input-username-search" v-model="username" debounce="500" trim></b-form-input>
+                    </b-form-group>
+                </b-col>
+                <b-col lg>
+                    <b-form-group
+                        label="Filter by status"
+                        label-for="input-status-filter">
+                        <b-form-select id="input-status-filter" v-model="status" :options="statusEnum"></b-form-select>
+                    </b-form-group>
+                </b-col>
+                <b-col lg>
+                    <b-form-group
+                        label="Filter by apartment"
+                        label-for="input-apartment-filter">
+                        <b-form-select id="input-apartment-filter" v-model="apartment" :options="apartments"></b-form-select>
+                    </b-form-group>
+                </b-col>
+                <b-col lg>
+                    <b-form-group
+                        label="Sort by total price"
+                        label-for="input-status-filter">
+                            <b-form-radio-group
+                                id='input-status-filter'
+                                v-model="sorting"
+                                :options="sortOptions"
+                                buttons
+                                button-variant="outline-secondary">
+                            </b-form-radio-group>
+                    </b-form-group>
+                </b-col>
+            </b-row>
+
+            <reservation-list-item v-for="res in filteredReservations" :user-type="userType" :reservation="res" :key="res.id"></reservation-list-item>
+
+            <h5 align="center" v-if="filteredReservations.length == 0">No reservations found.</h5>
+        </b-container>
+    </div>
+
+
+
+    <script src="js/vue.min.js"></script>
+    <script src="js/bootstrap-vue.min.js"></script>
+    <script src="js/jquery-3.5.1.min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/mk-notifications.min.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/components/navigation-bar.js"></script>
+    <script src="js/components/comment-input.js"></script>
+    <script src="js/components/reservation-list-item.js"></script>
+    <script src="app/reservation-list.js"></script>
+</body>
+</html>

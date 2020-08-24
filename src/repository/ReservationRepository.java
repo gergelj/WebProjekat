@@ -87,6 +87,11 @@ public class ReservationRepository extends CSVRepository<Reservation> implements
    }
 
    private User getGuestById(User guest) throws DatabaseException {
-	   return guest == null? null : userRepository.getEager(guest.getId()); 
+	   if(guest == null)
+		   return null;
+
+	   User user = userRepository.getEager(guest.getId());
+	   user.getAccount().setPassword("");
+	   return user;
    }
 }

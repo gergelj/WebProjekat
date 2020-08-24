@@ -13,7 +13,6 @@ import java.util.StringJoiner;
 import beans.Address;
 import beans.Amenity;
 import beans.Apartment;
-import beans.Comment;
 import beans.Location;
 import beans.Picture;
 import beans.User;
@@ -120,21 +119,6 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
 	   return retVal;
    }
    
-   private List<Comment> getCommentList(String commentString)
-   {
-	   List<Comment> retVal = new ArrayList<Comment>();
-	   
-	   if(commentString.equals(this.emptyChar))
-		   return retVal;
-	   
-	   for(String s: commentString.split(listDelimiter))
-	   {
-		   retVal.add(new Comment(Long.valueOf(s)));
-	   }
-	   
-	   return retVal;
-   }
-   
    private String getPictureListString(List<Picture> pictures)
    {
 	   StringJoiner joiner = new StringJoiner(listDelimiter);
@@ -176,19 +160,5 @@ public class ApartmentCsvConverter implements ICsvConverter<Apartment> {
 	   
 	   return joiner.toString();
    }
-   
-   private String getCommentListString(List<Comment> comments)
-   {
-	   StringJoiner joiner = new StringJoiner(listDelimiter);
-	   
-	   if(comments.isEmpty())
-		   return this.emptyChar;
-	   
-	   for(Comment c: comments)
-	   {
-		   joiner.add(String.valueOf(c.getId()));
-	   }
-	   
-	   return joiner.toString();
-   }
+
 }

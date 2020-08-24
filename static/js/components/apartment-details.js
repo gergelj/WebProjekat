@@ -111,7 +111,7 @@ Vue.component("apartment-details", {
                                     <b-form-rating v-bind:value="comment.rating" variant="warning" class="mb-2 mt-2" inline readonly></b-form-rating>
                                 
                                     <template v-if="mode == 'admin'">
-                                        <b-badge v-if="!comment.approved" variant="danger">Disapproved</b-badge>
+                                        <b-badge v-if="!comment.approved" variant="danger">Not approved</b-badge>
                                         <b-badge v-if="comment.approved" variant="success">Approved</b-badge>
                                     </template>
                                     

@@ -28,6 +28,7 @@ import beans.DateRange;
 import beans.PricingCalendar;
 import beans.Reservation;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ReservationService {
    private ReservationRepository reservationRepository;
@@ -79,27 +80,30 @@ public class ReservationService {
     *  <b>Called by:</b> host or guest<br>
     *  
     * @throws DatabaseException 
-    * @throws InvalidUserException
+ * @throws BadRequestException 
     */
    
-   public void cancelReservation(Reservation reservation, UserType userType) throws DatabaseException, InvalidUserException {
-	   if(reservation.getReservationStatus() == ReservationStatus.accepted || reservation.getReservationStatus() == ReservationStatus.created)
-	   {
-		   if(userType == UserType.host)
-		   {
-			   rejectReservation(reservation, userType);
-		   }
-		   else if(userType == UserType.guest)
-		   {
+   public void cancelReservation(long reservationId, User user) throws DatabaseException, BadRequestException {
+	   if(user.getUserType() == UserType.guest) {		   
+		   Reservation reservation = reservationRepository.getEager(reservationId);
+		   
+		   if(reservation.getReservationStatus() == ReservationStatus.accepted || reservation.getReservationStatus() == ReservationStatus.created) {
+			   
 			   reservation.setReservationStatus(ReservationStatus.cancelled);
+			   
+			   DateCollection dc = dateCollectionRepository.getByApartmentId(reservation.getApartment().getId());
+			   dc.removeBooking(reservation.getDateRange());
+			   
+			   dateCollectionRepository.update(dc);
+			   reservationRepository.update(reservation);
 		   }
-		   else
-		   {
-			   throw new InvalidUserException();
+		   else {
+			   throw new BadRequestException("Reservation status was previously not 'created' or 'accepted'");
 		   }
-		   reservationRepository.update(reservation);
 	   }
-	   //TODO: proveriti da li treba da baci neki excpetion ako nije accepted ili created
+	   else {		   
+		   throw new InvalidUserException();
+	   }
    }
    
    
@@ -134,19 +138,24 @@ public class ReservationService {
     *  <b>Called by:</b> host<br>
     *  
     * @throws DatabaseException 
-    * @throws InvalidUserException
+ * @throws BadRequestException 
     */
-   public void acceptReservation(Reservation reservation, UserType userType) throws DatabaseException, InvalidUserException {
-	   if(userType == UserType.host)
-	   {
-		   if(reservation.getReservationStatus() == ReservationStatus.created)
-		   {
+   public void acceptReservation(long reservationId, User user) throws DatabaseException, BadRequestException {
+	   if(user.getUserType() == UserType.host) {		   
+		   Reservation reservation = reservationRepository.getEager(reservationId);
+		   
+		   if(reservation.getReservationStatus() == ReservationStatus.created) {
+			   
 			   reservation.setReservationStatus(ReservationStatus.accepted);
 			   reservationRepository.update(reservation);
 		   }
-		   //TODO: proveriti da li u suprotnom slcuaju treba da baci neki exception
+		   else {
+			   throw new BadRequestException("Reservation status was previously not 'created'");
+		   }
 	   }
-	   throw new InvalidUserException();
+	   else {		   
+		   throw new InvalidUserException();
+	   }
    }
    
    
@@ -156,18 +165,29 @@ public class ReservationService {
     *  
     * @throws DatabaseException 
     * @throws InvalidUserException
+ * @throws BadRequestException 
     */
-   public void rejectReservation(Reservation reservation, UserType userType) throws DatabaseException, InvalidUserException {
-	   if(userType == UserType.host)
-	   {
-		   if(reservation.getReservationStatus() == ReservationStatus.created || reservation.getReservationStatus() == ReservationStatus.accepted)
-		   {
+   public void rejectReservation(long reservationId, User user) throws DatabaseException, BadRequestException {
+	   if(user.getUserType() == UserType.host) {		   
+		   Reservation reservation = reservationRepository.getEager(reservationId);
+		   
+		   if(reservation.getReservationStatus() == ReservationStatus.accepted || reservation.getReservationStatus() == ReservationStatus.created) {
+			   
 			   reservation.setReservationStatus(ReservationStatus.rejected);
+			   
+			   DateCollection dc = dateCollectionRepository.getByApartmentId(reservation.getApartment().getId());
+			   dc.removeBooking(reservation.getDateRange());
+			   
+			   dateCollectionRepository.update(dc);
 			   reservationRepository.update(reservation);
 		   }
-		   //TODO: provetiti da li u suprotnom terba da baci neki exception
+		   else {
+			   throw new BadRequestException("Reservation status was previously not 'created' or 'accepted'");
+		   }
 	   }
-	   throw new InvalidUserException();
+	   else {		   
+		   throw new InvalidUserException();
+	   }
 	   
    }
    
@@ -176,23 +196,29 @@ public class ReservationService {
     *  <b>Called by:</b> host<br>
     *  
     * @throws DatabaseException 
-    * @throws InvalidUserException
+ * @throws BadRequestException 
     */
-   public void finishReservation(Reservation reservation, UserType userType) throws DatabaseException, InvalidUserException {
-	   if(userType == UserType.host)
-	   {
-		   Date checkOutDate = reservation.getCheckIn();
-		   checkOutDate.setDate(reservation.getCheckIn().getDate()+reservation.getNights());
+   public void finishReservation(long reservationId, User user) throws DatabaseException, BadRequestException {
+	   if(user.getUserType() == UserType.host) {		   
+		   Reservation reservation = reservationRepository.getEager(reservationId);
 		   
-		   if(checkOutDate.compareTo(new Date()) <= 0);
-		   {
-			  reservation.setReservationStatus(ReservationStatus.finished);
-			  reservationRepository.update(reservation);
+		   if(reservation.getReservationStatus() == ReservationStatus.created || reservation.getReservationStatus() == ReservationStatus.accepted) {
+			   
+			   if(reservation.getDateRange().getEnd().before(new Date())) {
+				   reservation.setReservationStatus(ReservationStatus.finished);
+				   reservationRepository.update(reservation);				   
+			   }
+			   else {
+				   throw new BadRequestException("Reservation is not completed.");
+			   }
 		   }
-		   //TODO: proveriti da li baca exception ako nije prosao datum
+		   else {
+			   throw new BadRequestException("Reservation status was previously not 'created' or 'accepted'");
+		   }
 	   }
-	   
-	   throw new InvalidUserException();
+	   else {		   
+		   throw new InvalidUserException();
+	   }
    }
    
    public List<Reservation> getAll() throws DatabaseException {
@@ -371,6 +397,22 @@ public class ReservationService {
 			return cal.getTotalPrice(dateRange, a.getPricePerNight());
 		}
 		else {
+			throw new InvalidUserException();
+		}
+	}
+
+	public List<Reservation> getReservations(User user) throws DatabaseException, InvalidUserException {
+		switch(user.getUserType()) {
+		case admin: {
+			return reservationRepository.getAllEager();
+		}
+		case host:{
+			return reservationRepository.getAllEager().stream().filter(res -> res.getApartment().getHost().equals(user)).collect(Collectors.toList());
+		}
+		case guest:{
+			return reservationRepository.getAllEager().stream().filter(res -> res.getGuest().equals(user)).collect(Collectors.toList());
+		}
+		default:
 			throw new InvalidUserException();
 		}
 	}

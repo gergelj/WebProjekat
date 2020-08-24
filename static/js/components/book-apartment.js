@@ -49,6 +49,7 @@ Vue.component('book-apartment', {
             })
             .then(function(response){
                 vm.availableDates = vm.fixDate(response.data);
+                vm.availableDates = vm.removePastDates(vm.availableDates);
                 if(vm.availableDates.length == 0){
                     vm.showCancelBookingDialog();
                 }
@@ -88,6 +89,16 @@ Vue.component('book-apartment', {
                 listDate[i] = new Date(parseInt(listDate[i]));
             }
             return listDate;
+        },
+        removePastDates(listDate){
+            let newList = [];
+            let today = new Date().getTime();
+            for(let date of listDate){
+                if(date.getTime() >= today){
+                    newList.push(date);
+                }
+            }
+            return newList;
         },
         checkAvailability(){
             if(this.dataValid){
