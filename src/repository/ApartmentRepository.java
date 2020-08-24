@@ -16,7 +16,6 @@ import beans.User;
 import exceptions.DatabaseException;
 import repository.abstractrepository.IAmenityRepository;
 import repository.abstractrepository.IApartmentRepository;
-import repository.abstractrepository.IUserRepository;
 import repository.csv.CSVRepository;
 import repository.csv.IEagerCsvRepository;
 import repository.csv.stream.ICsvStream;
@@ -27,7 +26,7 @@ public class ApartmentRepository extends CSVRepository<Apartment> implements IAp
    
 	private IEagerCsvRepository<User> userRepository;
 	private IAmenityRepository amenityRepository;
-	private IEagerCsvRepository<Comment> commentRepository;
+
 	public ApartmentRepository(ICsvStream<Apartment> stream, LongSequencer sequencer, IEagerCsvRepository<User> userRepository, IAmenityRepository amenityRepository, IEagerCsvRepository<Comment> commentRepository) throws DatabaseException {
 	   super("Apartment", stream, sequencer);
 	   this.userRepository = userRepository;

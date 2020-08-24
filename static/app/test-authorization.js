@@ -32,7 +32,7 @@ function testAuthorization2(type1, type2){
         .then(function(response){
             let userType = response.data;
 
-            if(type1 != userType || type2 != userType){
+            if(type1 != userType && type2 != userType){
                 window.location.replace("login.html");
             }
         });
@@ -53,7 +53,7 @@ function testAuthorization3(type1, type2, type3){
         .then(function(response){
             let userType = response.data;
 
-            if(type1 != userType || type2 != userType || type3 != userType){
+            if(type1 != userType && type2 != userType && type3 != userType){
                 window.location.replace("login.html");
             }
         });

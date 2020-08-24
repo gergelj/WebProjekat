@@ -33,7 +33,7 @@ Vue.component("reservation-list-item", {
                                 <b-col><b-badge>{{reservation.nights}} nights</b-badge></b-col>
                             </b-row>
                             <b-row class="mb-2">
-                                <b-col><h5><strong>total: </strong> <b-badge>{{reservation.totalPrice}}€</b-badge></h5></b-col>
+                                <b-col><h5><strong>total: </strong> <b-badge>{{reservation.totalPrice.toFixed(2)}}€</b-badge></h5></b-col>
                             </b-row>
 
                         </b-col>
@@ -112,9 +112,6 @@ Vue.component("reservation-list-item", {
 </b-card>
 </div>
     `,
-    mounted(){
-        console.log(this.userType);
-    },
     methods:{
         onCancel(){
             let jwt = window.localStorage.getItem('jwt');

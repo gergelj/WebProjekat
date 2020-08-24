@@ -2,10 +2,29 @@ var app = new Vue({
     el:"#app",
     data:{
         userType: 'undefined',
-        reservations:[]
+        reservations:[],
+
+        username: '',
+        status: null,
+        statusEnum:[
+            {value: null, text:"All reservations"},
+            {value: 'created', text:"Created"},
+            {value: 'rejected', text:"Rejected"},
+            {value: "cancelled", text:"Cancelled"},
+            {value: 'accepted', text:"Accepted"},
+            {value: 'finished', text:"Finished"}
+        ],
+        apartment: null,
+        apartments: [
+            {value: null, text:'All apartments'}
+        ],
+        sorting: null,
+        sortOptions:[
+            {value:'ascending', text:'Ascending'},
+            {value:'descending', text:'Descending'}
+        ]
     },
     mounted(){
-        //this.$root.$on("send-comment", (comment) => {this.onCommentSend(comment);});
         let jwt = window.localStorage.getItem('jwt');
         if(!jwt)
             jwt = '';
@@ -30,6 +49,7 @@ var app = new Vue({
             })
             .then(function(response){
                 vm.reservations = vm.fixDate(response.data);
+                vm.createApartmentList();
             })
             .catch(function(error){
                 let response = error.response;
@@ -46,6 +66,45 @@ var app = new Vue({
                 reservation.checkIn = new Date(parseInt(reservation.checkIn));
             }
             return reservations;
+        },
+        createApartmentList(){
+            let apartmentMap = {};
+
+            for(let apartment of this.reservations.map(r => r.apartment)){
+                apartmentMap[apartment.id] = apartment.name;
+            }
+
+            for(let id in apartmentMap){
+                this.apartments.push({value: id, text: apartmentMap[id]});
+            }
         }
+    },
+    watch:{
+        sorting(sortMode){
+            if(sortMode == 'ascending'){
+                this.reservations.sort(function(a, b){
+                    if(a.totalPrice < b.totalPrice) return -1;
+                    if(a.totalPrice > b.totalPrice) return 1;
+                    return 0;
+                });
+            }
+            else{ //descending
+                this.reservations.sort(function(a, b){
+                    if(a.totalPrice > b.totalPrice) return -1;
+                    if(a.totalPrice < b.totalPrice) return 1;
+                    return 0;
+                });
+            }
+        }
+    },
+    computed:{
+        filteredReservations(){
+            let hasUsername = this.username.length > 0;
+            let hasStatus = this.status != null;
+            let hasApartment = this.apartment != null;
+
+            return this.reservations.filter(res => (hasUsername ? (res.guest.account.username.toLowerCase().indexOf(this.username.toLowerCase()) != -1) : true) && (hasStatus ? (res.reservationStatus == this.status) : true) && (hasApartment ? (res.apartment.id == this.apartment) : true));
+        }
+
     }
 })
