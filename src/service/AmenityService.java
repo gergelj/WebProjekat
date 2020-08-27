@@ -8,11 +8,7 @@ package service;
 
 import repository.AmenityRepository;
 import beans.Amenity;
-import beans.User;
-import beans.enums.UserType;
 import exceptions.DatabaseException;
-import exceptions.InvalidUserException;
-
 import java.util.*;
 
 public class AmenityService {
@@ -37,10 +33,6 @@ public class AmenityService {
    
    public void delete(Amenity amenity) throws DatabaseException {
 	   amenityRepository.delete(amenity.getId());
-   }
-   
-   public Amenity getById(long id) throws DatabaseException {
-      return amenityRepository.getById(id);
    }
    
    public List<Amenity> getAll() throws DatabaseException {

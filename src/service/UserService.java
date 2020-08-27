@@ -7,7 +7,6 @@
 package service;
 
 import repository.AccountRepository;
-import repository.DateCollectionRepository;
 import repository.UserRepository;
 import specification.ISpecification;
 import specification.filterconverter.UserFilterConverter;
@@ -207,26 +206,23 @@ public class UserService {
    }
    
    public User blockUser(User user) throws DatabaseException, InvalidUserException {
-	   
-	   /*if(userType != UserType.admin)
-		   throw new InvalidUserException();*/
-	   
-	   User blockedUser = userRepository.getEager(user.getId());
-	   blockedUser.block();
-	   userRepository.update(blockedUser);
-	   
-	   blockedUser.getAccount().setPassword("");
-	   return blockedUser;
+	   	   
+		   User blockedUser = userRepository.getEager(user.getId());
+		   blockedUser.block();
+		   userRepository.update(blockedUser);
+		   
+		   blockedUser.getAccount().setPassword("");
+		   return blockedUser;
    }
    
-   public User unblockUser(User user) throws DatabaseException
+   public User unblockUser(User user) throws DatabaseException, InvalidUserException
    {
-	   User unblockedUser = userRepository.getEager(user.getId());
-	   unblockedUser.setBlocked(false);
-	   userRepository.update(unblockedUser);
-	   
-	   unblockedUser.getAccount().setPassword("");
-	   return unblockedUser;
+		   User unblockedUser = userRepository.getEager(user.getId());
+		   unblockedUser.setBlocked(false);
+		   userRepository.update(unblockedUser);
+		   
+		   unblockedUser.getAccount().setPassword("");
+		   return unblockedUser;
    }
 
 }

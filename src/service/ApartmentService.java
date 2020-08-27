@@ -22,7 +22,6 @@ import dto.ApartmentDTO;
 import dto.ApartmentFilterDTO;
 import exceptions.BadRequestException;
 import exceptions.DatabaseException;
-import exceptions.InvalidDateException;
 import exceptions.InvalidUserException;
 
 import java.io.BufferedOutputStream;
@@ -53,7 +52,7 @@ public class ApartmentService {
     *  
     *  <b>Called by:</b> admin, guest or undefined user 
     */
-   public List<Apartment> getActiveApartments(UserType userType) throws DatabaseException, InvalidUserException {
+   private List<Apartment> getActiveApartments(UserType userType) throws DatabaseException, InvalidUserException {
       
 	  if(userType != UserType.host)
       {
@@ -80,7 +79,7 @@ public class ApartmentService {
     *  @throws DatabaseException
     *  @throws InvalidUserException
     */
-   public List<Apartment> getApartmentsByHost(User host, UserType userType) throws DatabaseException, InvalidUserException {
+   private List<Apartment> getApartmentsByHost(User host, UserType userType) throws DatabaseException, InvalidUserException {
 	   if(userType == UserType.host || userType == UserType.admin)
 	   {
 		   List<Apartment> allApartments = apartmentRepository.getAllEager();
@@ -97,11 +96,6 @@ public class ApartmentService {
 	   }
 	   throw new InvalidUserException();
    }
-   
-   public Apartment getById(long id) throws DatabaseException {
-	   return apartmentRepository.getById(id);
-   }
-   
    
    /** 
     *  <b>Called by:</b> admin or host<br>
@@ -157,43 +151,6 @@ public class ApartmentService {
       }
       else {
     	  throw new InvalidUserException();    	  
-      }
-   }
-   
-   /** Returns a list of all apartments<br><br>
-    *  
-    *  <b>Called by:</b> admin<br>
-    *  
-    * @throws DatabaseException 
-    * @throws InvalidUserException
-    */
-   public List<Apartment> getAll(UserType userType) throws DatabaseException, InvalidUserException {
-	   if(userType == UserType.admin)
-	   {
-		   return apartmentRepository.getAllEager();
-	   }
-	   throw new InvalidUserException();
-   }
-   
-   /** Deletes all apartments<br><br>
-    *  
-    *  <b>Called by:</b> admin<br>
-    *  
-    * @throws DatabaseException 
-    * @throws InvalidUserException
-    */
-   public void deleteAll(UserType userType) throws DatabaseException, InvalidUserException {
-      if(userType == UserType.admin)
-      {
-    	  List<Apartment> apartments = apartmentRepository.getAllEager();
-    	  
-    	  for(Apartment apartment: apartments)
-    	  {
-    		  apartmentRepository.delete(apartment.getId());
-    	  }
-      }
-      else {    	  
-    	  throw new InvalidUserException();
       }
    }
    
@@ -294,7 +251,6 @@ public class ApartmentService {
     * @throws InvalidUserException
     */
    public List<Apartment> find(ApartmentFilterDTO filter, User loggedInUser) throws DatabaseException, InvalidUserException {
-	   //TODO: pitati Gerga kako find funkcionise
 	   List<Apartment> retVal = new ArrayList<Apartment>();
 	   ISpecification<Apartment> specification = ApartmentFilterConverter.getSpecification(filter, dateCollectionRepository);
 	   

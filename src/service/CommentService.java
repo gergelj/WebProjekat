@@ -122,30 +122,4 @@ public class CommentService {
 	   }
 	   
    }
-   
-   
-   /** Returns a list of all <b>approved</b> Comments<br><br>
-    *  
-    *  <b>Called by:</b> host, guest, admin or undefined user<br><br>
-    *  
-    * @throws DatabaseException 
-    * @throws InvalidUserException
-    */
-   public List<Comment> getAllApprovedCommentsByApartment(Apartment apartment, User user)
-   {
-	   /*
-	   List<Comment> retVal = new ArrayList<Comment>();
-	
-	   List<Comment> allComments = apartmentRepository.getAllComments(apartment);
-	   
-	   for(Comment comment: allComments)
-	   {
-		   if(comment.isApproved())
-			   retVal.add(comment);
-	   }
-	   
-	   return retVal;
-	   */
-	   return null;
-   }
 }

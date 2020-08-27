@@ -19,7 +19,6 @@ import dto.BookingDatesDTO;
 import dto.ReservationDTO;
 import exceptions.BadRequestException;
 import exceptions.DatabaseException;
-import exceptions.InvalidDateException;
 import exceptions.InvalidUserException;
 import beans.Apartment;
 import beans.Comment;
@@ -254,31 +253,6 @@ public class ReservationService {
       }
    }
    
-   
-   /** Returns a list of <b>reservations</b> made by specific <b>username</b><br><br>
-    *  
-    *  <b>Called by:</b> host, admin<br>
-    *  
-    * @throws DatabaseException 
-    * @throws InvalidUserException
-    */
-   public List<Reservation> getReservationByUsername(String username, UserType userType) throws DatabaseException, InvalidUserException {
-	   if(userType == UserType.host || userType == UserType.admin)
-	   {
-		   List<Reservation> allReservations = reservationRepository.getAllEager();
-		   List<Reservation> retVal = new ArrayList<Reservation>();
-		   
-		   for(Reservation reservation: allReservations)
-		   {
-			   if(reservation.getGuest().getAccount().getUsername().equals(username))
-				   retVal.add(reservation);
-		   }
-		   
-		   return retVal;
-	   }
-	   throw new InvalidUserException();
-   }
-   
    public List<Date> getAvailableDatesByApartment(long apartmentId, User user) throws InvalidUserException, DatabaseException{
 	   if(user.getUserType() != UserType.undefined) {
 		   DateCollection dc = dateCollectionRepository.getByApartmentId(apartmentId);
@@ -309,25 +283,8 @@ public class ReservationService {
 
    public PricingCalendar getPricingCalendar(User user) throws InvalidUserException, DatabaseException {
 	   if(user.getUserType() == UserType.admin) {
-		   
 		   List<PricingCalendar> list = pricingCalendarRepository.getAll();
-		   if(list.isEmpty()) {
-			   Map<DayOfWeek, Double> map = new HashMap<DayOfWeek, Double>();
-			   map.put(DayOfWeek.monday, 1.0);
-			   map.put(DayOfWeek.tuesday, 1.0);
-			   map.put(DayOfWeek.wednesday, 1.0);
-			   map.put(DayOfWeek.thursday, 1.0);
-			   map.put(DayOfWeek.friday, 1.0);
-			   map.put(DayOfWeek.saturday, 1.0);
-			   map.put(DayOfWeek.sunday, 1.0);
-			   PricingCalendar pc = new PricingCalendar(false, map, null, 1);
-			   pc = pricingCalendarRepository.create(pc);
-			   return pc;
-		   }
-		   else {
-			   return list.get(0);
-		   }
-		   
+		   return list.get(0);
 	   }
 	   else {
 		   throw new InvalidUserException();
