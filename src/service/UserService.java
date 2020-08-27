@@ -176,7 +176,22 @@ public class UserService {
       if(!reservations.isEmpty())
     	  users = reservations.stream().map(Reservation::getGuest).collect(Collectors.toList());
       
+      users = checkList(users);
+      
       return users;
+   }
+   
+   private List<User> checkList(List<User> users)
+   {
+	   List<User> retVal = new ArrayList<User>();
+	   
+	   for(User user: users)
+	   {
+		   if(!retVal.contains(user))
+			   retVal.add(user);
+	   }
+	   
+	   return retVal;
    }
    
    public List<User> find(UserFilterDTO filter, User thisUser) throws DatabaseException, InvalidUserException {
