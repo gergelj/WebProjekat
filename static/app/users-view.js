@@ -116,7 +116,7 @@ Vue.component("users-view",{
         removeMyself(userList, myself){
             let index = userList.findIndex(user => user.id == myself.id);
             if(index != -1){
-                userList.splice(index);
+                userList.splice(index, 1);
             }
             return userList;
         },

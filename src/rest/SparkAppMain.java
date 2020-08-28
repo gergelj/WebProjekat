@@ -646,11 +646,11 @@ public class SparkAppMain {
 		get("/rest/vazduhbnb/profile", (request, response)->{
 			User loggedinUser = getLoggedInUser(request);
 			
-			if(loggedinUser == null)
-			{
+			if(loggedinUser == null){
 				response.status(400);
 				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
 			}
+			
 			try{
 				
 				return g.toJson(resources.userService.getById(loggedinUser.getId()), User.class);
@@ -673,18 +673,15 @@ public class SparkAppMain {
 				User user = resources.userService.update(updatedUser);
 				return g.toJson(resources.userService.getById(user.getId()), User.class);
 			}
-			catch(DatabaseException ex)
-			{
+			catch(DatabaseException ex){
 				response.status(500);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class );
 			}
-			catch(InvalidPasswordException ex)
-			{
+			catch(InvalidPasswordException ex){
 				response.status(409);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}
-			catch(BadRequestException ex)
-			{
+			catch(BadRequestException ex){
 				response.status(400);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}
@@ -692,34 +689,54 @@ public class SparkAppMain {
 		
 		put("/rest/vazduhbnb/updateAmenityName", (request, response)->{
 			response.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(request);
+			
+			if(loggedInUser == null){
+				response.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
 
 			String payload = request.body();
 			Amenity updatedAmenity = g.fromJson(payload, Amenity.class);
-						
-			try
-			{
-				resources.amenityService.update(updatedAmenity);
-				return g.toJson(updatedAmenity);
+
+			try{
+				resources.amenityService.update(updatedAmenity, loggedInUser);
+				return "OK";
 			}
-			catch(DatabaseException ex)
-			{
+			catch(InvalidUserException ex) {
+				response.status(403);				
+				return g.toJson(new ErrorMessageDTO("Access denied"), ErrorMessageDTO.class);
+			}
+			catch(DatabaseException ex){
 				response.status(500);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}
 		});
 		
-		put("/rest/vazduhbnb/deleteAmenity", (request, response)->{
+		delete("/rest/vazduhbnb/deleteAmenity", (request, response)->{
 			response.type("application/json");
+			
+			User loggedInUser = getLoggedInUser(request);
+			
+			if(loggedInUser == null){
+				response.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
 			
 			String payload = request.body();
 			Amenity deletedAmenity = g.fromJson(payload, Amenity.class);
 			
 			try {
-				resources.amenityService.delete(deletedAmenity);
-				return g.toJson(deletedAmenity);
+				resources.amenityService.delete(deletedAmenity, loggedInUser);
+				response.status(200);
+				return "OK";
 			}
-			catch(DatabaseException ex)
-			{
+			catch(InvalidUserException ex) {
+				response.status(403);				
+				return g.toJson(new ErrorMessageDTO("Access denied"), ErrorMessageDTO.class);
+			}
+			catch(DatabaseException ex){
 				response.status(500);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}
@@ -728,32 +745,39 @@ public class SparkAppMain {
 		post("/rest/vazduhbnb/addNewAmenity", (request, response)->{
 			response.type("application/json");
 			
-			String payload = request.body();
+			User loggedInUser = getLoggedInUser(request);
 			
+			if(loggedInUser == null){
+				response.status(401);
+				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+			}
+			
+			String payload = request.body();
 			String amenityName = g.fromJson(g.toJson(payload), String.class);
 			
-			System.out.println(amenityName);
-			
 			try {
-				resources.amenityService.create(new Amenity(amenityName, false));
-				return g.toJson(amenityName);
+				Amenity amenity = resources.amenityService.create(amenityName, loggedInUser);
+				response.status(200);
+				return g.toJson(amenity);
 			}
-			catch (DatabaseException ex) {
+			catch(InvalidUserException ex) {
+				response.status(403);				
+				return g.toJson(new ErrorMessageDTO("Access denied"), ErrorMessageDTO.class);				
+			}
+			catch(DatabaseException ex) {
 				response.status(500);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}
 		});
 		
-		get("/rest/vazduhbnb/amenities", (request, response)->{
+		get("/rest/vazduhbnb/amenities", (request, response) -> {
 			response.type("application/json");
 			
-			try
-			{
+			try{
 				List<Amenity> amenities = resources.amenityService.getAll();
 				return g.toJson(amenities);
 			}
-			catch(DatabaseException ex)
-			{
+			catch(DatabaseException ex){
 				response.status(500);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}
@@ -857,31 +881,6 @@ public class SparkAppMain {
 				response.status(403);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}			
-		});
-		
-		put("/rest/vazduhbnb/deleteUser", (request, response) ->{
-			response.type("application/json");
-			
-			String payload = request.body();
-			
-			long id = g.fromJson(payload, long.class);
-			
-			if(id < 1)
-			{
-				response.status(400);
-				return g.toJson("Index lower than minimal");
-			}
-			
-			try
-			{
-				resources.userService.delete(id);
-				return g.toJson(id);
-			}
-			catch(DatabaseException ex)
-			{
-				response.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
-			}
 		});
 		
 		put("/rest/vazduhbnb/blockUser", (request, response) ->{
@@ -1011,23 +1010,6 @@ public class SparkAppMain {
 			return "";
 		});
 		
-		get("/rest/vazduhbnb/testloginJWT", (req, res) -> {
-			//TODO: obavezno detaljnije pogledati
-			String auth = req.headers("Authorization");
-			System.out.println("Authorization: " + auth);
-			if ((auth != null) && (auth.contains("Bearer "))) {
-				String jwt = auth.substring(auth.indexOf("Bearer ") + 7);
-				try {
-				    Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
-				    // ako nije bacio izuzetak, onda je OK
-					return "User " + claims.getBody().getSubject() + " logged in.";
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
-			}
-			return "No user logged in.";
-		});
-
 	}
 
 	private static Gson getGson() {
@@ -1050,13 +1032,6 @@ public class SparkAppMain {
 			
 		});
 		
-		/*builder.registerTypeAdapter(String.class, new JsonDeserializer<String>() {
-			@Override
-			public String deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-				return json.getAsString().replaceAll("<script", "script").replaceAll("</", " ");
-			}
-		});*/
-
 		return builder.create();
 	}
 	
@@ -1066,26 +1041,21 @@ public class SparkAppMain {
 			String jwt = auth.substring(auth.indexOf("Bearer ") + 7);
 			try {
 			    Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
-			    // ako nije bacio izuzetak, onda je OK
-				//System.out.println("User " + claims.getBody().getSubject() + " logged in.");
 				return userConverter.fromCsv(claims.getBody().getSubject());
 			} catch (Exception e) {
-				//System.out.println(e.getMessage());
+				return null;
 			}
 		}
 		return null;
 	}
 	
-
 	private static String getJwtToken(User user) {
-		
 		JwtBuilder jwtBuilder = Jwts.builder();
 		jwtBuilder.setSubject(userConverter.toCsv(user));
 		
 		// Token je validan 30 minuta!
 		jwtBuilder.setExpiration(new Date(new Date().getTime() + 1000*minutesUntilTokenExpires*60L));
 		jwtBuilder.setIssuedAt(new Date());
-		
 		
 		return jwtBuilder.signWith(key).compact();
 	}
