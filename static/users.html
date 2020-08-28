@@ -40,37 +40,34 @@
 
         <navigation-bar></navigation-bar>
 
-        <b-row class="mb-4">
-            <b-col class="mx-auto">
-                <b-card
-                    class="mt-5"
-                    no-body
-                    border-variant="danger"
-                    bg-variant="light"
-                    >
+        <b-container class="mb-4">
+            <b-card
+                class="mt-5"
+                no-body
+                border-variant="danger"
+                bg-variant="light">
 
-                    <template v-slot:header>
-                        <h4 align="center" class="mb-0">Users</h4>
-                    </template>
+                <template v-slot:header>
+                    <h4 align="center" class="mb-0">Users</h4>
+                </template>
 
-                    <b-card-body>
-                        <b-row>
-                            <b-col>
-                                <b-button v-b-toggle.collapse-filter variant="outline-primary">Search Users</b-button>
-                                <b-collapse id="collapse-filter" class="mt-3">
-                                    <user-filter :user-type="userType"></user-filter>
-                                </b-collapse>
-                            </b-col>
-                        </b-row>
-                        <b-row class="mt-3">
-                            <b-col>
-                                <users-view :user-type="userType"></users-view>
-                            </b-col>
-                        </b-row>
-                    </b-card-body>
-                </b-card>
-            </b-col>
-        </b-row>
+                <b-card-body>
+                    <b-row>
+                        <b-col>
+                            <b-button v-b-toggle.collapse-filter variant="outline-primary">Search Users</b-button>
+                            <b-collapse id="collapse-filter" class="mt-3">
+                                <user-filter :user-type="userType"></user-filter>
+                            </b-collapse>
+                        </b-col>
+                    </b-row>
+                    <b-row class="mt-3">
+                        <b-col>
+                            <users-view :user-type="userType"></users-view>
+                        </b-col>
+                    </b-row>
+                </b-card-body>
+            </b-card>
+        </b-container>
 
     </div>
 

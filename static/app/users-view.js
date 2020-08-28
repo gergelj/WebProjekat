@@ -79,7 +79,7 @@ Vue.component("users-view",{
         const vm = this;
 
         axios
-            .get("rest/vazduhbnb/getLoggedinUser", {
+            .get("rest/vazduhbnb/getLoggedInUser", {
                 headers:{
                     "Authorization" : "Bearer " + jwt
                 }
@@ -96,11 +96,9 @@ Vue.component("users-view",{
                     })
                     .catch(function(error){
                         switch(error.response.status) {
-                            case 401:
-                            case 403: alert("Please login with privileges"); signOut(); break;
-                            case 500:
-                                pushErrorNotification('Internal Server Error','Please try again later');
-                                break;
+                            case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                            case 403: alert(forbiddenErrorMessage); signOut(); break;
+                            case 500: pushInternalServerError(); break;
                         }
             });
             });
@@ -137,12 +135,10 @@ Vue.component("users-view",{
                 })
                 .catch(function(error){
                     switch(error.response.status) {
-                        case 400: pushErrorNotification('An error occured', "Selected user doesn't exist"); break;
-                        case 401: alert("Please login with privileges"); signOut(); break;
-                        case 403: alert("Please login with privileges"); signOut(); break;
-                        case 500:
-                            pushErrorNotification('Internal Server Error','Please try again later');
-                            break; 
+                        case 400: pushErrorNotification('Error', "Selected user doesn't exist"); break;
+                        case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                        case 403: alert(forbiddenErrorMessage); signOut(); break;
+                        case 500: pushInternalServerError(); break;
                     }
                 });
         },
@@ -163,12 +159,10 @@ Vue.component("users-view",{
                 })
                 .catch(function(error){
                     switch(error.response.status) {
-                        case 400: pushErrorNotification('An error occured', "Selected user doesn't exist"); break;
-                        case 401: alert("Please login with privileges"); signOut(); break;
-                        case 403: alert("Please login with privileges"); signOut(); break;
-                        case 500:
-                            pushErrorNotification('Internal Server Error','Please try again later');
-                            break; 
+                        case 400: pushErrorNotification('Error', "Selected user doesn't exist"); break;
+                        case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                        case 403: alert(forbiddenErrorMessage); signOut(); break;
+                        case 500: pushInternalServerError(); break;
                     }
                 });
         }

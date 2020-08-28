@@ -59,6 +59,7 @@ import io.jsonwebtoken.security.Keys;
 import repository.csv.converter.UserCsvConverter;
 import spark.Request;
 import utils.AppResources;
+import utils.StringResources;
 import ws.WsHandler;
 
 public class SparkAppMain {
@@ -99,8 +100,6 @@ public class SparkAppMain {
 		
 		
 		post("/rest/vazduhbnb/login", (req, res) -> {
-			//TODO: obavezno detaljnije pogledati
-			
 			res.type("application/json");
 			String payload = req.body();
 			UserDTO u = g.fromJson(payload, UserDTO.class);
@@ -116,17 +115,15 @@ public class SparkAppMain {
 				System.out.println("Returned JWT: " + jws);
 				
 				return g.toJson(new TokenDTO(jws, loggedInUser.getAccount().getUsername(), loggedInUser.getUserType()), TokenDTO.class);
-				
-				//TODO: povratna vrednost kod exception-a
 			}catch(InvalidUserException ex) {
 				res.status(403); //forbidden (blocked user)
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			}catch(BadRequestException ex) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
-			} catch(DatabaseException ex) {
+			}catch(DatabaseException ex) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 			
 		});
@@ -137,7 +134,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			try {
@@ -146,10 +143,10 @@ public class SparkAppMain {
 				return g.toJson(reservations);
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO("Internal Server Error"), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -157,7 +154,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			long reservationId = g.fromJson(req.body(), Long.class);
@@ -168,13 +165,13 @@ public class SparkAppMain {
 				return "OK";
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);				
 			}catch(BadRequestException e) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);				
 			}
 		});
 		
@@ -182,7 +179,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			long reservationId = g.fromJson(req.body(), Long.class);
@@ -193,13 +190,13 @@ public class SparkAppMain {
 				return "OK";
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);				
 			}catch(BadRequestException e) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);				
 			}
 		});
 		
@@ -207,7 +204,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			long reservationId = g.fromJson(req.body(), Long.class);
@@ -218,13 +215,13 @@ public class SparkAppMain {
 				return "OK";
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);				
 			}catch(BadRequestException e) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);				
 			}
 		});
 		
@@ -232,7 +229,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			long reservationId = g.fromJson(req.body(), Long.class);
@@ -243,13 +240,13 @@ public class SparkAppMain {
 				return "OK";
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);				
 			}catch(BadRequestException e) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);				
 			}
 		});
 		
@@ -259,7 +256,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			CommentDTO comment = g.fromJson(req.body(), CommentDTO.class);
@@ -270,13 +267,13 @@ public class SparkAppMain {
 				return g.toJson(newComment, Comment.class);
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);				
 			}catch(BadRequestException e) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);				
 			}
 		});
 		
@@ -294,7 +291,6 @@ public class SparkAppMain {
 				System.out.println("Registered user: " + registeredUser.getAccount().getUsername() + " with JWTToken: " + jws);
 				
 				return g.toJson(new TokenDTO(jws, registeredUser.getAccount().getUsername(), registeredUser.getUserType()), TokenDTO.class);
-				
 			} catch(NotUniqueException ex) {
 				response.status(409); // username is not unique
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
@@ -303,7 +299,7 @@ public class SparkAppMain {
 				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
 			} catch (DatabaseException ex) {
 				response.status(500); // server-side error
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -326,7 +322,7 @@ public class SparkAppMain {
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 
 		});
@@ -338,21 +334,16 @@ public class SparkAppMain {
 			UserFilterDTO filter = g.fromJson(payload, UserFilterDTO.class);
 			User loggedinUser = getLoggedInUser(request);
 			
-			try
-			{
+			try{
 				List<User> users = resources.userService.find(filter, loggedinUser);
 				
 				return g.toJson(users);
-			}
-			catch(DatabaseException ex)
-			{
+			}catch(DatabaseException ex){
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO("Internal Server Error"), ErrorMessageDTO.class);
-			}
-			catch(InvalidUserException ex)
-			{
+				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+			}catch(InvalidUserException ex){
 				response.status(403);
-				return g.toJson(new ErrorMessageDTO("User doesn't have permission."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -360,7 +351,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("Unauthorized access."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			ReservationDTO reservation = g.fromJson(req.body(), ReservationDTO.class);
@@ -371,13 +362,13 @@ public class SparkAppMain {
 				return "OK";
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}catch(BadRequestException e) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO("Internal Server Error."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -387,7 +378,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(request);
 			if(loggedInUser == null) {
 				response.status(401);
-				return g.toJson(new ErrorMessageDTO("Unauthorized access."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			String payload = request.body();
@@ -399,10 +390,10 @@ public class SparkAppMain {
 				return "OK";
 			}catch(DatabaseException e){
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO("Internal Server Error"), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}catch(InvalidUserException e) {
 				response.status(403);
-				return g.toJson(new ErrorMessageDTO("User doesn't have permission."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}catch(BadRequestException e) {
 				response.status(400);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
@@ -415,7 +406,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			ApartmentEditDTO apartmentEdit = g.fromJson(req.body(), ApartmentEditDTO.class);
@@ -426,13 +417,13 @@ public class SparkAppMain {
 				return "OK";
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("User doesn't have permission."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}catch(BadRequestException e) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -447,21 +438,19 @@ public class SparkAppMain {
 			
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			try {
-				
 				resources.commentService.approveComment(comment, toApprove, loggedInUser, apartmentId);
 				res.status(200);
 				return toApprove ? "approved" : "disapproved";
-				
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -471,7 +460,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			boolean toActivate = Boolean.valueOf(req.queryParams("activate"));		
@@ -483,10 +472,10 @@ public class SparkAppMain {
 				return "Apartment " + (toActivate ? "activated" : "deactivated") + ".";
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -495,7 +484,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			String payload = req.body();
@@ -507,13 +496,13 @@ public class SparkAppMain {
 				return "Apartment deleted";
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}catch(BadRequestException e) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 			
 		});
@@ -535,10 +524,10 @@ public class SparkAppMain {
 				return g.toJson(comments);
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO("Internal Server Error"), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);				
 			}
 			
 		});
@@ -549,7 +538,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			long apartmentId = Long.valueOf(req.queryParams("apartment"));
@@ -560,10 +549,10 @@ public class SparkAppMain {
 				return g.toJson(dates);
 			}catch(InvalidUserException e) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -573,7 +562,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			long apartmentId = Long.valueOf(req.queryParams("apartment"));
@@ -584,10 +573,10 @@ public class SparkAppMain {
 				return g.toJson(dates);
 			}catch(InvalidUserException e) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -597,7 +586,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			long apartmentId = Long.valueOf(req.queryParams("apartment"));
@@ -608,10 +597,10 @@ public class SparkAppMain {
 				return g.toJson(dates, BookingDatesDTO.class);
 			}catch(InvalidUserException e) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -621,7 +610,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			long apartmentId = Long.valueOf(req.queryParams("apartment"));
@@ -633,13 +622,13 @@ public class SparkAppMain {
 				return totalPrice;
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}catch(InvalidDateException e) {
 				res.status(400);
 				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -647,18 +636,15 @@ public class SparkAppMain {
 			User loggedinUser = getLoggedInUser(request);
 			
 			if(loggedinUser == null){
-				response.status(400);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				response.status(401);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			try{
-				
 				return g.toJson(resources.userService.getById(loggedinUser.getId()), User.class);
-				
-				//TODO: povratna vrednost kod exception-a
 			} catch(DatabaseException ex) {
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 			
 		});
@@ -675,7 +661,7 @@ public class SparkAppMain {
 			}
 			catch(DatabaseException ex){
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class );
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class );
 			}
 			catch(InvalidPasswordException ex){
 				response.status(409);
@@ -687,14 +673,14 @@ public class SparkAppMain {
 			}
 		});
 		
-		put("/rest/vazduhbnb/updateAmenityName", (request, response)->{
+		put("/rest/vazduhbnb/amenity", (request, response)->{
 			response.type("application/json");
 			
 			User loggedInUser = getLoggedInUser(request);
 			
 			if(loggedInUser == null){
 				response.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 
 			String payload = request.body();
@@ -706,22 +692,22 @@ public class SparkAppMain {
 			}
 			catch(InvalidUserException ex) {
 				response.status(403);				
-				return g.toJson(new ErrorMessageDTO("Access denied"), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}
 			catch(DatabaseException ex){
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
-		delete("/rest/vazduhbnb/deleteAmenity", (request, response)->{
+		delete("/rest/vazduhbnb/amenity", (request, response)->{
 			response.type("application/json");
 			
 			User loggedInUser = getLoggedInUser(request);
 			
 			if(loggedInUser == null){
 				response.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			String payload = request.body();
@@ -734,22 +720,22 @@ public class SparkAppMain {
 			}
 			catch(InvalidUserException ex) {
 				response.status(403);				
-				return g.toJson(new ErrorMessageDTO("Access denied"), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}
 			catch(DatabaseException ex){
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
-		post("/rest/vazduhbnb/addNewAmenity", (request, response)->{
+		post("/rest/vazduhbnb/amenity", (request, response)->{
 			response.type("application/json");
 			
 			User loggedInUser = getLoggedInUser(request);
 			
 			if(loggedInUser == null){
 				response.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			String payload = request.body();
@@ -762,11 +748,11 @@ public class SparkAppMain {
 			}
 			catch(InvalidUserException ex) {
 				response.status(403);				
-				return g.toJson(new ErrorMessageDTO("Access denied"), ErrorMessageDTO.class);				
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);				
 			}
 			catch(DatabaseException ex) {
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -779,7 +765,7 @@ public class SparkAppMain {
 			}
 			catch(DatabaseException ex){
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -797,45 +783,36 @@ public class SparkAppMain {
 			response.type("application/json");
 			
 			User loggedinUser = getLoggedInUser(request);
-			if(loggedinUser == null)
-			{
-				response.status(403);
-				return g.toJson("Forbidden");
+			if(loggedinUser == null){
+				response.status(401);
+				return g.toJson(StringResources.USER_NOT_LOGGED_IN);
 			}
 			
 			List<Reservation> reservations = new ArrayList<Reservation>();
 			List<Apartment> apartments = new ArrayList<Apartment>();
 			try {
-				if(loggedinUser.getUserType() == UserType.admin)
-				{
+				if(loggedinUser.getUserType() == UserType.admin){
 					reservations = 	resources.reservationService.getAll();
 				}
-				else if(loggedinUser.getUserType() == UserType.guest)
-				{
+				else if(loggedinUser.getUserType() == UserType.guest){
 					reservations = resources.reservationService.getReservationByGuest(loggedinUser);
 				}
-				else if(loggedinUser.getUserType() == UserType.host)
-				{
+				else if(loggedinUser.getUserType() == UserType.host){
 					reservations = resources.reservationService.getReservationByHost(loggedinUser, loggedinUser.getUserType());
 				}
 				
-				for(Reservation res: reservations)
-				{
+				for(Reservation res: reservations){
 					if(!apartments.contains(res.getApartment()))
 						apartments.add(res.getApartment());
 				}
 								
 				return g.toJson(apartments);
-			}
-			catch(DatabaseException ex)
-			{
+			}catch(DatabaseException ex){
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
-			}
-			catch(InvalidUserException ex)
-			{
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
+			}catch(InvalidUserException ex){
 				response.status(403);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}			
 		});
 		
@@ -845,7 +822,7 @@ public class SparkAppMain {
 			User user = getLoggedInUser(request);
 			if(user == null) {
 				response.status(401);
-				return g.toJson("User is not logged in");
+				return g.toJson(StringResources.USER_NOT_LOGGED_IN);
 			}
 			
 			try {
@@ -855,11 +832,11 @@ public class SparkAppMain {
 			}
 			catch(InvalidUserException ex) {
 				response.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."));
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED));
 			}
 			catch(DatabaseException ex) {
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -871,16 +848,16 @@ public class SparkAppMain {
 			Apartment apartment = g.fromJson(payload, Apartment.class);
 			User loggedinUser = getLoggedInUser(request);
 			
-			try
-			{
+			try{
 				List<Reservation> reservations = resources.reservationService.getReservationsByApartment(apartment.getId(), loggedinUser);
 				return g.toJson(reservations);
-			}
-			catch(InvalidUserException ex)
-			{
+			}catch(InvalidUserException ex){
 				response.status(403);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
-			}			
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
+			}catch(DatabaseException ex) {
+				response.status(500);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
+			}
 		});
 		
 		put("/rest/vazduhbnb/blockUser", (request, response) ->{
@@ -891,14 +868,14 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(request);
 			if(loggedInUser == null) {
 				response.status(401);
-				return g.toJson("User not logged in.");
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			User user = g.fromJson(payload, User.class);
 			
 			if(user == null) {
 				response.status(400);
-				return g.toJson("User is null");
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_FOUND), ErrorMessageDTO.class);
 			}
 			
 			try {
@@ -908,11 +885,11 @@ public class SparkAppMain {
 			}
 			catch(InvalidUserException ex) {				
 				response.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}
 			catch(DatabaseException ex) {
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -924,14 +901,14 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(request);
 			if(loggedInUser == null) {
 				response.status(401);
-				return g.toJson("User not logged in.");
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			User user = g.fromJson(payload, User.class);
 			
 			if(user == null) {
 				response.status(400);
-				return g.toJson("User is null");
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_FOUND), ErrorMessageDTO.class);
 			}
 			
 			try {
@@ -941,11 +918,11 @@ public class SparkAppMain {
 			}
 			catch(InvalidUserException ex) {				
 				response.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}
 			catch(DatabaseException ex) {
 				response.status(500);
-				return g.toJson(new ErrorMessageDTO(ex.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -955,7 +932,7 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			try {				
@@ -964,10 +941,10 @@ public class SparkAppMain {
 				return g.toJson(cal, PricingCalendar.class);
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {				
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
@@ -977,30 +954,27 @@ public class SparkAppMain {
 			User loggedInUser = getLoggedInUser(req);
 			if(loggedInUser == null) {
 				res.status(401);
-				return g.toJson(new ErrorMessageDTO("User not logged in."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.USER_NOT_LOGGED_IN), ErrorMessageDTO.class);
 			}
 			
 			PricingCalendar pricingCalendar = g.fromJson(req.body(), PricingCalendar.class);
 			
 			try {
-				
 				resources.reservationService.updatePricingCalendar(pricingCalendar, loggedInUser);
 				res.status(200);
 				return "OK";
 			}catch(InvalidUserException e) {
 				res.status(403);
-				return g.toJson(new ErrorMessageDTO("Access denied."), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.ACCESS_DENIED), ErrorMessageDTO.class);
 			}catch(DatabaseException e) {				
 				res.status(500);
-				return g.toJson(new ErrorMessageDTO(e.getMessage()), ErrorMessageDTO.class);
+				return g.toJson(new ErrorMessageDTO(StringResources.INTERNAL_SERVER_ERROR), ErrorMessageDTO.class);
 			}
 		});
 		
-		get("/rest/vazduhbnb/getLoggedinUser", (request, response)->{
+		get("/rest/vazduhbnb/getLoggedInUser", (request, response)->{
 			response.type("application/json");
-			
 			User user = getLoggedInUser(request);
-			
 			return g.toJson(user);
 		});
 		
@@ -1013,7 +987,6 @@ public class SparkAppMain {
 	}
 
 	private static Gson getGson() {
-		// Creates the json object which will manage the information received 
 		GsonBuilder builder = new GsonBuilder(); 
 
 		// Register an adapter to manage the date types as long values 
@@ -1053,7 +1026,6 @@ public class SparkAppMain {
 		JwtBuilder jwtBuilder = Jwts.builder();
 		jwtBuilder.setSubject(userConverter.toCsv(user));
 		
-		// Token je validan 30 minuta!
 		jwtBuilder.setExpiration(new Date(new Date().getTime() + 1000*minutesUntilTokenExpires*60L));
 		jwtBuilder.setIssuedAt(new Date());
 		

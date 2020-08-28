@@ -30,7 +30,7 @@ var app = new Vue({
                         switch(response.status){
                             case 400: pushErrorNotification("Error", "Invalid username/password"); break;
                             case 403: pushErrorNotification("Access denied", "You account has been blocked"); break;
-                            case 500: pushErrorNotification("Internal Server Error", "Please try again later."); break;
+                            case 500: pushInternalServerError(); break;
                         }
                     })
             }

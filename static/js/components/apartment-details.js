@@ -33,8 +33,8 @@ Vue.component("apartment-details", {
             .catch(function(error){
                 let response = error.response;
                 switch(response.status){
-                    case 403: alert("Access denied. Login with priviliges."); signOut(); break;
-                    case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                    case 403: alert(forbiddenErrorMessage); signOut(); break;
+                    case 500: pushInternalServerError(); break;
                 }
             })
     },
@@ -156,9 +156,9 @@ Vue.component("apartment-details", {
                 .catch(function(error){
                     let response = error.response;
                     switch(response.status){
-                        case 401: alert("Error. Not logged in."); signOut(); break;
-                        case 403: alert("Access denied. Please login with privileges."); signOut(); break; 
-                        case 500: pushErrorNotification("Internal Server Error", "Please try again later."); break;
+                        case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                        case 403: alert(forbiddenErrorMessage); signOut(); break;
+                        case 500: pushInternalServerError(); break;
                     }
                 });
         }

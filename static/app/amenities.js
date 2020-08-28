@@ -111,7 +111,7 @@ Vue.component("add-form", {
 
                 const vm = this;
                 axios
-                    .post('rest/vazduhbnb/addNewAmenity', this.name, {
+                    .post('rest/vazduhbnb/amenity', this.name, {
                         headers: {
                             "Authorization" : "Bearer " + jwt
                         }
@@ -123,9 +123,9 @@ Vue.component("add-form", {
                     })
                     .catch(error => {
                         switch(error.response.status){
-                            case 401:
-                            case 403: alert("Please login with privileges"); signOut(); break;
-                            case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                            case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                            case 403: alert(forbiddenErrorMessage); signOut(); break;
+                            case 500: pushInternalServerError(); break;
                         }
                     });
             }
@@ -168,7 +168,7 @@ var app = new Vue({
             .catch(function(error){
                 switch(error.response.status){
                     case 500:
-                        pushErrorNotification('Internal Server Error','Please try again later');
+                        pushInternalServerError();
                         break;
                 }
             });
@@ -182,7 +182,7 @@ var app = new Vue({
             const vm = this;
 
             axios
-                .put('rest/vazduhbnb/updateAmenityName', this.selectedAmenity, {
+                .put('rest/vazduhbnb/amenity', this.selectedAmenity, {
                     headers: {
                         "Authorization" : "Bearer " + jwt
                     }
@@ -193,9 +193,9 @@ var app = new Vue({
                 })
                 .catch(error => {
                     switch(error.response.status){
-                        case 401:
-                        case 403: alert("Please login with privileges"); signOut(); break;
-                        case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                        case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                        case 403: alert(forbiddenErrorMessage); signOut(); break;
+                        case 500: pushInternalServerError(); break;
                     }
                 });
         },
@@ -207,7 +207,7 @@ var app = new Vue({
             const vm = this;
 
             axios
-                .delete('rest/vazduhbnb/deleteAmenity', {
+                .delete('rest/vazduhbnb/amenity', {
                     headers: {
                         "Authorization" : "Bearer " + jwt
                     },
@@ -223,9 +223,9 @@ var app = new Vue({
                 })
                 .catch(error => {
                     switch(error.response.status){
-                        case 401:
-                        case 403: alert("Please login with privileges"); signOut(); break;
-                        case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                        case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                        case 403: alert(forbiddenErrorMessage); signOut(); break;
+                        case 500: pushInternalServerError(); break;
                     }
                 });
         },

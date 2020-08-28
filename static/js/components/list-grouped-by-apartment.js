@@ -125,9 +125,15 @@ Vue.component('apartment-details',{
                 vm.reservations = response.data;
                 vm.fixDate(vm.reservations);
             })
+            .catch(function(error){
+                switch(error.response.status){
+                    case 403: alert(forbiddenErrorMessage); signOut(); break;
+                    case 500: pushInternalServerError(); break;
+                }
+            });
 
         axios
-            .get('rest/vazduhbnb/getLoggedinUser',{
+            .get('rest/vazduhbnb/getLoggedInUser',{
                 headers:{
                     'Authorization': 'Bearer ' + jwt
                 }

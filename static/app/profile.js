@@ -48,12 +48,8 @@ var profile = new Vue({
             .catch(function(error){
                 console.log(error.response)
                     switch(error.response.status) {
-                        case 400:
-                            pushErrorNotification("Bad request",'Bad request sent');
-                            break;    
-                        case 500:
-                            pushErrorNotification('Internal Server Error','Please try again later.');
-                            break;
+                        case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                        case 500: pushInternalServerError(); break;
                     }
             })
     },
@@ -61,7 +57,7 @@ var profile = new Vue({
         update: function() {
             if(this.isDataValid){
 
-                let userDto={
+                let userDto = {
                     username: this.user.account.username,
                     name: this.user.name,
                     surname: this.user.surname,
@@ -82,18 +78,10 @@ var profile = new Vue({
                         vm.controlPassword = '';
                     })
                     .catch(function(error){
-                        console.log(error.response)
-                        switch(error.response.status)
-                        {
-                            case 400:
-                                pushErrorNotification("An error occured",error.response.data.message);
-                                break;    
-                            case 409:
-                                pushErrorNotification("Invalid Password",'You entered wrong old password!');
-                                break;    
-                            case 500:
-                                pushErrorNotification('Internal server error','Please try again later.');
-                                break;
+                        switch(error.response.status){
+                            case 400: pushErrorNotification("Error", error.response.data.message); break;    
+                            case 409: pushErrorNotification("Error",'Old password is incorrect!'); break;    
+                            case 500: pushInternalServerError(); break;
                         }
                     });
             }
