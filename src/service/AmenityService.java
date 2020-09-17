@@ -25,22 +25,33 @@ public class AmenityService {
    }
 
 //Methods
-   public Amenity create(Amenity amenity) throws DatabaseException {
-	  
-	  return amenityRepository.create(amenity);
-
+   public Amenity create(String amenityName, User user) throws DatabaseException, InvalidUserException {
+	  if(user.getUserType() == UserType.admin) {
+		  Amenity amenity = new Amenity(amenityName, false);
+		  amenity = amenityRepository.create(amenity);
+		  return amenity;
+	  }
+	  else {
+		  throw new InvalidUserException();
+	  }
    }
    
-   public void update(Amenity amenity) throws DatabaseException {
-	   amenityRepository.update(amenity); 
+   public void update(Amenity amenity, User user) throws DatabaseException, InvalidUserException {
+	   if(user.getUserType() == UserType.admin) {		   
+		   amenityRepository.update(amenity);
+	   }
+	   else {
+		   throw new InvalidUserException();
+	   }
    }
    
-   public void delete(Amenity amenity) throws DatabaseException {
-	   amenityRepository.delete(amenity.getId());
-   }
-   
-   public Amenity getById(long id) throws DatabaseException {
-      return amenityRepository.getById(id);
+   public void delete(Amenity amenity, User user) throws DatabaseException, InvalidUserException {
+	   if(user.getUserType() == UserType.admin) {
+		   amenityRepository.delete(amenity.getId());		   
+	   }
+	   else {
+		   throw new InvalidUserException();
+	   }
    }
    
    public List<Amenity> getAll() throws DatabaseException {

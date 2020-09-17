@@ -11,9 +11,7 @@ axios
         })
         .then(response =>{
             userType = response.data;
-            if(userType != 'admin')
-            {
-                
+            if(userType != 'admin'){
                 window.location.replace('login.html');
             }
         });

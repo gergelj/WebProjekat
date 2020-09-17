@@ -27,8 +27,9 @@ Vue.component("amenity-list",{
             })
             .catch(function(error){
                 let response = error.response;
-                alert(response.data.message);
-                return;
+                switch(response.status){
+                    case 500: pushInternalServerError(); break;
+                }
             });
     },
     methods:{

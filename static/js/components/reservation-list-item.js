@@ -133,10 +133,10 @@ Vue.component("reservation-list-item", {
                 .catch(function(error){
                     let response = error.response;
                     switch(response.status){
-                        case 401: alert("User not logged in"); signOut(); break;
-                        case 403: alert("Please login with privileges"); signOut(); break;
-                        case 400: pushErrorNotification("Error occured", response.data.message); break;
-                        case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                        case 400: pushErrorNotification("Error", response.data.message); break;
+                        case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                        case 403: alert(forbiddenErrorMessage); signOut(); break;
+                        case 500: pushInternalServerError(); break;
                     }
                 });
         },
@@ -160,10 +160,10 @@ Vue.component("reservation-list-item", {
                 .catch(function(error){
                     let response = error.response;
                     switch(response.status){
-                        case 401: alert("User not logged in"); signOut(); break;
-                        case 403: alert("Please login with privileges"); signOut(); break;
-                        case 400: pushErrorNotification("Error occured", response.data.message); break;
-                        case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                        case 400: pushErrorNotification("Error", response.data.message); break;
+                        case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                        case 403: alert(forbiddenErrorMessage); signOut(); break;
+                        case 500: pushInternalServerError(); break;
                     }
                 });
         },
@@ -187,10 +187,10 @@ Vue.component("reservation-list-item", {
                 .catch(function(error){
                     let response = error.response;
                     switch(response.status){
-                        case 401: alert("User not logged in"); signOut(); break;
-                        case 403: alert("Please login with privileges"); signOut(); break;
-                        case 400: pushErrorNotification("Error occured", response.data.message); break;
-                        case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                        case 400: pushErrorNotification("Error", response.data.message); break;
+                        case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                        case 403: alert(forbiddenErrorMessage); signOut(); break;
+                        case 500: pushInternalServerError(); break;
                     }
                 });
         },
@@ -214,10 +214,10 @@ Vue.component("reservation-list-item", {
                 .catch(function(error){
                     let response = error.response;
                     switch(response.status){
-                        case 401: alert("User not logged in"); signOut(); break;
-                        case 403: alert("Please login with privileges"); signOut(); break;
-                        case 400: pushErrorNotification("Error occured", response.data.message); break;
-                        case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                        case 400: pushErrorNotification("Error", response.data.message); break;
+                        case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                        case 403: alert(forbiddenErrorMessage); signOut(); break;
+                        case 500: pushInternalServerError(); break;
                     }
                 });
         },
@@ -243,9 +243,9 @@ Vue.component("reservation-list-item", {
                 .catch(function(error){
                     let response = error.response;
                     switch(response.status){
-                        case 401: alert("Error. Not logged in."); signOut(); break;
-                        case 403: alert("Access denied. Please login with privileges."); signOut(); break; 
-                        case 500: pushErrorNotification("Internal Server Error", "Please try again later."); break;
+                        case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                        case 403: alert(forbiddenErrorMessage); signOut(); break;
+                        case 500: pushInternalServerError(); break;
                     }
                 });
         }

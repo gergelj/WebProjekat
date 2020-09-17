@@ -54,9 +54,9 @@ var app = new Vue({
             .catch(function(error){
                 let response = error.response;
                 switch(response.status){
-                    case 401:
-                    case 403: alert("User not logged in"); signOut(); break;
-                    case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                    case 401: alert(unauthorizedErrorMessage); signOut(); break;
+                    case 403: alert(forbiddenErrorMessage); signOut(); break;
+                    case 500: pushInternalServerError(); break;
                 }
             })
     },

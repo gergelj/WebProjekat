@@ -58,9 +58,9 @@ var signupApp = new Vue({
                     .catch(function(error){
                         let response = error.response;
                         switch(response.status){
-                            case 400: pushErrorNotification("An error occured", response.data.message); break; //invalid data
-                            case 409: pushErrorNotification("This username is taken", "Try something else."); break; // username not unique
-                            case 500: pushErrorNotification("An error occured", "Please try again later."); break; // server-side error
+                            case 400: pushErrorNotification("Error", response.data.message); break; //invalid data
+                            case 409: pushErrorNotification("Error", "This username is taken. Try something else."); break; // username not unique
+                            case 500: pushInternalServerError(); break; // server-side error
                         }
                     });
             }

@@ -7,7 +7,6 @@
 package service;
 
 import repository.AccountRepository;
-import repository.DateCollectionRepository;
 import repository.UserRepository;
 import specification.ISpecification;
 import specification.filterconverter.UserFilterConverter;
@@ -156,12 +155,21 @@ public class UserService {
 	   return userRepository.isUsernameUnique(username);
    }
 
-   public List<User> getAll() throws DatabaseException {      
-      List<User> users = userRepository.getAllEager();
-      for(User user : users)
-    	  user.getAccount().setPassword("");
-      
-      return users;
+   public List<User> getAll(User loggedInUser) throws DatabaseException, InvalidUserException { 
+	   switch(loggedInUser.getUserType()) {
+	   case admin: {
+		   List<User> users = userRepository.getAllEager();
+		      for(User user : users)
+		    	  user.getAccount().setPassword("");
+		      
+		   return users;
+	   }
+	   case host: {
+		   return getGuestsByHost(loggedInUser, loggedInUser.getUserType());
+	   }
+	   default:
+		   throw new InvalidUserException();
+	   }
    }
    
    public List<User> getGuestsByHost(User host, UserType userType) throws InvalidUserException, DatabaseException {
@@ -174,24 +182,9 @@ public class UserService {
       List<User> users = new ArrayList<User>();
       
       if(!reservations.isEmpty())
-    	  users = reservations.stream().map(Reservation::getGuest).collect(Collectors.toList());
-      
-      users = checkList(users);
+    	  users = reservations.stream().map(Reservation::getGuest).distinct().collect(Collectors.toList());
       
       return users;
-   }
-   
-   private List<User> checkList(List<User> users)
-   {
-	   List<User> retVal = new ArrayList<User>();
-	   
-	   for(User user: users)
-	   {
-		   if(!retVal.contains(user))
-			   retVal.add(user);
-	   }
-	   
-	   return retVal;
    }
    
    public List<User> find(UserFilterDTO filter, User thisUser) throws DatabaseException, InvalidUserException {
@@ -206,27 +199,32 @@ public class UserService {
       return retVal;
    }
    
-   public User blockUser(User user) throws DatabaseException, InvalidUserException {
-	   
-	   /*if(userType != UserType.admin)
-		   throw new InvalidUserException();*/
-	   
-	   User blockedUser = userRepository.getEager(user.getId());
-	   blockedUser.block();
-	   userRepository.update(blockedUser);
-	   
-	   blockedUser.getAccount().setPassword("");
-	   return blockedUser;
+   public User blockUser(User user, User loggedInUser) throws DatabaseException, InvalidUserException {
+	   if(loggedInUser.getUserType() == UserType.admin) {		   
+		   User blockedUser = userRepository.getEager(user.getId());
+		   blockedUser.block();
+		   userRepository.update(blockedUser);
+		   
+		   blockedUser.getAccount().setPassword("");
+		   return blockedUser;
+	   }
+	   else {
+		   throw new InvalidUserException();
+	   }
    }
    
-   public User unblockUser(User user) throws DatabaseException
-   {
-	   User unblockedUser = userRepository.getEager(user.getId());
-	   unblockedUser.setBlocked(false);
-	   userRepository.update(unblockedUser);
-	   
-	   unblockedUser.getAccount().setPassword("");
-	   return unblockedUser;
+   public User unblockUser(User user, User loggedInUser) throws DatabaseException, InvalidUserException {
+	   if(loggedInUser.getUserType() == UserType.admin) {		   
+		   User blockedUser = userRepository.getEager(user.getId());
+		   blockedUser.setBlocked(false);
+		   userRepository.update(blockedUser);
+		   
+		   blockedUser.getAccount().setPassword("");
+		   return blockedUser;
+	   }
+	   else {
+		   throw new InvalidUserException();
+	   }
    }
 
 }
