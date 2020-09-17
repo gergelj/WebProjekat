@@ -39,7 +39,7 @@ Vue.component("navigation-bar", {
 
             <!-- Guest user -->
             <template v-if="usertype == 'guest'">
-                <b-nav-item href="reservations.html">
+                <b-nav-item href="reservation-list.html">
                     <i class="fas fa-calendar-alt"></i>
                     My Reservations
                 </b-nav-item>
@@ -58,7 +58,7 @@ Vue.component("navigation-bar", {
                     My guests
                 </b-nav-item>
 
-                <b-nav-item href="reservations.html">
+                <b-nav-item href="reservation-list.html">
                     <i class="fas fa-calendar-alt"></i>
                     Reservations
                 </b-nav-item>
@@ -82,7 +82,7 @@ Vue.component("navigation-bar", {
                     Users
                 </b-nav-item>
 
-                <b-nav-item href="reservations.html">
+                <b-nav-item href="reservation-list.html">
                     <i class="fas fa-calendar-alt"></i>
                     Reservations
                 </b-nav-item>
