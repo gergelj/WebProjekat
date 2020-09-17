@@ -146,23 +146,121 @@ Vue.component('apartment-details',{
         selectReservation: function(record, index)
         {
             this.selectedReservation = record;
-            pushSuccessNotification('You have selected reservation','');
         },
-        onCancel: function()
-        {
-            //TODO: implement
+        onCancel(){
+            let jwt = window.localStorage.getItem('jwt');
+            if(!jwt)
+                jwt = '';
+        
+            const vm = this;
+        
+            // parametar je id trenutne rezervacije (this.reservation.id)
+            axios
+                .put('rest/vazduhbnb/cancelReservation', this.selectedReservation.id, {
+                    headers:{
+                        "Authorization" : "Bearer " + jwt
+                    }
+                })
+                .then(function(response){
+                    pushSuccessNotification("Success", "Reservation has been cancelled");
+                    // refreshuje se prikaz
+                    vm.selectedReservation.reservationStatus = 'cancelled';
+                })
+                .catch(function(error){
+                    let response = error.response;
+                    switch(response.status){
+                        case 401: alert("User not logged in"); signOut(); break;
+                        case 403: alert("Please login with privileges"); signOut(); break;
+                        case 400: pushErrorNotification("Error occured", response.data.message); break;
+                        case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                    }
+                });
         },
-        onReject: function()
-        {
-            //TODO: implement
+        
+        
+        onReject(){
+            let jwt = window.localStorage.getItem('jwt');
+            if(!jwt)
+                jwt = '';
+        
+            const vm = this;
+        
+            axios
+                .put('rest/vazduhbnb/rejectReservation', this.selectedReservation.id, {
+                    headers:{
+                        "Authorization" : "Bearer " + jwt
+                    }
+                })
+                .then(function(response){
+                    pushSuccessNotification("Success", "Reservation has been rejected");
+                    vm.selectedReservation.reservationStatus = 'rejected';
+                })
+                .catch(function(error){
+                    let response = error.response;
+                    switch(response.status){
+                        case 401: alert("User not logged in"); signOut(); break;
+                        case 403: alert("Please login with privileges"); signOut(); break;
+                        case 400: pushErrorNotification("Error occured", response.data.message); break;
+                        case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                    }
+                });
         },
-        onAccept: function()
-        {
-            //TODO: implement
+        
+        
+        onAccept(){
+            let jwt = window.localStorage.getItem('jwt');
+            if(!jwt)
+                jwt = '';
+        
+            const vm = this;
+        
+            axios
+                .put('rest/vazduhbnb/acceptReservation', this.selectedReservation.id, {
+                    headers:{
+                        "Authorization" : "Bearer " + jwt
+                    }
+                })
+                .then(function(response){
+                    pushSuccessNotification("Success", "Reservation has been accepted");
+                    vm.selectedReservation.reservationStatus = 'accepted';
+                })
+                .catch(function(error){
+                    let response = error.response;
+                    switch(response.status){
+                        case 401: alert("User not logged in"); signOut(); break;
+                        case 403: alert("Please login with privileges"); signOut(); break;
+                        case 400: pushErrorNotification("Error occured", response.data.message); break;
+                        case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                    }
+                });
         },
-        onFinish: function()
-        {
-            //TODO: implement
+        
+        
+        onFinish(){
+            let jwt = window.localStorage.getItem('jwt');
+            if(!jwt)
+                jwt = '';
+        
+            const vm = this;
+        
+            axios
+                .put('rest/vazduhbnb/finishReservation', this.selectedReservation.id, {
+                    headers:{
+                        "Authorization" : "Bearer " + jwt
+                    }
+                })
+                .then(function(response){
+                    vm.selectedReservation.reservationStatus = 'finished';
+                })
+                .catch(function(error){
+                    let response = error.response;
+                    switch(response.status){
+                        case 401: alert("User not logged in"); signOut(); break;
+                        case 403: alert("Please login with privileges"); signOut(); break;
+                        case 400: pushErrorNotification("Error occured", response.data.message); break;
+                        case 500: pushErrorNotification("Internal Server Error", "Please try again later"); break;
+                    }
+                });
         }
     },
     computed:{
@@ -216,7 +314,7 @@ Vue.component('apartment-details',{
             else if(this.userType == 'host')
             {
                 return [
-                    {key: 'guest.account.username'},
+                    {key: 'guest.account.username', label:'Guest'},
                     {key:'checkIn', sortable: true, sortByFormatted: true,
                      formatter: value=>{
                         let format='DD.MM.YYYY.'
